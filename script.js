@@ -3936,7 +3936,8 @@ function mudarTurnoSerra() {
     if (!select) return;
     select.value = select.value === 'tarde' ? 'manha' : 'tarde';
     atualizarLabelTurnoSerra();
-    alert(select.value === 'tarde' ? 'Agora voce esta lancando no turno da tarde.' : 'Agora voce esta lancando no turno da manha.');
+    const label = document.getElementById('serra-turno-atual-label');
+    if (label) label.textContent = select.value === 'tarde' ? 'MARCADO: TURNO DA TARDE' : 'MARCADO: TURNO DA MANHA';
 }
 
 function setModoCorteSerra(modo) {

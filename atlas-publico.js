@@ -244,4 +244,143 @@
       }
     });
   });
+
+  function instalarPDFSerraCompleto() {
+    const seguro = valor => String(valor ?? "").replace(/[&<>"']/g, c => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[c]));
+    const numero = valor => {
+      const n = Number(String(valor ?? "").replace(",", "."));
+      return Number.isFinite(n) ? n : 0;
+    };
+    const totalItem = item => numero(item && item.metros) * (parseInt(item && item.qtd, 10) || 1);
+    const turnoItem = item => String(item && item.turno || "").toLowerCase().includes("tarde") ? "tarde" : "manha";
+    const qualidadeItem = item => {
+      const desc = String(item && item.desc || "").toUpperCase();
+      if (desc.includes("PPC")) return "PPC";
+      if (desc.includes("P2")) return "P2";
+      if (desc.includes("LIXO") || desc.includes("DESCARTE")) return "LIXO";
+      if (desc.includes("P1")) return "P1";
+      if (desc.includes("PED:")) return "PEDIDO";
+      return "OUTROS";
+    };
+    const ralItem = item => `${item && item.ralI || "-"} / ${item && item.ralS || "-"}`;
+    const add = (obj, chave, valor) => {
+      obj[chave] = (obj[chave] || 0) + valor;
+    };
+
+    function linhasItens(lista) {
+      if (!lista.length) return `<tr><td colspan="8" class="vazio">Sem itens marcados neste turno</td></tr>`;
+      return lista.map(item => {
+        const qtd = parseInt(item.qtd, 10) || 1;
+        const metros = numero(item.metros);
+        return `
+          <tr>
+            <td>${seguro(item.tipo || "")}</td>
+            <td>${seguro(item.esp || "")} mm</td>
+            <td>${seguro(ralItem(item))}</td>
+            <td>${qtd}</td>
+            <td>${metros.toFixed(2)} m</td>
+            <td><b>${(qtd * metros).toFixed(2)} m</b></td>
+            <td>${seguro(qualidadeItem(item))}</td>
+            <td>${seguro(item.desc || "")}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function linhasResumoQualidadePorTurno(resumo) {
+      return ["P1", "P2", "PPC", "LIXO"].map(q => {
+        const manha = resumo.manha[q] || 0;
+        const tarde = resumo.tarde[q] || 0;
+        return `<tr><td>${q}</td><td>${manha.toFixed(2)} m</td><td>${tarde.toFixed(2)} m</td><td><b>${(manha + tarde).toFixed(2)} m</b></td></tr>`;
+      }).join("");
+    }
+
+    function linhasRalFinal(resumoRal) {
+      const rals = Object.keys(resumoRal).sort();
+      if (!rals.length) return `<tr><td colspan="4" class="vazio">Sem dados por RAL</td></tr>`;
+      return rals.map(ral => {
+        const info = resumoRal[ral] || {};
+        const manha = info.manha || 0;
+        const tarde = info.tarde || 0;
+        return `<tr><td>${seguro(ral)}</td><td>${manha.toFixed(2)} m</td><td>${tarde.toFixed(2)} m</td><td><b>${(manha + tarde).toFixed(2)} m</b></td></tr>`;
+      }).join("");
+    }
+
+    window.gerarPDF_Serra = function(dadosEncoded) {
+      const rel = JSON.parse(decodeURIComponent(dadosEncoded));
+      const janela = window.open("", "_blank");
+      if (!janela) return alert("O navegador bloqueou a abertura do PDF.");
+
+      const itens = Array.isArray(rel.itens) ? rel.itens : [];
+      const porTurno = { manha: [], tarde: [] };
+      const resumo = {
+        manha: { P1: 0, P2: 0, PPC: 0, LIXO: 0 },
+        tarde: { P1: 0, P2: 0, PPC: 0, LIXO: 0 }
+      };
+      const resumoRal = {};
+
+      itens.forEach(item => {
+        const turno = turnoItem(item);
+        const qualidade = qualidadeItem(item);
+        const total = totalItem(item);
+        const ral = ralItem(item);
+        porTurno[turno].push(item);
+        if (resumo[turno][qualidade] !== undefined) add(resumo[turno], qualidade, total);
+        resumoRal[ral] ||= { manha: 0, tarde: 0 };
+        resumoRal[ral][turno] += total;
+      });
+
+      const totalManha = porTurno.manha.reduce((s, i) => s + totalItem(i), 0);
+      const totalTarde = porTurno.tarde.reduce((s, i) => s + totalItem(i), 0);
+      const totalGeral = totalManha + totalTarde;
+
+      janela.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Relatorio Serra</title>
+          <style>
+            *{box-sizing:border-box} body{margin:0;background:#d1d5db;color:#000;font-family:Arial,Helvetica,sans-serif}
+            .page{width:297mm;min-height:210mm;margin:0 auto 8mm;background:#fff;padding:10mm}
+            .topo{display:flex;justify-content:space-between;align-items:center;background:#000;color:#fff;border-bottom:5px solid #e31c24;padding:12px 14px;margin-bottom:7mm}
+            .marca{font-size:24px;font-weight:900}.marca span{color:#e31c24}.dados{text-align:right;font-weight:800;line-height:1.45}
+            .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm;margin-bottom:6mm}.card{border:2px solid #000;padding:8px;text-align:center}.card span{display:block;font-size:11px;text-transform:uppercase;font-weight:800}.card b{font-size:22px}
+            .secao{background:#111;color:#fff;text-align:center;font-weight:900;text-transform:uppercase;border:2px solid #000;padding:7px;margin-top:6mm}
+            table{width:100%;border-collapse:collapse;font-size:10px} th,td{border:1.5px solid #000;padding:4px 5px;text-align:center} th{background:#eee}.vazio{padding:10px;color:#555;font-style:italic}.total td{background:#111;color:#fff;font-weight:900}
+            .duas{display:grid;grid-template-columns:1fr 1fr;gap:7mm;margin-top:4mm}
+            .no-print{position:sticky;bottom:0;padding:12px;background:#0f172a}.no-print button{width:100%;padding:16px;border:3px solid #e31c24;border-radius:10px;background:#000;color:#fff;font-size:18px;font-weight:900}
+            @media print{body{background:#fff}.page{width:297mm;min-height:210mm;margin:0;padding:9mm}.no-print{display:none!important}@page{size:A4 landscape;margin:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+          </style>
+        </head>
+        <body>
+          <main class="page">
+            <header class="topo"><div><div class="marca"><span>ATLAS</span> PAINEL</div><div>RELATORIO DE SERRA POR TURNO</div></div><div class="dados">DATA: ${seguro(rel.data)}<br>OP: ${seguro(rel.operador)}</div></header>
+            <section class="cards"><div class="card"><span>Turno da manha</span><b>${totalManha.toFixed(2)} m</b></div><div class="card"><span>Turno da tarde</span><b>${totalTarde.toFixed(2)} m</b></div><div class="card"><span>Total do dia</span><b>${totalGeral.toFixed(2)} m</b></div></section>
+            <div class="secao">Turno da manha</div>
+            <table><thead><tr><th>Tipo</th><th>Esp.</th><th>RAL inf/sup</th><th>Qtd</th><th>Metro un.</th><th>Total</th><th>Classe</th><th>Pedido/stock</th></tr></thead><tbody>${linhasItens(porTurno.manha)}</tbody></table>
+            <div class="secao">Turno da tarde</div>
+            <table><thead><tr><th>Tipo</th><th>Esp.</th><th>RAL inf/sup</th><th>Qtd</th><th>Metro un.</th><th>Total</th><th>Classe</th><th>Pedido/stock</th></tr></thead><tbody>${linhasItens(porTurno.tarde)}</tbody></table>
+            <div class="secao">Relatorio final de tudo separado por turno</div>
+            <div class="duas">
+              <table><thead><tr><th>Classe</th><th>Manha</th><th>Tarde</th><th>Total</th></tr></thead><tbody>${linhasResumoQualidadePorTurno(resumo)}<tr class="total"><td>Total</td><td>${totalManha.toFixed(2)} m</td><td>${totalTarde.toFixed(2)} m</td><td>${totalGeral.toFixed(2)} m</td></tr></tbody></table>
+              <table><thead><tr><th>RAL</th><th>Manha</th><th>Tarde</th><th>Total</th></tr></thead><tbody>${linhasRalFinal(resumoRal)}</tbody></table>
+            </div>
+          </main>
+          <div class="no-print"><button onclick="window.print()">CONFIRMAR E GERAR PDF</button></div>
+        </body>
+        </html>
+      `);
+      janela.document.close();
+      setTimeout(() => janela.focus(), 300);
+    };
+  }
+
+  instalarPDFSerraCompleto();
 })();

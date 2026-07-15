@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v176-serra-mudar-turno';
+const CACHE_NAME = 'atlas-v177-serra-pdf-final';
 const assets = [
   './',
   './index.html',
