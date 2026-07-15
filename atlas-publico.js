@@ -380,8 +380,9 @@
             .marca{font-size:24px;font-weight:900}.marca span{color:#e31c24}.dados{text-align:right;font-weight:800;line-height:1.45}
             .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm;margin-bottom:6mm}.card{border:2px solid #000;padding:8px;text-align:center}.card span{display:block;font-size:11px;text-transform:uppercase;font-weight:800}.card b{font-size:22px}
             .secao{background:#111;color:#fff;text-align:center;font-weight:900;text-transform:uppercase;border:2px solid #000;padding:7px;margin-top:6mm}
-            .subsecao{display:flex;justify-content:space-between;align-items:center;background:#e5e7eb;border:1.5px solid #000;border-top:0;padding:5px 8px;font-weight:900;text-transform:uppercase;font-size:12px}
-            .subsecao b{font-size:14px}
+            .subsecao{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;background:#e5e7eb;border:1.5px solid #000;border-top:0;padding:5px 8px;font-weight:900;text-transform:uppercase;font-size:12px}
+            .subsecao span{grid-column:2;text-align:center}
+            .subsecao b{grid-column:3;text-align:right;font-size:14px}
             table{width:100%;border-collapse:collapse;font-size:10px} th,td{border:1.5px solid #000;padding:4px 5px;text-align:center} th{background:#eee}.vazio{padding:10px;color:#555;font-style:italic}.total td{background:#111;color:#fff;font-weight:900}
             .duas{display:grid;grid-template-columns:1fr 1fr;gap:7mm;margin-top:4mm}
             .no-print{position:sticky;bottom:0;padding:12px;background:#0f172a}.no-print button{width:100%;padding:16px;border:3px solid #e31c24;border-radius:10px;background:#000;color:#fff;font-size:18px;font-weight:900}

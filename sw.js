@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v183-serra-pedido-stock';
+const CACHE_NAME = 'atlas-v184-serra-subtitulo-centro';
 const assets = [
   './',
   './index.html',
