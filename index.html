@@ -18,7 +18,7 @@
         html.atlas-route-loading #tela-login { display: none !important; }
         html.atlas-route-loading #app-principal { display: block !important; }
     </style>
-    <link rel="stylesheet" href="style.css?v=20260517-sessao-local-169">
+    <link rel="stylesheet" href="style.css?v=20260715-serra-separacao-174">
     <link rel="stylesheet" href="atlas-publico.css?v=20260715-sem-chave">
     <link rel="manifest" href="manifest.json">
 </head>
@@ -186,8 +186,8 @@
             });
         })();
 
-        window.ATLAS_SISTEMA_VERSAO = '20260517-sessao-local-169';
-        window.ATLAS_SISTEMA_BUILD = 169;
+        window.ATLAS_SISTEMA_VERSAO = '20260715-serra-separacao-174';
+        window.ATLAS_SISTEMA_BUILD = 174;
         window.atlasMostrarTelaAtualizacao = function atlasMostrarTelaAtualizacao(opcoes = {}) {
             const finalizado = opcoes.finalizado === true;
             let overlay = document.getElementById('atlas-update-screen');
@@ -401,10 +401,10 @@
             Promise.allSettled([limparCaches, atualizarWorker]);
         })();
     </script>
-    <script src="script.js?v=20260517-sessao-local-169"></script>
-    <script src="historicos-admin.js?v=20260517-sessao-local-169"></script>
-    <script src="atlas-ajustes-fachadas.js?v=20260517-sessao-local-169"></script>
-    <script type="module" src="main.js?v=20260517-sessao-local-169"></script>
+    <script src="script.js?v=20260715-serra-separacao-174"></script>
+    <script src="historicos-admin.js?v=20260715-serra-separacao-174"></script>
+    <script src="atlas-ajustes-fachadas.js?v=20260715-serra-separacao-174"></script>
+    <script type="module" src="main.js?v=20260715-serra-separacao-174"></script>
     <script src="atlas-publico.js?v=20260715-sem-chave"></script>
     <script>
         if ('serviceWorker' in navigator) {
@@ -416,7 +416,7 @@
             });
 
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=20260517-sessao-local-169')
+                navigator.serviceWorker.register('sw.js?v=20260715-serra-separacao-174')
                     .then(reg => {
                         console.log('Atlas PWA: Ativo!');
                         reg.update();

@@ -3830,14 +3830,43 @@ function exibirSetupSerra() {
                 ${[30, 40, 50, 60, 80, 100, 120].map(e => `<option value="${e}">${e} mm</option>`).join('')}
             </select>
 
-            <button onclick="iniciarInterfaceCorteSerra()" style="width:100%; background:white; color:black; font-weight:800; border:none; padding:15px; border-radius:6px; cursor:pointer; text-transform:uppercase;">
-                Abrir Lançamento
+            <div style="background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px; margin-bottom:18px;">
+                <label style="display:block; color:#fbbf24; font-size:12px; font-weight:900; margin-bottom:10px; text-transform:uppercase;">Escolha o relatorio do turno</label>
+                <input type="hidden" id="s-turno-setup-serra" value="manha">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <button id="btn-turno-manha-serra" type="button" onclick="selecionarTurnoSetupSerra('manha')" style="background:#E31C24; color:white; border:none; padding:14px; border-radius:8px; font-weight:900; cursor:pointer;">TURNO DA MANHA</button>
+                    <button id="btn-turno-tarde-serra" type="button" onclick="selecionarTurnoSetupSerra('tarde')" style="background:#1e293b; color:white; border:1px solid #334155; padding:14px; border-radius:8px; font-weight:900; cursor:pointer;">TURNO DA TARDE</button>
+                </div>
+            </div>
+
+            <button id="btn-abrir-lancamento-serra" onclick="iniciarInterfaceCorteSerra()" style="width:100%; background:white; color:black; font-weight:800; border:none; padding:15px; border-radius:6px; cursor:pointer; text-transform:uppercase;">
+                Abrir lancamento da manha
             </button>
         </div>
     `;
 
     const inputData = document.getElementById('data-manual-serra');
     if (inputData) inputData.valueAsDate = new Date();
+}
+
+
+function selecionarTurnoSetupSerra(turno) {
+    const valor = turno === 'tarde' ? 'tarde' : 'manha';
+    const input = document.getElementById('s-turno-setup-serra');
+    const manha = document.getElementById('btn-turno-manha-serra');
+    const tarde = document.getElementById('btn-turno-tarde-serra');
+    const abrir = document.getElementById('btn-abrir-lancamento-serra');
+
+    if (input) input.value = valor;
+    if (manha) {
+        manha.style.background = valor === 'manha' ? '#E31C24' : '#1e293b';
+        manha.style.border = valor === 'manha' ? 'none' : '1px solid #334155';
+    }
+    if (tarde) {
+        tarde.style.background = valor === 'tarde' ? '#E31C24' : '#1e293b';
+        tarde.style.border = valor === 'tarde' ? 'none' : '1px solid #334155';
+    }
+    if (abrir) abrir.textContent = valor === 'tarde' ? 'Abrir lancamento da tarde' : 'Abrir lancamento da manha';
 }
 
 // --- 4. INTERFACE DE LANÇAMENTO ---
@@ -3847,13 +3876,14 @@ function iniciarInterfaceCorteSerra() {
     const tipo = document.getElementById('s-tipo-serra')?.value || "5 Ondas";
     const esp = document.getElementById('s-esp-serra')?.value || "30";
     const dataEscolhida = document.getElementById('data-manual-serra')?.value || "";
+    const turnoEscolhido = document.getElementById('s-turno-setup-serra')?.value || "manha";
 
     const container = document.getElementById('container-acao-serra');
     if (!container) return;
 
     container.innerHTML = `
         <div style="background:#1e293b; padding:12px; border-radius:8px; margin-bottom:15px; border-left:4px solid #E31C24; display:flex; justify-content:space-between; align-items:center;">
-            <div style="color:white; font-weight:bold; font-size:13px;">${tipo} - ${esp}mm</div>
+            <div style="color:white; font-weight:bold; font-size:13px;">${tipo} - ${esp}mm | ${turnoEscolhido === 'tarde' ? 'TURNO DA TARDE' : 'TURNO DA MANHA'}</div>
             <div id="resumo-soma-serra" style="color:#10b981; font-weight:bold; font-size:14px;">Neste Painel: 0.00m</div>
             <input type="hidden" id="h-tipo-serra" value="${tipo}">
             <input type="hidden" id="h-esp-serra" value="${esp}">
@@ -3862,6 +3892,13 @@ function iniciarInterfaceCorteSerra() {
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
             <button id="btn-s-ped-serra" onclick="setModoCorteSerra('pedido')" style="background:#3b82f6; color:white; border:none; padding:10px; border-radius:6px; font-weight:bold;">PEDIDO</button>
             <button id="btn-s-stk-serra" onclick="setModoCorteSerra('stock')" style="background:#1e293b; color:white; border:none; padding:10px; border-radius:6px; font-weight:bold;">STOCK</button>
+        </div>
+        <div style="background:#111827; border:1px solid #334155; border-radius:10px; padding:12px; margin-bottom:15px;">
+            <label style="display:block; color:#94a3b8; font-size:11px; font-weight:bold; margin-bottom:7px;">TURNO / EQUIPE</label>
+            <select id="s-turno-serra" style="width:100%; padding:12px; background:#1e293b; color:white; border:1px solid #334155; border-radius:8px; font-weight:bold;">
+                <option value="manha" ${turnoEscolhido === 'manha' ? 'selected' : ''}>Turno da manha</option>
+                <option value="tarde" ${turnoEscolhido === 'tarde' ? 'selected' : ''}>Turno da tarde</option>
+            </select>
         </div>
 
         <div id="campos-serra" style="background:#111827; padding:15px; border-radius:10px; border:1px solid #334155;"></div>
@@ -3913,7 +3950,7 @@ function setModoCorteSerra(modo) {
                 <option value="P1">P1</option>
                 <option value="P2">P2</option>
                 <option value="PPC">PPC</option>
-                <option value="Descarte">Descarte</option>
+                <option value="Lixo">Lixo</option>
             </select>
             ${rals}
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
@@ -3940,6 +3977,7 @@ function addLinhaSerra(modo) {
         ralI: document.getElementById('s-ral-i-serra').value,
         metros: metros,
         qtd: modo === 'stock' ? (parseInt(document.getElementById('s-qtd-serra')?.value) || 1) : 1,
+        turno: document.getElementById('s-turno-serra')?.value || 'manha',
         desc: modo === 'pedido'
             ? `PED: ${document.getElementById('s-ped-serra')?.value || "S/N"}`
             : `STOCK: ${document.getElementById('s-qualidade-serra')?.value || "P1"}`
@@ -4036,7 +4074,7 @@ function atualizarTabelaSerra() {
                 <span>
                     <b style="color:#10b981;">${metrosLinha.toFixed(2)}m</b>
                     <small>(${it.qtd}x ${it.metros}m)</small> - ${it.desc}
-                    <br><small style="color:#94a3b8;">INF: ${it.ralI} / SUP: ${it.ralS}</small>
+                    <br><small style="color:#94a3b8;">${(it.turno || 'manha') === 'tarde' ? 'Tarde' : 'Manh&atilde;'} | INF: ${it.ralI} / SUP: ${it.ralS}</small>
                 </span>
                 <i class="fas fa-trash" onclick="removerCorteSerra(${idx})" style="color:#ef4444; cursor:pointer; padding:5px;"></i>
             </div>
@@ -9757,6 +9795,252 @@ document.addEventListener('click', function(evento) {
 
         return janela;
     };
+})();
+
+/* ==========================================================
+   SERRA - PDF COMPLETO POR TURNO, QUALIDADE E RAL
+   ========================================================== */
+(function() {
+    if (window.atlasPDFSerraTurnosCompletoAtivo) return;
+    window.atlasPDFSerraTurnosCompletoAtivo = true;
+
+    function textoSerraSeguro(valor) {
+        return String(valor ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    }
+
+    function numeroSerra(valor) {
+        const n = Number(String(valor ?? '').replace(',', '.'));
+        return Number.isFinite(n) ? n : 0;
+    }
+
+    function totalItemSerra(item) {
+        return numeroSerra(item?.metros) * (parseInt(item?.qtd, 10) || 1);
+    }
+
+    function turnoSerra(item) {
+        const turno = String(item?.turno || '').toLowerCase();
+        return turno.includes('tarde') ? 'tarde' : 'manha';
+    }
+
+    function nomeTurnoSerra(turno) {
+        return turno === 'tarde' ? 'Turno da tarde' : 'Turno da manha';
+    }
+
+    function qualidadeSerra(item) {
+        const desc = String(item?.desc || '').toUpperCase();
+        if (desc.includes('PPC')) return 'PPC';
+        if (desc.includes('P2')) return 'P2';
+        if (desc.includes('LIXO') || desc.includes('DESCARTE')) return 'LIXO';
+        if (desc.includes('P1')) return 'P1';
+        if (desc.includes('PED:')) return 'PEDIDO';
+        return 'OUTROS';
+    }
+
+    function ralSerra(item) {
+        const inf = item?.ralI || '-';
+        const sup = item?.ralS || '-';
+        return `${inf}/${sup}`;
+    }
+
+    function acumularSerra(map, chave, metros) {
+        map[chave] = (map[chave] || 0) + metros;
+    }
+
+    function linhasItensSerra(lista) {
+        if (!lista.length) {
+            return `<tr><td colspan="8" class="vazio">Sem lancamentos neste turno</td></tr>`;
+        }
+
+        return lista.map(item => {
+            const qtd = parseInt(item.qtd, 10) || 1;
+            const metros = numeroSerra(item.metros);
+            return `
+                <tr>
+                    <td>${textoSerraSeguro(item.tipo || '')}</td>
+                    <td>${textoSerraSeguro(item.esp || '')} mm</td>
+                    <td>${textoSerraSeguro(ralSerra(item))}</td>
+                    <td>${qtd}</td>
+                    <td>${metros.toFixed(2)} m</td>
+                    <td><b>${(qtd * metros).toFixed(2)} m</b></td>
+                    <td>${textoSerraSeguro(qualidadeSerra(item))}</td>
+                    <td>${textoSerraSeguro(item.desc || '')}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function linhasResumoSerra(resumo) {
+        const qualidades = ['P1', 'P2', 'PPC', 'LIXO', 'PEDIDO', 'OUTROS'];
+        return qualidades.map(nome => `
+            <tr>
+                <td>${nome}</td>
+                <td>${(resumo[nome] || 0).toFixed(2)} m</td>
+            </tr>
+        `).join('');
+    }
+
+    function linhasRalSerra(resumoRal) {
+        const chaves = Object.keys(resumoRal).sort();
+        if (!chaves.length) return `<tr><td colspan="7" class="vazio">Sem dados por RAL</td></tr>`;
+        return chaves.map(ral => {
+            const info = resumoRal[ral] || {};
+            const total = (info.P1 || 0) + (info.P2 || 0) + (info.PPC || 0) + (info.LIXO || 0) + (info.PEDIDO || 0) + (info.OUTROS || 0);
+            return `
+                <tr>
+                    <td>${textoSerraSeguro(ral)}</td>
+                    <td>${(info.P1 || 0).toFixed(2)} m</td>
+                    <td>${(info.P2 || 0).toFixed(2)} m</td>
+                    <td>${(info.PPC || 0).toFixed(2)} m</td>
+                    <td>${(info.LIXO || 0).toFixed(2)} m</td>
+                    <td>${(info.PEDIDO || 0).toFixed(2)} m</td>
+                    <td><b>${total.toFixed(2)} m</b></td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    window.gerarPDF_Serra = function(dadosEncoded) {
+        const rel = JSON.parse(decodeURIComponent(dadosEncoded));
+        const janela = window.open('', '_blank');
+        if (!janela) return alert('O navegador bloqueou a abertura do PDF.');
+
+        const itens = Array.isArray(rel.itens) ? rel.itens : [];
+        const porTurno = { manha: [], tarde: [] };
+        const resumoTurno = {
+            manha: { P1: 0, P2: 0, PPC: 0, LIXO: 0, PEDIDO: 0, OUTROS: 0 },
+            tarde: { P1: 0, P2: 0, PPC: 0, LIXO: 0, PEDIDO: 0, OUTROS: 0 }
+        };
+        const resumoRal = { manha: {}, tarde: {}, geral: {} };
+        const resumoGeral = { P1: 0, P2: 0, PPC: 0, LIXO: 0, PEDIDO: 0, OUTROS: 0 };
+
+        itens.forEach(item => {
+            const turno = turnoSerra(item);
+            const qualidade = qualidadeSerra(item);
+            const ral = ralSerra(item);
+            const total = totalItemSerra(item);
+            porTurno[turno].push(item);
+            acumularSerra(resumoTurno[turno], qualidade, total);
+            acumularSerra(resumoGeral, qualidade, total);
+            resumoRal[turno][ral] ||= {};
+            resumoRal.geral[ral] ||= {};
+            acumularSerra(resumoRal[turno][ral], qualidade, total);
+            acumularSerra(resumoRal.geral[ral], qualidade, total);
+        });
+
+        const totalManha = Object.values(resumoTurno.manha).reduce((s, v) => s + v, 0);
+        const totalTarde = Object.values(resumoTurno.tarde).reduce((s, v) => s + v, 0);
+        const totalGeral = totalManha + totalTarde;
+
+        const blocoTurno = turno => `
+            <section class="turno">
+                <div class="secao-titulo">${nomeTurnoSerra(turno)} - lancamentos</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo</th><th>Esp.</th><th>RAL inf/sup</th><th>Qtd</th>
+                            <th>Metro un.</th><th>Total</th><th>Classe</th><th>Pedido/stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>${linhasItensSerra(porTurno[turno])}</tbody>
+                </table>
+                <div class="duas-colunas">
+                    <table>
+                        <thead><tr><th colspan="2">Resumo da equipe</th></tr></thead>
+                        <tbody>
+                            ${linhasResumoSerra(resumoTurno[turno])}
+                            <tr class="total"><td>Total do turno</td><td>${(turno === 'manha' ? totalManha : totalTarde).toFixed(2)} m</td></tr>
+                        </tbody>
+                    </table>
+                    <table>
+                        <thead><tr><th colspan="7">Resumo por RAL da equipe</th></tr><tr><th>RAL</th><th>P1</th><th>P2</th><th>PPC</th><th>Lixo</th><th>Pedido</th><th>Total</th></tr></thead>
+                        <tbody>${linhasRalSerra(resumoRal[turno])}</tbody>
+                    </table>
+                </div>
+            </section>
+        `;
+
+        janela.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Relatorio Serra Completo</title>
+                <style>
+                    * { box-sizing: border-box; }
+                    body { margin:0; background:#d1d5db; color:#000; font-family:Arial, Helvetica, sans-serif; }
+                    .page { width:297mm; min-height:210mm; margin:0 auto 8mm; background:#fff; padding:10mm; }
+                    .topo { display:flex; justify-content:space-between; align-items:center; background:#000; color:#fff; border-bottom:5px solid #e31c24; padding:12px 14px; margin-bottom:8mm; }
+                    .marca { font-size:24px; font-weight:900; }
+                    .marca span { color:#e31c24; }
+                    .dados-topo { text-align:right; font-size:13px; line-height:1.45; font-weight:700; }
+                    .cards { display:grid; grid-template-columns:repeat(3, 1fr); gap:6mm; margin-bottom:7mm; }
+                    .card { border:2px solid #000; padding:8px; text-align:center; }
+                    .card span { display:block; font-size:11px; text-transform:uppercase; font-weight:700; }
+                    .card b { display:block; font-size:22px; margin-top:3px; }
+                    .secao-titulo { background:#111; color:#fff; font-weight:900; text-align:center; padding:7px; border:2px solid #000; text-transform:uppercase; margin-top:6mm; }
+                    table { width:100%; border-collapse:collapse; font-size:10px; }
+                    th, td { border:1.5px solid #000; padding:4px 5px; text-align:center; }
+                    th { background:#eee; font-weight:900; }
+                    .duas-colunas { display:grid; grid-template-columns:0.75fr 1.25fr; gap:6mm; margin-top:4mm; align-items:start; }
+                    .total td { background:#111; color:#fff; font-weight:900; }
+                    .vazio { color:#555; font-style:italic; padding:10px; }
+                    .assinatura { margin-top:12mm; text-align:center; }
+                    .assinatura div { display:inline-block; width:90mm; border-top:2px solid #000; padding-top:4px; font-weight:700; }
+                    .no-print { position:sticky; bottom:0; padding:12px; background:#0f172a; }
+                    .no-print button { width:100%; padding:16px; border:3px solid #e31c24; border-radius:10px; background:#000; color:#fff; font-size:18px; font-weight:900; cursor:pointer; }
+                    @media print {
+                        body { background:#fff; }
+                        .page { width:297mm; min-height:210mm; margin:0; padding:9mm; }
+                        .no-print { display:none !important; }
+                        @page { size:A4 landscape; margin:0; }
+                        * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+                    }
+                </style>
+            </head>
+            <body>
+                <main class="page">
+                    <header class="topo">
+                        <div><div class="marca"><span>ATLAS</span> PAINEL</div><div>RELATORIO COMPLETO DA SERRA</div></div>
+                        <div class="dados-topo">DATA: ${textoSerraSeguro(rel.data)}<br>OP: ${textoSerraSeguro(rel.operador)}</div>
+                    </header>
+
+                    <section class="cards">
+                        <div class="card"><span>Metros turno da manha</span><b>${totalManha.toFixed(2)} m</b></div>
+                        <div class="card"><span>Metros turno da tarde</span><b>${totalTarde.toFixed(2)} m</b></div>
+                        <div class="card"><span>Metros totais do dia</span><b>${totalGeral.toFixed(2)} m</b></div>
+                    </section>
+
+                    ${blocoTurno('manha')}
+                    ${blocoTurno('tarde')}
+
+                    <section class="turno">
+                        <div class="secao-titulo">Relatorio final do dia</div>
+                        <div class="duas-colunas">
+                            <table>
+                                <thead><tr><th colspan="2">Resumo geral por classe</th></tr></thead>
+                                <tbody>
+                                    ${linhasResumoSerra(resumoGeral)}
+                                    <tr class="total"><td>Total geral</td><td>${totalGeral.toFixed(2)} m</td></tr>
+                                </tbody>
+                            </table>
+                            <table>
+                                <thead><tr><th colspan="7">Resumo geral separado por RAL</th></tr><tr><th>RAL</th><th>P1</th><th>P2</th><th>PPC</th><th>Lixo</th><th>Pedido</th><th>Total</th></tr></thead>
+                                <tbody>${linhasRalSerra(resumoRal.geral)}</tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section class="assinatura"><div>${textoSerraSeguro(rel.operador || 'Responsavel')}</div></section>
+                </main>
+                <div class="no-print"><button onclick="window.print()">CONFIRMAR E GERAR PDF</button></div>
+            </body>
+            </html>
+        `);
+        janela.document.close();
+        setTimeout(() => janela.focus(), 300);
+    };
+
+    try { gerarPDF_Serra = window.gerarPDF_Serra; } catch (erro) {}
 })();
 
 /* ==========================================================
