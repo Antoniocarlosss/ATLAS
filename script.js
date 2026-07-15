@@ -13992,6 +13992,8 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
         }).join('');
         const metrosA = prodA.metros ? `${Number(prodA.metros || 0).toFixed(2)} m` : '';
         const metrosB = prodB.metros ? `${Number(prodB.metros || 0).toFixed(2)} m` : '';
+        const metrosManha = prodA.metros ? `${Number(prodA.metros || 0).toFixed(2)} m` : '';
+        const metrosTarde = prodB.metros ? `${Number(prodB.metros || 0).toFixed(2)} m` : '';
 
         return `
             <section class="page">
@@ -14033,6 +14035,8 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
                     <thead><tr><th colspan="3">Dados Inje&ccedil;&atilde;o Parciais</th></tr></thead>
                     <tbody>
                         <tr><th>Comprimento</th><td>${metrosA}</td><td>${metrosB}</td></tr>
+                        <tr><th>Metros turno da manh&atilde;</th><td colspan="2" class="turno-pdf">${metrosManha}</td></tr>
+                        <tr><th>Metros turno da tarde</th><td colspan="2" class="turno-pdf">${metrosTarde}</td></tr>
                         <tr><th>Metros totais do dia</th><td colspan="2" class="total-dia-pdf">${totalDia.toFixed(2)} m</td></tr>
                     </tbody>
                 </table>
@@ -14092,6 +14096,7 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
                 .valor-quimico { text-align: center; font-weight: 700; }
                 .dados { width: 58%; margin: 0 auto 4mm; }
                 .dados th { background: #f5f5f5; }
+                .turno-pdf { text-align: center; font-weight: 800; }
                 .total-dia-pdf { text-align: center; font-weight: 900; font-size: 13px; }
                 .observacoes { margin-top: 4mm; }
                 .observacoes .hora { width: 27mm; }
