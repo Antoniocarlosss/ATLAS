@@ -158,13 +158,13 @@
     const error = $("#atlas-admin-error");
 
     if (String(user && user.value || "").trim().toLowerCase() !== "admin") {
-      if (error) error.textContent = "Login incorreto.";
+      if (error) error.textContent = "Dados incorretos.";
       if (user) user.focus();
       return;
     }
 
     if (String(password && password.value || "").trim() !== "1234") {
-      if (error) error.textContent = "Senha incorreta.";
+      if (error) error.textContent = "Dados incorretos.";
       if (password) password.focus();
       return;
     }
@@ -190,9 +190,9 @@
           <h2 id="atlas-admin-title">Entrar no sistema completo</h2>
           <form id="atlas-admin-form">
             <label for="atlas-admin-user">Login</label>
-            <input id="atlas-admin-user" name="login" autocomplete="username" placeholder="admin">
+            <input id="atlas-admin-user" name="login" autocomplete="username">
             <label for="atlas-admin-password">Senha</label>
-            <input id="atlas-admin-password" name="senha" type="password" autocomplete="current-password" placeholder="1234">
+            <input id="atlas-admin-password" name="senha" type="password" autocomplete="current-password">
             <p id="atlas-admin-error" class="atlas-admin-error" aria-live="polite"></p>
             <button class="atlas-admin-submit" type="submit">Entrar</button>
           </form>

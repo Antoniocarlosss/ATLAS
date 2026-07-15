@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v171-visitante-login';
+const CACHE_NAME = 'atlas-v172-sem-chave-na-porta';
 const assets = [
   './',
   './index.html',
