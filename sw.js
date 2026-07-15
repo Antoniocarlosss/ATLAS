@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v178-serra-turno-fixo';
+const CACHE_NAME = 'atlas-v179-serra-tarde-ok';
 const assets = [
   './',
   './index.html',

@@ -258,7 +258,10 @@
       return Number.isFinite(n) ? n : 0;
     };
     const totalItem = item => numero(item && item.metros) * (parseInt(item && item.qtd, 10) || 1);
-    const turnoItem = item => String(item && item.turno || "").toLowerCase().includes("tarde") ? "tarde" : "manha";
+    const turnoItem = item => {
+      const texto = String(item && (item.turno || item.turnoSerra || item.equipe || item.periodo) || "").toLowerCase();
+      return texto.includes("tarde") || texto === "2" || texto.includes("pm") ? "tarde" : "manha";
+    };
     const qualidadeItem = item => {
       const desc = String(item && item.desc || "").toUpperCase();
       if (desc.includes("PPC")) return "PPC";

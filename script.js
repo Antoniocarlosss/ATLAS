@@ -3999,6 +3999,10 @@ function addLinhaSerra(modo) {
 
     const metros = parseFloat(metrosInput.value);
     if (!metros || metros <= 0) return alert("Insira a metragem!");
+    const turnoAtual = document.getElementById('s-turno-serra')?.value || document.getElementById('h-turno-serra')?.value || window.atlasSerraTurnoAtual || 'manha';
+    window.atlasSerraTurnoAtual = turnoAtual;
+    const turnoHidden = document.getElementById('h-turno-serra');
+    if (turnoHidden) turnoHidden.value = turnoAtual;
 
     const item = {
         tipo: document.getElementById('h-tipo-serra').value,
@@ -4007,7 +4011,7 @@ function addLinhaSerra(modo) {
         ralI: document.getElementById('s-ral-i-serra').value,
         metros: metros,
         qtd: modo === 'stock' ? (parseInt(document.getElementById('s-qtd-serra')?.value) || 1) : 1,
-        turno: window.atlasSerraTurnoAtual || document.getElementById('h-turno-serra')?.value || document.getElementById('s-turno-serra')?.value || 'manha',
+        turno: turnoAtual,
         desc: modo === 'pedido'
             ? `PED: ${document.getElementById('s-ped-serra')?.value || "S/N"}`
             : `STOCK: ${document.getElementById('s-qualidade-serra')?.value || "P1"}`
