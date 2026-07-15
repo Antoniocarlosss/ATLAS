@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v185-sempre-visitante';
+const CACHE_NAME = 'atlas-v186-limpa-rota-publica';
 const assets = [
   './',
   './index.html',

@@ -41,6 +41,17 @@
     if (app) app.style.display = "block";
   }
 
+  function limparRotaPublica() {
+    try {
+      const url = new URL(location.href);
+      url.searchParams.delete("modulo");
+      url.searchParams.delete("pagina");
+      url.searchParams.delete("atlas_modulo");
+      url.searchParams.delete("atlas_nocache");
+      history.replaceState({}, "", url);
+    } catch (error) {}
+  }
+
   function setHeaderPublic() {
     const user = $("#user-display");
     if (user) user.textContent = "VISITANTE";
@@ -88,6 +99,7 @@
 
   function enterPublicMode() {
     localStorage.removeItem("atlas_sessao_usuario_id");
+    limparRotaPublica();
     document.documentElement.classList.add("atlas-public-mode");
     setVisitorUser();
     showAppShell();

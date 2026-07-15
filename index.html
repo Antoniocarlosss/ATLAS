@@ -18,8 +18,8 @@
         html.atlas-route-loading #tela-login { display: none !important; }
         html.atlas-route-loading #app-principal { display: block !important; }
     </style>
-    <link rel="stylesheet" href="style.css?v=20260715-sempre-visitante-185">
-    <link rel="stylesheet" href="atlas-publico.css?v=20260715-sempre-visitante-185">
+    <link rel="stylesheet" href="style.css?v=20260715-limpa-rota-publica-186">
+    <link rel="stylesheet" href="atlas-publico.css?v=20260715-limpa-rota-publica-186">
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -186,8 +186,8 @@
             });
         })();
 
-        window.ATLAS_SISTEMA_VERSAO = '20260715-sempre-visitante-185';
-        window.ATLAS_SISTEMA_BUILD = 185;
+        window.ATLAS_SISTEMA_VERSAO = '20260715-limpa-rota-publica-186';
+        window.ATLAS_SISTEMA_BUILD = 186;
         window.atlasMostrarTelaAtualizacao = function atlasMostrarTelaAtualizacao(opcoes = {}) {
             const finalizado = opcoes.finalizado === true;
             let overlay = document.getElementById('atlas-update-screen');
@@ -405,13 +405,21 @@
         try {
             localStorage.removeItem('atlas_public_admin');
             localStorage.removeItem('atlas_sessao_usuario_id');
+            const atlasUrlPublica = new URL(location.href);
+            if (atlasUrlPublica.searchParams.has('modulo') || atlasUrlPublica.searchParams.has('pagina') || atlasUrlPublica.searchParams.has('atlas_modulo')) {
+                atlasUrlPublica.searchParams.delete('modulo');
+                atlasUrlPublica.searchParams.delete('pagina');
+                atlasUrlPublica.searchParams.delete('atlas_modulo');
+                atlasUrlPublica.searchParams.delete('atlas_nocache');
+                history.replaceState({}, '', atlasUrlPublica);
+            }
         } catch (erro) {}
     </script>
-    <script src="script.js?v=20260715-sempre-visitante-185"></script>
-    <script src="historicos-admin.js?v=20260715-sempre-visitante-185"></script>
-    <script src="atlas-ajustes-fachadas.js?v=20260715-sempre-visitante-185"></script>
-    <script type="module" src="main.js?v=20260715-sempre-visitante-185"></script>
-    <script src="atlas-publico.js?v=20260715-sempre-visitante-185"></script>
+    <script src="script.js?v=20260715-limpa-rota-publica-186"></script>
+    <script src="historicos-admin.js?v=20260715-limpa-rota-publica-186"></script>
+    <script src="atlas-ajustes-fachadas.js?v=20260715-limpa-rota-publica-186"></script>
+    <script type="module" src="main.js?v=20260715-limpa-rota-publica-186"></script>
+    <script src="atlas-publico.js?v=20260715-limpa-rota-publica-186"></script>
     <script>
         if ('serviceWorker' in navigator) {
             let atlasAtualizandoPWA = false;
@@ -422,7 +430,7 @@
             });
 
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=20260715-sempre-visitante-185')
+                navigator.serviceWorker.register('sw.js?v=20260715-limpa-rota-publica-186')
                     .then(reg => {
                         console.log('Atlas PWA: Ativo!');
                         reg.update();
