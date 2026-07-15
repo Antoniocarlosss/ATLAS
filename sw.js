@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v182-firebase-atlaspainel';
+const CACHE_NAME = 'atlas-v183-serra-pedido-stock';
 const assets = [
   './',
   './index.html',

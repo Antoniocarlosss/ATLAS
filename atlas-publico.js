@@ -275,9 +275,10 @@
     const add = (obj, chave, valor) => {
       obj[chave] = (obj[chave] || 0) + valor;
     };
+    const itemEhPedido = item => String(item && item.desc || "").toUpperCase().includes("PED:");
 
     function linhasItens(lista) {
-      if (!lista.length) return `<tr><td colspan="8" class="vazio">Sem itens marcados neste turno</td></tr>`;
+      if (!lista.length) return `<tr><td colspan="8" class="vazio">Sem itens nesta parte</td></tr>`;
       return lista.map(item => {
         const qtd = parseInt(item.qtd, 10) || 1;
         const metros = numero(item.metros);
@@ -294,6 +295,29 @@
           </tr>
         `;
       }).join("");
+    }
+
+    function tabelaItens(titulo, lista) {
+      const total = lista.reduce((s, item) => s + totalItem(item), 0);
+      return `
+        <div class="subsecao"><span>${seguro(titulo)}</span><b>${total.toFixed(2)} m</b></div>
+        <table>
+          <thead>
+            <tr><th>Tipo</th><th>Esp.</th><th>RAL inf/sup</th><th>Qtd</th><th>Metro un.</th><th>Total</th><th>Classe</th><th>Pedido/stock</th></tr>
+          </thead>
+          <tbody>${linhasItens(lista)}</tbody>
+        </table>
+      `;
+    }
+
+    function blocoTurno(titulo, lista) {
+      const pedidos = lista.filter(itemEhPedido);
+      const stock = lista.filter(item => !itemEhPedido(item));
+      return `
+        <div class="secao">${seguro(titulo)}</div>
+        ${tabelaItens("Pedidos", pedidos)}
+        ${tabelaItens("Stock", stock)}
+      `;
     }
 
     function linhasResumoQualidadePorTurno(resumo) {
@@ -356,6 +380,8 @@
             .marca{font-size:24px;font-weight:900}.marca span{color:#e31c24}.dados{text-align:right;font-weight:800;line-height:1.45}
             .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm;margin-bottom:6mm}.card{border:2px solid #000;padding:8px;text-align:center}.card span{display:block;font-size:11px;text-transform:uppercase;font-weight:800}.card b{font-size:22px}
             .secao{background:#111;color:#fff;text-align:center;font-weight:900;text-transform:uppercase;border:2px solid #000;padding:7px;margin-top:6mm}
+            .subsecao{display:flex;justify-content:space-between;align-items:center;background:#e5e7eb;border:1.5px solid #000;border-top:0;padding:5px 8px;font-weight:900;text-transform:uppercase;font-size:12px}
+            .subsecao b{font-size:14px}
             table{width:100%;border-collapse:collapse;font-size:10px} th,td{border:1.5px solid #000;padding:4px 5px;text-align:center} th{background:#eee}.vazio{padding:10px;color:#555;font-style:italic}.total td{background:#111;color:#fff;font-weight:900}
             .duas{display:grid;grid-template-columns:1fr 1fr;gap:7mm;margin-top:4mm}
             .no-print{position:sticky;bottom:0;padding:12px;background:#0f172a}.no-print button{width:100%;padding:16px;border:3px solid #e31c24;border-radius:10px;background:#000;color:#fff;font-size:18px;font-weight:900}
@@ -366,10 +392,8 @@
           <main class="page">
             <header class="topo"><div><div class="marca"><span>ATLAS</span> PAINEL</div><div>RELATORIO DE SERRA POR TURNO</div></div><div class="dados">DATA: ${seguro(rel.data)}<br>OP: ${seguro(rel.operador)}</div></header>
             <section class="cards"><div class="card"><span>Turno da manha</span><b>${totalManha.toFixed(2)} m</b></div><div class="card"><span>Turno da tarde</span><b>${totalTarde.toFixed(2)} m</b></div><div class="card"><span>Total do dia</span><b>${totalGeral.toFixed(2)} m</b></div></section>
-            <div class="secao">Turno da manha</div>
-            <table><thead><tr><th>Tipo</th><th>Esp.</th><th>RAL inf/sup</th><th>Qtd</th><th>Metro un.</th><th>Total</th><th>Classe</th><th>Pedido/stock</th></tr></thead><tbody>${linhasItens(porTurno.manha)}</tbody></table>
-            <div class="secao">Turno da tarde</div>
-            <table><thead><tr><th>Tipo</th><th>Esp.</th><th>RAL inf/sup</th><th>Qtd</th><th>Metro un.</th><th>Total</th><th>Classe</th><th>Pedido/stock</th></tr></thead><tbody>${linhasItens(porTurno.tarde)}</tbody></table>
+            ${blocoTurno("Turno da manha", porTurno.manha)}
+            ${blocoTurno("Turno da tarde", porTurno.tarde)}
             <div class="secao">Relatorio final de tudo separado por turno</div>
             <div class="duas">
               <table><thead><tr><th>Classe</th><th>Manha</th><th>Tarde</th><th>Total</th></tr></thead><tbody>${linhasResumoQualidadePorTurno(resumo)}<tr class="total"><td>Total</td><td>${totalManha.toFixed(2)} m</td><td>${totalTarde.toFixed(2)} m</td><td>${totalGeral.toFixed(2)} m</td></tr></tbody></table>
