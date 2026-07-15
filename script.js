@@ -3887,6 +3887,7 @@ function iniciarInterfaceCorteSerra() {
     const esp = document.getElementById('s-esp-serra')?.value || "30";
     const dataEscolhida = document.getElementById('data-manual-serra')?.value || "";
     const turnoEscolhido = document.getElementById('s-turno-setup-serra')?.value || "manha";
+    window.atlasSerraTurnoAtual = turnoEscolhido;
 
     const container = document.getElementById('container-acao-serra');
     if (!container) return;
@@ -3898,6 +3899,7 @@ function iniciarInterfaceCorteSerra() {
             <input type="hidden" id="h-tipo-serra" value="${tipo}">
             <input type="hidden" id="h-esp-serra" value="${esp}">
             <input type="hidden" id="h-data-rel-serra" value="${dataEscolhida}">
+            <input type="hidden" id="h-turno-serra" value="${turnoEscolhido}">
         </div>
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
             <button id="btn-s-ped-serra" onclick="setModoCorteSerra('pedido')" style="background:#3b82f6; color:white; border:none; padding:10px; border-radius:6px; font-weight:bold;">PEDIDO</button>
@@ -3927,8 +3929,12 @@ function iniciarInterfaceCorteSerra() {
 
 function atualizarLabelTurnoSerra() {
     const select = document.getElementById('s-turno-serra');
+    const hidden = document.getElementById('h-turno-serra');
     const label = document.getElementById('serra-turno-atual-label');
-    if (label) label.textContent = select?.value === 'tarde' ? 'TURNO DA TARDE' : 'TURNO DA MANHA';
+    const turno = select?.value === 'tarde' ? 'tarde' : 'manha';
+    window.atlasSerraTurnoAtual = turno;
+    if (hidden) hidden.value = turno;
+    if (label) label.textContent = turno === 'tarde' ? 'MARCADO: TURNO DA TARDE' : 'MARCADO: TURNO DA MANHA';
 }
 
 function mudarTurnoSerra() {
@@ -3936,8 +3942,6 @@ function mudarTurnoSerra() {
     if (!select) return;
     select.value = select.value === 'tarde' ? 'manha' : 'tarde';
     atualizarLabelTurnoSerra();
-    const label = document.getElementById('serra-turno-atual-label');
-    if (label) label.textContent = select.value === 'tarde' ? 'MARCADO: TURNO DA TARDE' : 'MARCADO: TURNO DA MANHA';
 }
 
 function setModoCorteSerra(modo) {
@@ -4003,7 +4007,7 @@ function addLinhaSerra(modo) {
         ralI: document.getElementById('s-ral-i-serra').value,
         metros: metros,
         qtd: modo === 'stock' ? (parseInt(document.getElementById('s-qtd-serra')?.value) || 1) : 1,
-        turno: document.getElementById('s-turno-serra')?.value || 'manha',
+        turno: window.atlasSerraTurnoAtual || document.getElementById('h-turno-serra')?.value || document.getElementById('s-turno-serra')?.value || 'manha',
         desc: modo === 'pedido'
             ? `PED: ${document.getElementById('s-ped-serra')?.value || "S/N"}`
             : `STOCK: ${document.getElementById('s-qualidade-serra')?.value || "P1"}`
@@ -4100,7 +4104,7 @@ function atualizarTabelaSerra() {
                 <span>
                     <b style="color:#10b981;">${metrosLinha.toFixed(2)}m</b>
                     <small>(${it.qtd}x ${it.metros}m)</small> - ${it.desc}
-                    <br><small style="color:#94a3b8;">${(it.turno || 'manha') === 'tarde' ? 'Tarde' : 'Manh&atilde;'} | INF: ${it.ralI} / SUP: ${it.ralS}</small>
+                    <br><small style="color:#94a3b8;">${(it.turno || 'manha') === 'tarde' ? 'MARCADO: TURNO DA TARDE' : 'MARCADO: TURNO DA MANHA'} | INF: ${it.ralI} / SUP: ${it.ralS}</small>
                 </span>
                 <i class="fas fa-trash" onclick="removerCorteSerra(${idx})" style="color:#ef4444; cursor:pointer; padding:5px;"></i>
             </div>
