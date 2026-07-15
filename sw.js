@@ -1,4 +1,4 @@
-const CACHE_NAME = "atlas-painel-clean-v1";
+const CACHE_NAME = "atlas-painel-clean-v3";
 const APP_FILES = [
   "./",
   "./index.html",

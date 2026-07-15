@@ -291,10 +291,6 @@ textarea:focus {
   margin: 14px 0;
 }
 
-.moduleTabs.unlocked {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
 .moduleTab {
   background: var(--panel-2);
   border: 1px solid var(--line);
@@ -316,6 +312,15 @@ textarea:focus {
   margin-bottom: 14px;
 }
 
+.sectionTitle.compact {
+  margin-top: 18px;
+}
+
+.sectionTitle h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
 .field {
   margin-bottom: 14px;
 }
@@ -330,16 +335,45 @@ textarea:focus {
   width: 100%;
 }
 
+.reportViewer {
+  display: grid;
+  gap: 12px;
+}
+
+.dateFilters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.dateFilters label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .reportActions {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-bottom: 12px;
 }
 
-#reportOutput {
-  min-height: 260px;
-  white-space: pre-wrap;
+.reportList {
+  display: grid;
+  gap: 8px;
+}
+
+.insertPanel {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.premiumOnly[hidden] {
+  display: none;
 }
 
 .historyHeader {
@@ -403,14 +437,6 @@ textarea:focus {
   .twoCols,
   .reportActions {
     grid-template-columns: 1fr;
-  }
-
-  .moduleTabs.unlocked {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .moduleTabs.unlocked .adminOnly {
-    grid-column: 1 / -1;
   }
 
   h1 {
