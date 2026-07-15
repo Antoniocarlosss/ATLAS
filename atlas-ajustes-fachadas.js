@@ -339,7 +339,7 @@
         } else {
             container.innerHTML = `
                 <select id="s-qualidade-serra" style="width:100%; margin-bottom:10px; padding:10px; background:#1e293b; color:white; border:1px solid #334155; border-radius:5px;">
-                    <option value="P1">P1</option><option value="P2">P2</option><option value="PPC">PPC</option><option value="Descarte">Descarte</option>
+                    <option value="P1">P1</option><option value="P2">P2</option><option value="PPC">PPC</option><option value="Lixo">Lixo</option>
                 </select>
                 ${rals}
                 ${htmlCamposDetalhesPainel("serra-linha", { acabamentoInferior:"Canelada", acabamentoSuperior:"Canelada" })}
@@ -358,6 +358,10 @@
         if (!metros || metros <= 0) return alert("Insira a metragem!");
 
         const tipo = normalizarTipoPainelAtlas(document.getElementById("h-tipo-serra").value);
+        const turnoAtual = document.getElementById("s-turno-serra")?.value || document.getElementById("h-turno-serra")?.value || window.atlasSerraTurnoAtual || "manha";
+        window.atlasSerraTurnoAtual = turnoAtual;
+        const turnoHidden = document.getElementById("h-turno-serra");
+        if (turnoHidden) turnoHidden.value = turnoAtual;
         const item = {
             tipo,
             esp: document.getElementById("h-esp-serra").value,
@@ -365,6 +369,7 @@
             ralI: document.getElementById("s-ral-i-serra").value,
             metros,
             qtd: modo === "stock" ? (parseInt(document.getElementById("s-qtd-serra")?.value) || 1) : 1,
+            turno: turnoAtual,
             desc: modo === "pedido" ? `PED: ${document.getElementById("s-ped-serra")?.value || "S/N"}` : `STOCK: ${document.getElementById("s-qualidade-serra")?.value || "P1"}`
         };
 

@@ -386,4 +386,70 @@
   }
 
   instalarPDFSerraCompleto();
+
+  function instalarCorrecaoTurnoSerra() {
+    if (window.atlasCorrecaoTurnoSerraAtiva) return;
+    window.atlasCorrecaoTurnoSerraAtiva = true;
+
+    const turnoSelecionado = () => {
+      const select = document.getElementById("s-turno-serra");
+      const valor = String(select && select.value || "").toLowerCase();
+      return valor.includes("tarde") ? "tarde" : "manha";
+    };
+
+    const salvarTurnoUltimoItem = () => {
+      try {
+        const turno = turnoSelecionado();
+        window.atlasSerraTurnoAtual = turno;
+        const hidden = document.getElementById("h-turno-serra");
+        if (hidden) hidden.value = turno;
+
+        if (typeof db_serra_live !== "undefined" && Array.isArray(db_serra_live) && db_serra_live.length) {
+          const ultimo = db_serra_live[db_serra_live.length - 1];
+          ultimo.turno = turno;
+          ultimo.turnoSerra = turno;
+          ultimo.equipe = turno;
+          localStorage.setItem("atlas_serra_live", JSON.stringify(db_serra_live));
+        }
+      } catch (erro) {
+        console.warn("Nao foi possivel marcar turno da Serra:", erro);
+      }
+    };
+
+    const addOriginal = window.addLinhaSerra;
+    if (typeof addOriginal === "function") {
+      window.addLinhaSerra = function(modo) {
+        const retorno = addOriginal.apply(this, arguments);
+        salvarTurnoUltimoItem();
+        if (typeof window.atualizarTabelaSerra === "function") window.atualizarTabelaSerra();
+        return retorno;
+      };
+      try { addLinhaSerra = window.addLinhaSerra; } catch (erro) {}
+    }
+
+    const tabelaOriginal = window.atualizarTabelaSerra;
+    if (typeof tabelaOriginal === "function") {
+      window.atualizarTabelaSerra = function() {
+        const retorno = tabelaOriginal.apply(this, arguments);
+        const lista = document.getElementById("lista-corte-serra");
+        try {
+          if (lista && typeof db_serra_live !== "undefined" && Array.isArray(db_serra_live)) {
+            Array.from(lista.children).forEach((linha, index) => {
+              const item = db_serra_live[index];
+              if (!item) return;
+              const turno = String(item.turno || item.turnoSerra || item.equipe || "").toLowerCase().includes("tarde") ? "TARDE" : "MANHA";
+              linha.innerHTML = linha.innerHTML.replace(/MARCADO:\s*TURNO DA (MANHA|TARDE)/g, `MARCADO: TURNO DA ${turno}`);
+            });
+          }
+        } catch (erro) {}
+        return retorno;
+      };
+      try { atualizarTabelaSerra = window.atualizarTabelaSerra; } catch (erro) {}
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(instalarCorrecaoTurnoSerra, 300);
+    setTimeout(instalarCorrecaoTurnoSerra, 1200);
+  });
 })();
