@@ -92,6 +92,8 @@
     renderPublicHome();
   }
 
+  window.atlasPublicoEntrarVisitante = enterPublicMode;
+
   function enterAdminMode() {
     document.documentElement.classList.remove("atlas-public-mode");
     if (!originalLogout && typeof window.atlasSairSistema === "function") {
