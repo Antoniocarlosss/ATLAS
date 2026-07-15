@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v181-serra-turno-final';
+const CACHE_NAME = 'atlas-v182-firebase-atlaspainel';
 const assets = [
   './',
   './index.html',

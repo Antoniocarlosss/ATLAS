@@ -19,13 +19,13 @@ onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCpSrCxE4UR4b1TMV54PVaIJk-VfKqGYdI",
-    authDomain: "atlas-painel.firebaseapp.com",
-    projectId: "atlas-painel",
-    storageBucket: "atlas-painel.firebasestorage.app",
-    messagingSenderId: "90696632690",
-    appId: "1:90696632690:web:764621e567f390e0e9f5eb",
-    measurementId: "G-FDS3MKMB4X"
+    apiKey: "AIzaSyCyUe7O434SYtYR3pb-_wj_QGyeaHbMICg",
+    authDomain: "atlaspainel-22f63.firebaseapp.com",
+    projectId: "atlaspainel-22f63",
+    storageBucket: "atlaspainel-22f63.firebasestorage.app",
+    messagingSenderId: "794861110337",
+    appId: "1:794861110337:web:b1a673d370e996d9f432c0",
+    measurementId: "G-4PD1RWEYWN"
 };
 
 const atlasFirebaseApp = initializeApp(firebaseConfig);
