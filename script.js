@@ -3830,12 +3830,18 @@ function exibirSetupSerra() {
                 ${[30, 40, 50, 60, 80, 100, 120].map(e => `<option value="${e}">${e} mm</option>`).join('')}
             </select>
 
-            <div style="background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px; margin-bottom:18px;">
-                <label style="display:block; color:#fbbf24; font-size:12px; font-weight:900; margin-bottom:10px; text-transform:uppercase;">Escolha o relatorio do turno</label>
+            <div style="background:#0f172a; border:1px solid #334155; border-radius:10px; padding:14px; margin-bottom:18px;">
+                <label style="display:block; color:#fbbf24; font-size:12px; font-weight:900; margin-bottom:10px; text-transform:uppercase;">Marcar turno do relatÃ³rio</label>
                 <input type="hidden" id="s-turno-setup-serra" value="manha">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    <button id="btn-turno-manha-serra" type="button" onclick="selecionarTurnoSetupSerra('manha')" style="background:#E31C24; color:white; border:none; padding:14px; border-radius:8px; font-weight:900; cursor:pointer;">TURNO DA MANHA</button>
-                    <button id="btn-turno-tarde-serra" type="button" onclick="selecionarTurnoSetupSerra('tarde')" style="background:#1e293b; color:white; border:1px solid #334155; padding:14px; border-radius:8px; font-weight:900; cursor:pointer;">TURNO DA TARDE</button>
+                    <label id="btn-turno-manha-serra" onclick="selecionarTurnoSetupSerra('manha')" style="display:flex; align-items:center; gap:12px; background:#E31C24; color:white; border:none; padding:14px; border-radius:8px; font-weight:900; cursor:pointer;">
+                        <input type="radio" name="turno-serra-setup" id="radio-turno-manha-serra" value="manha" checked style="width:22px; height:22px;">
+                        <span>TURNO DA MANHÃ</span>
+                    </label>
+                    <label id="btn-turno-tarde-serra" onclick="selecionarTurnoSetupSerra('tarde')" style="display:flex; align-items:center; gap:12px; background:#1e293b; color:white; border:1px solid #334155; padding:14px; border-radius:8px; font-weight:900; cursor:pointer;">
+                        <input type="radio" name="turno-serra-setup" id="radio-turno-tarde-serra" value="tarde" style="width:22px; height:22px;">
+                        <span>TURNO DA TARDE</span>
+                    </label>
                 </div>
             </div>
 
@@ -3855,9 +3861,13 @@ function selecionarTurnoSetupSerra(turno) {
     const input = document.getElementById('s-turno-setup-serra');
     const manha = document.getElementById('btn-turno-manha-serra');
     const tarde = document.getElementById('btn-turno-tarde-serra');
+    const radioManha = document.getElementById('radio-turno-manha-serra');
+    const radioTarde = document.getElementById('radio-turno-tarde-serra');
     const abrir = document.getElementById('btn-abrir-lancamento-serra');
 
     if (input) input.value = valor;
+    if (radioManha) radioManha.checked = valor === 'manha';
+    if (radioTarde) radioTarde.checked = valor === 'tarde';
     if (manha) {
         manha.style.background = valor === 'manha' ? '#E31C24' : '#1e293b';
         manha.style.border = valor === 'manha' ? 'none' : '1px solid #334155';
