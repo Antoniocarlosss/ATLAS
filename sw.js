@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v175-serra-radio-turnos';
+const CACHE_NAME = 'atlas-v176-serra-mudar-turno';
 const assets = [
   './',
   './index.html',

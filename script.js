@@ -3893,7 +3893,7 @@ function iniciarInterfaceCorteSerra() {
 
     container.innerHTML = `
         <div style="background:#1e293b; padding:12px; border-radius:8px; margin-bottom:15px; border-left:4px solid #E31C24; display:flex; justify-content:space-between; align-items:center;">
-            <div style="color:white; font-weight:bold; font-size:13px;">${tipo} - ${esp}mm | ${turnoEscolhido === 'tarde' ? 'TURNO DA TARDE' : 'TURNO DA MANHA'}</div>
+            <div style="color:white; font-weight:bold; font-size:13px;">${tipo} - ${esp}mm | <span id="serra-turno-atual-label">${turnoEscolhido === 'tarde' ? 'TURNO DA TARDE' : 'TURNO DA MANHA'}</span></div>
             <div id="resumo-soma-serra" style="color:#10b981; font-weight:bold; font-size:14px;">Neste Painel: 0.00m</div>
             <input type="hidden" id="h-tipo-serra" value="${tipo}">
             <input type="hidden" id="h-esp-serra" value="${esp}">
@@ -3905,7 +3905,7 @@ function iniciarInterfaceCorteSerra() {
         </div>
         <div style="background:#111827; border:1px solid #334155; border-radius:10px; padding:12px; margin-bottom:15px;">
             <label style="display:block; color:#94a3b8; font-size:11px; font-weight:bold; margin-bottom:7px;">TURNO / EQUIPE</label>
-            <select id="s-turno-serra" style="width:100%; padding:12px; background:#1e293b; color:white; border:1px solid #334155; border-radius:8px; font-weight:bold;">
+            <select id="s-turno-serra" onchange="atualizarLabelTurnoSerra()" style="width:100%; padding:12px; background:#1e293b; color:white; border:1px solid #334155; border-radius:8px; font-weight:bold;">
                 <option value="manha" ${turnoEscolhido === 'manha' ? 'selected' : ''}>Turno da manha</option>
                 <option value="tarde" ${turnoEscolhido === 'tarde' ? 'selected' : ''}>Turno da tarde</option>
             </select>
@@ -3914,14 +3914,29 @@ function iniciarInterfaceCorteSerra() {
         <div id="campos-serra" style="background:#111827; padding:15px; border-radius:10px; border:1px solid #334155;"></div>
         <div id="lista-corte-serra" style="margin-top:15px; max-height:250px; overflow-y:auto;"></div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-top:15px;">
             <button onclick="exibirSetupSerra()" style="background:#3b82f6; color:white; border:none; padding:15px; border-radius:8px; font-weight:bold;">MUDAR PAINEL</button>
+            <button onclick="mudarTurnoSerra()" style="background:#f59e0b; color:#111827; border:none; padding:15px; border-radius:8px; font-weight:900;">MUDAR TURNO</button>
             <button onclick="atlasFinalizarDiaSerra()" style="background:#E31C24; color:white; border:none; padding:15px; border-radius:8px; font-weight:bold;">FINALIZAR DIA</button>
         </div>
     `;
 
     setModoCorteSerra('pedido');
     atualizarTabelaSerra();
+}
+
+function atualizarLabelTurnoSerra() {
+    const select = document.getElementById('s-turno-serra');
+    const label = document.getElementById('serra-turno-atual-label');
+    if (label) label.textContent = select?.value === 'tarde' ? 'TURNO DA TARDE' : 'TURNO DA MANHA';
+}
+
+function mudarTurnoSerra() {
+    const select = document.getElementById('s-turno-serra');
+    if (!select) return;
+    select.value = select.value === 'tarde' ? 'manha' : 'tarde';
+    atualizarLabelTurnoSerra();
+    alert(select.value === 'tarde' ? 'Agora voce esta lancando no turno da tarde.' : 'Agora voce esta lancando no turno da manha.');
 }
 
 function setModoCorteSerra(modo) {
