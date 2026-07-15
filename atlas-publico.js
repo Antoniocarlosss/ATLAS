@@ -144,20 +144,67 @@
     }
   }
 
-  function loginAdminPrompt() {
-    const user = prompt("Login:");
-    if (String(user || "").trim().toLowerCase() !== "admin") {
-      alert("Login incorreto.");
+  function closeAdminModal() {
+    const modal = $("#atlas-admin-modal");
+    if (modal) modal.remove();
+  }
+
+  function submitAdminLogin(event) {
+    event.preventDefault();
+    const user = $("#atlas-admin-user");
+    const password = $("#atlas-admin-password");
+    const error = $("#atlas-admin-error");
+
+    if (String(user && user.value || "").trim().toLowerCase() !== "admin") {
+      if (error) error.textContent = "Login incorreto.";
+      if (user) user.focus();
       return;
     }
-    const password = prompt("Senha:");
-    if (String(password || "").trim() !== "1234") {
-      alert("Senha incorreta.");
+
+    if (String(password && password.value || "").trim() !== "1234") {
+      if (error) error.textContent = "Senha incorreta.";
+      if (password) password.focus();
       return;
     }
+
     localStorage.setItem(ADMIN_FLAG, "true");
+    closeAdminModal();
     enterAdminMode();
   }
+
+  function loginAdminPrompt() {
+    if ($("#atlas-admin-modal")) {
+      const input = $("#atlas-admin-user");
+      if (input) input.focus();
+      return;
+    }
+
+    document.body.insertAdjacentHTML("beforeend", `
+      <div id="atlas-admin-modal" class="atlas-admin-modal" role="dialog" aria-modal="true" aria-labelledby="atlas-admin-title">
+        <div class="atlas-admin-panel">
+          <button class="atlas-admin-close" type="button" aria-label="Fechar login" onclick="atlasPublicoFecharLogin()">×</button>
+          <img class="atlas-admin-logo" src="atlas-painel-icon.png" alt="Atlas Painel">
+          <p class="atlas-admin-kicker">ACESSO PREMIUM</p>
+          <h2 id="atlas-admin-title">Entrar no sistema completo</h2>
+          <form id="atlas-admin-form">
+            <label for="atlas-admin-user">Login</label>
+            <input id="atlas-admin-user" name="login" autocomplete="username" placeholder="admin">
+            <label for="atlas-admin-password">Senha</label>
+            <input id="atlas-admin-password" name="senha" type="password" autocomplete="current-password" placeholder="1234">
+            <p id="atlas-admin-error" class="atlas-admin-error" aria-live="polite"></p>
+            <button class="atlas-admin-submit" type="submit">Entrar</button>
+          </form>
+        </div>
+      </div>
+    `);
+
+    const form = $("#atlas-admin-form");
+    if (form) form.addEventListener("submit", submitAdminLogin);
+    const input = $("#atlas-admin-user");
+    if (input) input.focus();
+  }
+
+  window.atlasPublicoFecharLogin = closeAdminModal;
 
   window.atlasPublicoAbrirHistoricoInjecao = function () {
     showAppShell();
