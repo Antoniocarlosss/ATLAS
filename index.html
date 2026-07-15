@@ -1,306 +1,459 @@
-<!doctype html>
-<html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>ATLAS PAINEL</title>
-  <meta name="description" content="Sistema ATLAS para injeção, serra e relatórios por data.">
-  <meta name="theme-color" content="#090b0f">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="ATLAS PAINEL">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Atlas Painel - Gestão</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        if (new URLSearchParams(location.search).has('modulo') || new URLSearchParams(location.search).has('atlas_modulo')) {
+            document.documentElement.classList.add('atlas-route-loading');
+        }
+    </script>
+    <style>
+        html.atlas-route-loading #tela-login { display: none !important; }
+        html.atlas-route-loading #app-principal { display: block !important; }
+    </style>
+    <link rel="stylesheet" href="style.css?v=20260517-sessao-local-169">
+    <link rel="stylesheet" href="atlas-publico.css?v=20260715-publico">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <main class="appShell">
-    <header class="topBar">
-      <img class="appIcon" src="icon-192x192.png" alt="ATLAS">
-      <div>
-        <p class="eyebrow">Sistema ATLAS</p>
-        <h1>Atlas Painel</h1>
-      </div>
-      <button class="installButton" id="installButton" type="button">Instalar</button>
-    </header>
 
-    <section class="statusGrid" aria-label="Status">
-      <div class="statusItem">
-        <span id="dayIcon">☀</span>
-        <strong id="currentTime">--:--:--</strong>
-        <em id="currentDate">--/--/----</em>
-        <small>Hora atual</small>
-      </div>
-      <div class="statusItem">
-        <span>°C</span>
-        <strong id="temperature">--°C</strong>
-        <em id="locationLabel">Localização atual</em>
-        <small>Temperatura</small>
-      </div>
+    <section id="tela-login">
+        <div class="login-box">
+            <div class="logo-container-css login-center">
+                <div class="logo-bars-css">
+                    <div class="bar-css"></div>
+                    <div class="bar-css"></div>
+                </div>
+                <div class="logo-text-css">
+                    <span class="atlas-text">ATLAS</span>
+                    <span class="painel-text">P A I N E L</span>
+                </div>
+            </div>
+
+            <h1>Sistema de Gestão</h1>
+            <div class="input-wrapper">
+                <i class="fas fa-user"></i>
+                <input type="text" id="login-email" placeholder="ID do Usuário">
+            </div>
+            <div class="input-wrapper">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="login-senha" placeholder="Senha">
+            </div>
+            <button onclick="fazerLogin()" class="btn-primary">ENTRAR</button>
+        </div>
     </section>
 
-    <section class="panel operatorPanel" id="operatorPanel">
-      <label for="operatorName">Nome do operador</label>
-      <div class="inlineForm">
-        <input id="operatorName" type="text" maxlength="32" autocomplete="name" placeholder="Digite seu nome">
-        <button id="saveOperator" type="button">Entrar</button>
-      </div>
-      <p class="helperText">O nome fica salvo apenas neste celular.</p>
-    </section>
+    <div id="app-principal" style="display:none;">
+        <header class="atlas-topbar">
+            <div class="atlas-topbar-brand">
+                <div class="logo-container-css header-logo-scale">
+                    <div class="logo-bars-css">
+                        <div class="bar-css"></div>
+                        <div class="bar-css"></div>
+                    </div>
+                    <div class="logo-text-css">
+                        <span class="atlas-text">ATLAS</span>
+                        <span class="painel-text">P A I N E L</span>
+                    </div>
+                </div>
+                <div class="atlas-system-title">
+                    <strong>Atlas Painel</strong>
+                    <span>Gestao industrial</span>
+                </div>
+            </div>
 
-    <section class="panel summaryPanel" id="summaryPanel" hidden>
-      <div>
-        <span id="greeting">Bem-vindo</span>
-        <strong id="operatorLabel"></strong>
-      </div>
-      <button class="ghostButton" id="changeOperator" type="button">Trocar</button>
-    </section>
+            <div class="user-info atlas-user-panel">
+                <div class="atlas-user-copy">
+                    <span id="atlas-home-saudacao">Bom trabalho</span>
+                    <strong id="user-display">OPERADOR</strong>
+                </div>
+                <div class="atlas-header-clock" id="atlas-home-datahora">--/--/---- --:--</div>
+                <button onclick="atlasAlternarVisualHome()" class="atlas-header-action" title="Alternar visual da Home">
+                    <i class="fas fa-table-cells-large"></i>
+                </button>
+                <button onclick="abrirModulo('config')" class="atlas-header-action" title="Configuracoes">
+                    <i class="fas fa-gear"></i>
+                </button>
+                <button id="atlas-install-app-btn" onclick="atlasInstalarAppAtlas()" class="atlas-install-button" style="display:none;" title="Baixar aplicativo">
+                    <i class="fas fa-download"></i>
+                    <span>Baixar app</span>
+                </button>
+                <button onclick="atlasSairSistema()" class="btn-logout">Sair</button>
+            </div>
+        </header>
 
-    <section class="accessPanel">
-      <div>
-        <span id="accessState">Modo operador</span>
-        <strong id="accessText">Somente visualizar relatórios</strong>
-      </div>
-      <button class="ghostButton" id="loginButton" type="button">Liberar premium</button>
-      <button class="ghostButton danger" id="logoutButton" type="button" hidden>Sair</button>
-    </section>
+        <main>
+            <section id="grid-home" class="grid-container atlas-dashboard">
+                <div class="atlas-dashboard-hero">
+                    <div>
+                        <span class="atlas-kicker">Painel operacional</span>
+                        <h1>Atlas - operacao de fabrica</h1>
+                        <p>Navegacao direta para producao, stock, relatorios, pesquisa e controlo diario.</p>
+                    </div>
+                    <div class="atlas-hero-badge">
+                        <i class="fas fa-industry"></i>
+                        <span>Turno em andamento</span>
+                    </div>
+                </div>
 
-    <nav class="moduleTabs" aria-label="Módulos">
-      <button class="moduleTab active" type="button" data-view="injecao">Injeção</button>
-      <button class="moduleTab" type="button" data-view="serra">Serra</button>
-    </nav>
+                <div class="atlas-status-grid">
+                    <button type="button" class="atlas-status-card atlas-status-click" onclick="atlasAbrirPendenciasHome()">
+                        <span>Relatorios pendentes</span>
+                        <strong id="atlas-home-relatorios-pendentes">0</strong>
+                        <small>Clique para ver as secoes abertas</small>
+                    </button>
+                    <div class="atlas-status-card atlas-clock-card">
+                        <span>Hora atual</span>
+                        <strong id="atlas-home-relogio">--:--:--</strong>
+                        <small id="atlas-home-data-curta">--/--/----</small>
+                    </div>
+                </div>
 
-    <section class="moduleView active" id="injecaoView">
-      <div class="sectionTitle">
-        <p class="eyebrow">Relatório</p>
-        <h2>Injeção</h2>
-      </div>
+                <div class="atlas-quick-actions">
+                    <button onclick="atlasAbrirEscolhaHome('criar')"><i class="fas fa-plus"></i><span>Criar relatorio</span></button>
+                    <button onclick="atlasAbrirEscolhaHome('historico')"><i class="fas fa-clock-rotate-left"></i><span>Ver historico</span></button>
+                    <button onclick="atlasAbrirEscolhaHome('calculadora')"><i class="fas fa-calculator"></i><span>Calculadora</span></button>
+                    <button onclick="abrirModulo('conferencia')"><i class="fas fa-clipboard-check"></i><span>Conferencia</span></button>
+                    <button onclick="abrirModulo('pesquisa_encomenda')"><i class="fas fa-search"></i><span>Pesquisa</span></button>
+                    <button onclick="abrirModulo('config')"><i class="fas fa-sliders"></i><span>Configuracoes</span></button>
+                </div>
 
-      <section class="reportViewer">
-        <div class="dateFilters">
-          <label>Ano
-            <select id="injecaoAno"></select>
-          </label>
-          <label>Mês
-            <select id="injecaoMes"></select>
-          </label>
-          <label>Dia
-            <select id="injecaoDia"></select>
-          </label>
-        </div>
-        <div class="reportActions">
-          <button class="primaryButton" type="button" data-pdf="injecao">Ver em PDF</button>
-          <button class="ghostButton" type="button" data-print="injecao">Imprimir</button>
-        </div>
-        <div class="reportList" id="injecaoReportList"></div>
-      </section>
+                <div class="atlas-modules-title">
+                    <h2>Modulos</h2>
+                    <span>Escolha a area de trabalho</span>
+                </div>
+    <div class="card" onclick="abrirModulo('injecao')"><i class="fas fa-microchip"></i><span>Injeção</span></div>
+    <div class="card" onclick="abrirModulo('bobines')"><i class="fas fa-compact-disc"></i><span>Bobines</span></div>
+    <div class="card" onclick="abrirModulo('serra')"><i class="fas fa-layer-group"></i><span>Serra</span></div>
+    <div class="card" onclick="abrirModulo('embalagem')"><i class="fas fa-boxes-packing"></i><span>Embalagem</span></div>
+    <div id="card-gestao" class="card" onclick="abrirModulo('gestao')"><i class="fas fa-users"></i><span>Usuários</span></div>
+    <div class="card" onclick="abrirModulo('config')"><i class="fas fa-gears"></i><span>Ajustes</span></div>
+    <div class="card" onclick="abrirModulo('plano')"><i class="fas fa-clipboard-list"></i><span>Plano</span></div>
+    <div id="card-stock" class="card" onclick="abrirModulo('stock')"><i class="fas fa-boxes-stacked"></i><span>Stock</span></div>
+    <div id="card-permissoes" class="card" onclick="abrirModulo('permissoes')"><i class="fas fa-user-shield"></i><span>Permissões</span></div>
+    <div id="card-conferencia" class="card" onclick="abrirModulo('conferencia')">
+    <i class="fas fa-clipboard-check"></i>
+    <span>Conferência</span>
+</div>
+    <div id="card-lixeira-atlas" class="card" onclick="abrirModulo('lixeira')">
+    <i class="fas fa-trash-can"></i>
+    <span>Lixeira</span>
+</div>
 
-      <section class="premiumOnly insertPanel" hidden>
-        <div class="sectionTitle compact">
-          <p class="eyebrow">Premium</p>
-          <h3>Inserir relatório da Injeção</h3>
-        </div>
-        <div class="field">
-          <label for="injecaoData">Data do relatório</label>
-          <input id="injecaoData" type="date">
-        </div>
-        <div class="field">
-          <label for="injecaoTipoPainel">Tipo de painel</label>
-          <select id="injecaoTipoPainel">
-            <option>5 Ondas</option>
-            <option>Fachada Oculta</option>
-            <option>Fachada Visível</option>
-            <option>Telha Canudo</option>
-            <option>PIR</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="injecaoRal">RAL do painel</label>
-          <select id="injecaoRal">
-            <option value="">Sem RAL</option>
-            <option>RAL 9002</option>
-            <option>RAL 9006</option>
-            <option>RAL 9010</option>
-            <option>RAL 7016</option>
-            <option>RAL 3000</option>
-            <option>RAL 6005</option>
-            <option>RAL 5010</option>
-          </select>
-        </div>
-        <label class="checkBoxLine" for="injecaoPir">
-          <input id="injecaoPir" type="checkbox">
-          <span>PIR</span>
-        </label>
-        <div class="twoCols">
-          <div class="field">
-            <label for="injecaoEspessura">Espessura</label>
-            <select id="injecaoEspessura">
-              <option value="30">30 mm</option>
-              <option value="40">40 mm</option>
-              <option value="50">50 mm</option>
-              <option value="60">60 mm</option>
-              <option value="80">80 mm</option>
-              <option value="100">100 mm</option>
-              <option value="120">120 mm</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="injecaoMetros">Metros</label>
-            <input id="injecaoMetros" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Qtd">
-          </div>
-        </div>
-        <div class="field">
-          <label for="injecaoEspuma">Espessura da espuma (opcional)</label>
-          <select id="injecaoEspuma">
-            <option value="">Espuma opcional</option>
-            <option>10 mm</option>
-            <option>15 mm</option>
-            <option>20 mm</option>
-            <option>25 mm</option>
-            <option>30 mm</option>
-            <option>40 mm</option>
-          </select>
-        </div>
-        <p class="blueLabel">Parâmetros da máquina</p>
-        <div class="field">
-          <label for="injecaoFita">Fita (opcional)</label>
-          <select id="injecaoFita">
-            <option value="">Fita opcional</option>
-            <option>Fita 40 mm</option>
-            <option>Fita 50 mm</option>
-            <option>Fita 60 mm</option>
-            <option>Fita dupla</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="injecaoDensidade">Densidade / hora (opcional)</label>
-          <input id="injecaoDensidade" type="text" placeholder="Ex: 40 kg/m3 - 14:30">
-        </div>
-        <div class="chemicalGrid">
-          <input id="injecaoPol" type="number" min="0" step="0.01" inputmode="decimal" placeholder="POL kg">
-          <input id="injecaoPolPir" type="number" min="0" step="0.01" inputmode="decimal" placeholder="POL/PIR kg">
-          <input id="injecaoMdi" type="number" min="0" step="0.01" inputmode="decimal" placeholder="MDI kg">
-          <input id="injecaoPen" type="number" min="0" step="0.01" inputmode="decimal" placeholder="PEN kg">
-          <input id="injecaoCat1" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Cat 1 kg">
-          <input id="injecaoCat2" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Cat 2 kg">
-          <input id="injecaoCat3" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Cat 3 kg">
-          <input id="injecaoCat4" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Cat 4 kg">
-          <select id="injecaoVelocidade">
-            <option value="">Velocidade</option>
-            <option>5 m/min</option>
-            <option>6 m/min</option>
-            <option>8 m/min</option>
-            <option>9 m/min</option>
-            <option>10 m/min</option>
-            <option>11 m/min</option>
-            <option>12 m/min</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="injecaoMaquina">Máquina</label>
-          <input id="injecaoMaquina" type="text" placeholder="Ex: Injetora 01">
-        </div>
-        <div class="field">
-          <label for="injecaoProduto">Produto / observação curta</label>
-          <input id="injecaoProduto" type="text" placeholder="Nome do produto">
-        </div>
-        <div class="twoCols">
-          <div class="field">
-            <label for="injecaoQuantidade">Quantidade</label>
-            <input id="injecaoQuantidade" type="number" min="0" inputmode="numeric" placeholder="0">
-          </div>
-          <div class="field">
-            <label for="injecaoStatus">Status</label>
-            <select id="injecaoStatus">
-              <option>Em produção</option>
-              <option>Finalizado</option>
-              <option>Parado</option>
-            </select>
-          </div>
-        </div>
-        <div class="field">
-          <label for="injecaoObs">Observação</label>
-          <textarea id="injecaoObs" rows="3" placeholder="Observações rápidas"></textarea>
-        </div>
-        <button class="primaryButton" type="button" data-save="injecao">Salvar relatório da Injeção</button>
-      </section>
-    </section>
+</section>
+          <section id="conteudo-modulo" style="display:none;">
+                <div class="modulo-header">
+                    <button onclick="voltarHome()" class="btn-voltar-clean">
+                        <i class="fas fa-arrow-left"></i> VOLTAR
+                    </button>
+                    <h2 id="titulo-modulo" style="font-size:16px;">MÓDULO</h2>
+                </div>
+                <div id="render-modulo" class="modulo-body"></div>
+            </section>
+        </main>
+    </div>
 
-    <section class="moduleView" id="serraView">
-      <div class="sectionTitle">
-        <p class="eyebrow">Relatório</p>
-        <h2>Serra</h2>
-      </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        (function atlasResetPorLink() {
+            const params = new URLSearchParams(location.search);
+            if (!params.has('atlas_reset')) return;
 
-      <section class="reportViewer">
-        <div class="dateFilters">
-          <label>Ano
-            <select id="serraAno"></select>
-          </label>
-          <label>Mês
-            <select id="serraMes"></select>
-          </label>
-          <label>Dia
-            <select id="serraDia"></select>
-          </label>
-        </div>
-        <div class="reportActions">
-          <button class="primaryButton" type="button" data-pdf="serra">Ver em PDF</button>
-          <button class="ghostButton" type="button" data-print="serra">Imprimir</button>
-        </div>
-        <div class="reportList" id="serraReportList"></div>
-      </section>
+            const limparCaches = ('caches' in window)
+                ? caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('atlas-')).map(key => caches.delete(key))))
+                : Promise.resolve();
+            const limparWorker = ('serviceWorker' in navigator)
+                ? navigator.serviceWorker.getRegistrations().then(regs => Promise.all(regs.map(reg => reg.unregister().catch(() => null))))
+                : Promise.resolve();
 
-      <section class="premiumOnly insertPanel" hidden>
-        <div class="sectionTitle compact">
-          <p class="eyebrow">Premium</p>
-          <h3>Inserir relatório da Serra</h3>
-        </div>
-        <div class="field">
-          <label for="serraData">Data do relatório</label>
-          <input id="serraData" type="date">
-        </div>
-        <div class="field">
-          <label for="serraOrdem">Ordem ou cliente</label>
-          <input id="serraOrdem" type="text" placeholder="Ex: Pedido 1024">
-        </div>
-        <div class="field">
-          <label for="serraMedida">Medida</label>
-          <input id="serraMedida" type="text" placeholder="Ex: 2500 mm">
-        </div>
-        <div class="twoCols">
-          <div class="field">
-            <label for="serraQuantidade">Quantidade</label>
-            <input id="serraQuantidade" type="number" min="0" inputmode="numeric" placeholder="0">
-          </div>
-          <div class="field">
-            <label for="serraStatus">Status</label>
-            <select id="serraStatus">
-              <option>Cortando</option>
-              <option>Finalizado</option>
-              <option>Parado</option>
-            </select>
-          </div>
-        </div>
-        <div class="field">
-          <label for="serraObs">Observação</label>
-          <textarea id="serraObs" rows="3" placeholder="Observações rápidas"></textarea>
-        </div>
-        <button class="primaryButton" type="button" data-save="serra">Salvar relatório da Serra</button>
-      </section>
-    </section>
-  </main>
+            try {
+                localStorage.removeItem('atlas_sistema_versao');
+                localStorage.setItem('atlas_sistema_mostrar_atualizado', '1');
+            } catch (erro) {}
 
-  <script src="script.js"></script>
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        navigator.serviceWorker.register("sw.js");
-      });
-    }
-  </script>
+            Promise.allSettled([limparCaches, limparWorker]).finally(() => {
+                params.delete('atlas_reset');
+                params.set('atlas_nocache', Date.now());
+                location.replace(`${location.pathname}?${params.toString()}`);
+            });
+        })();
+
+        window.ATLAS_SISTEMA_VERSAO = '20260517-sessao-local-169';
+        window.ATLAS_SISTEMA_BUILD = 169;
+        window.atlasMostrarTelaAtualizacao = function atlasMostrarTelaAtualizacao(opcoes = {}) {
+            const finalizado = opcoes.finalizado === true;
+            let overlay = document.getElementById('atlas-update-screen');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'atlas-update-screen';
+                overlay.style.cssText = 'position:fixed; inset:0; z-index:50000; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at top,#17233a 0,#08111f 58%,#020617 100%); color:white; font-family:Inter,Arial,sans-serif;';
+                overlay.innerHTML = `
+                    <style>
+                        @keyframes atlasLogoEntrando { from { opacity:0; transform:translateY(12px) scale(.96); } to { opacity:1; transform:translateY(0) scale(1); } }
+                        @keyframes atlasBarraUpdate { from { width:0%; } to { width:var(--atlas-progresso, 100%); } }
+                        .atlas-update-card { width:min(92vw, 430px); border:1px solid #334155; background:rgba(15,23,42,.92); border-radius:18px; padding:28px; box-shadow:0 24px 80px rgba(0,0,0,.45); text-align:center; }
+                        .atlas-update-logo { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:18px; animation:atlasLogoEntrando .7s ease both; }
+                        .atlas-update-mark { width:42px; height:28px; position:relative; }
+                        .atlas-update-mark::before, .atlas-update-mark::after { content:''; position:absolute; left:0; width:36px; height:9px; background:#ef1b2d; transform:skewX(-18deg); }
+                        .atlas-update-mark::before { top:3px; }
+                        .atlas-update-mark::after { bottom:3px; }
+                        .atlas-update-name { font-size:32px; line-height:1; font-weight:900; letter-spacing:0; color:#fff; }
+                        .atlas-update-name b { color:#ef1b2d; }
+                        .atlas-update-sub { margin-top:3px; font-size:11px; letter-spacing:7px; color:#cbd5e1; font-weight:800; }
+                        .atlas-update-status { font-size:18px; font-weight:900; margin:10px 0 6px; }
+                        .atlas-update-detail { color:#a7bdd8; font-size:14px; margin-bottom:18px; }
+                        .atlas-update-track { height:14px; border-radius:999px; overflow:hidden; background:#020617; border:1px solid #334155; }
+                        .atlas-update-fill { height:100%; width:0%; background:linear-gradient(90deg,#2563eb,#10b981,#ef1b2d); transition:width .25s ease; }
+                        .atlas-update-percent { margin-top:10px; color:#22c55e; font-weight:900; font-size:22px; }
+                    </style>
+                    <div class="atlas-update-card">
+                        <div class="atlas-update-logo">
+                            <div class="atlas-update-mark"></div>
+                            <div>
+                                <div class="atlas-update-name"><b>ATLAS</b> PAINEL</div>
+                                <div class="atlas-update-sub">PAINEL</div>
+                            </div>
+                        </div>
+                        <div class="atlas-update-status">${finalizado ? 'Sistema atualizado' : 'Atualizando sistema'}</div>
+                        <div class="atlas-update-detail">${finalizado ? 'Tudo pronto para usar.' : 'Limpando cache antigo e baixando a nova versao.'}</div>
+                        <div class="atlas-update-track"><div class="atlas-update-fill"></div></div>
+                        <div class="atlas-update-percent">0%</div>
+                    </div>
+                `;
+                document.documentElement.appendChild(overlay);
+            }
+
+            const fill = overlay.querySelector('.atlas-update-fill');
+            const percent = overlay.querySelector('.atlas-update-percent');
+            const status = overlay.querySelector('.atlas-update-status');
+            const detail = overlay.querySelector('.atlas-update-detail');
+            let valor = finalizado ? 82 : 0;
+            const alvo = finalizado ? 100 : 94;
+            if (status) status.textContent = finalizado ? 'Sistema atualizado' : 'Atualizando sistema';
+            if (detail) detail.textContent = finalizado ? 'Tudo pronto para usar.' : 'Limpando cache antigo e baixando a nova versao.';
+
+            const timer = setInterval(() => {
+                valor = Math.min(alvo, valor + (finalizado ? 6 : Math.ceil(Math.random() * 8)));
+                if (fill) fill.style.width = valor + '%';
+                if (percent) percent.textContent = valor + '%';
+                if (valor >= alvo) clearInterval(timer);
+            }, 120);
+
+            return overlay;
+        };
+
+        window.atlasExecutarAtualizacaoAparelho = function atlasExecutarAtualizacaoAparelho() {
+            window.atlasMostrarTelaAtualizacao();
+            const limparCaches = ('caches' in window)
+                ? caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('atlas-')).map(key => caches.delete(key))))
+                : Promise.resolve();
+            const atualizarWorker = ('serviceWorker' in navigator)
+                ? navigator.serviceWorker.getRegistrations().then(regs => Promise.all(regs.map(reg => {
+                    if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    return reg.unregister().catch(() => null);
+                })))
+                : Promise.resolve();
+
+            Promise.allSettled([limparCaches, atualizarWorker]).finally(() => {
+                try {
+                    localStorage.removeItem('atlas_sistema_versao');
+                    localStorage.setItem('atlas_sistema_forcar_recarregar_sem_cache', String(Date.now()));
+                } catch (erro) {}
+                setTimeout(() => {
+                    const separador = location.href.includes('?') ? '&' : '?';
+                    location.replace(`${location.href.split('#')[0]}${separador}atlas_reload=${Date.now()}`);
+                }, 900);
+            });
+        };
+
+        window.atlasChaveAvisoAtualizacao = function atlasChaveAvisoAtualizacao(info = {}) {
+            const build = Number(info.build || window.ATLAS_SISTEMA_BUILD || 0);
+            const versao = info.versao || window.ATLAS_SISTEMA_VERSAO || 'sem-versao';
+            const pedido = info.solicitadoEmMs || '';
+            return `atlas_update_notice_seen_${build}_${versao}_${pedido}`;
+        };
+
+        window.atlasAdiarAvisoAtualizacao = function atlasAdiarAvisoAtualizacao(info = {}) {
+            try {
+                localStorage.setItem(window.atlasChaveAvisoAtualizacao(info), '1');
+            } catch (erro) {}
+            document.getElementById('atlas-update-notice')?.remove();
+        };
+
+        window.atlasMostrarAvisoAtualizacaoDisponivel = function atlasMostrarAvisoAtualizacaoDisponivel(info = {}) {
+            if (document.getElementById('atlas-update-notice')) return;
+            try {
+                if (localStorage.getItem(window.atlasChaveAvisoAtualizacao(info)) === '1') return;
+            } catch (erro) {}
+            const versao = info.versao || 'nova versao';
+            const overlay = document.createElement('div');
+            overlay.id = 'atlas-update-notice';
+            overlay.style.cssText = 'position:fixed; inset:0; z-index:49999; display:flex; align-items:center; justify-content:center; padding:18px; background:rgba(2,6,23,.82); color:white; font-family:Inter,Arial,sans-serif;';
+            overlay.innerHTML = `
+                <div style="width:min(94vw,460px); background:#0f172a; border:1px solid #3b82f6; border-radius:18px; padding:24px; box-shadow:0 22px 70px rgba(0,0,0,.5); text-align:center;">
+                    <div style="font-size:30px; font-weight:900; margin-bottom:6px;"><span style="color:#ef1b2d;">ATLAS</span> PAINEL</div>
+                    <div style="font-size:20px; font-weight:900; margin-bottom:8px;">Atualizacao disponivel</div>
+                    <div style="color:#bfdbfe; font-size:14px; margin-bottom:18px;">Existe uma versao nova do sistema: <b>${versao}</b>. Atualize para evitar erros de usuario, permissao e relatorios.</div>
+                    <button onclick="window.atlasExecutarAtualizacaoAparelho()" style="width:100%; border:none; border-radius:12px; background:#10b981; color:white; padding:15px; font-weight:900; cursor:pointer;">ATUALIZAR AGORA</button>
+                    <button onclick='window.atlasAdiarAvisoAtualizacao(${JSON.stringify(info).replace(/'/g, '&#039;')})' style="width:100%; border:1px solid #334155; border-radius:12px; background:#1e293b; color:white; padding:12px; font-weight:900; cursor:pointer; margin-top:10px;">LEMBRAR DEPOIS</button>
+                </div>
+            `;
+            document.documentElement.appendChild(overlay);
+        };
+
+        window.atlasChecarAvisoVersaoPublicada = function atlasChecarAvisoVersaoPublicada() {
+            let info = null;
+            let global = null;
+            try {
+                info = JSON.parse(localStorage.getItem('atlas_versao_publicada_info') || 'null');
+                global = JSON.parse(localStorage.getItem('atlas_atualizacao_global_info') || 'null');
+            } catch (erro) {
+                info = null;
+                global = null;
+            }
+            const buildPublicado = Math.max(Number(info?.build || 0), Number(global?.build || 0));
+            const buildAtual = Number(window.ATLAS_SISTEMA_BUILD || 0);
+            if (buildPublicado > buildAtual) {
+                const aviso = Number(global?.build || 0) >= Number(info?.build || 0) ? global : info;
+                try {
+                    if (localStorage.getItem(window.atlasChaveAvisoAtualizacao(aviso)) === '1') return;
+                } catch (erro) {}
+                window.atlasMostrarAvisoAtualizacaoDisponivel(aviso);
+            }
+        };
+
+        window.addEventListener('atlasVersaoPublicadaAtualizada', window.atlasChecarAvisoVersaoPublicada);
+        window.addEventListener('atlasAtualizacaoGlobalAtualizada', window.atlasChecarAvisoVersaoPublicada);
+        window.addEventListener('load', () => setTimeout(window.atlasChecarAvisoVersaoPublicada, 2500));
+
+        window.atlasInstallPromptPendente = null;
+        window.atlasAppEstaInstalado = function atlasAppEstaInstalado() {
+            return window.matchMedia('(display-mode: standalone)').matches
+                || window.navigator.standalone === true
+                || document.referrer.startsWith('android-app://');
+        };
+
+        window.atlasAtualizarBotaoInstalar = function atlasAtualizarBotaoInstalar() {
+            const botao = document.getElementById('atlas-install-app-btn');
+            if (!botao) return;
+            botao.style.display = window.atlasAppEstaInstalado() ? 'none' : 'inline-flex';
+        };
+
+        window.atlasInstalarAppAtlas = async function atlasInstalarAppAtlas() {
+            if (window.atlasAppEstaInstalado()) {
+                window.atlasAtualizarBotaoInstalar();
+                return;
+            }
+
+            if (window.atlasInstallPromptPendente) {
+                const promptInstalacao = window.atlasInstallPromptPendente;
+                window.atlasInstallPromptPendente = null;
+                promptInstalacao.prompt();
+                await promptInstalacao.userChoice.catch(() => null);
+                window.atlasAtualizarBotaoInstalar();
+                return;
+            }
+
+            alert('Para baixar o Atlas, use o menu do navegador e escolha "Instalar aplicativo" ou "Adicionar a tela inicial".');
+        };
+
+        window.addEventListener('beforeinstallprompt', evento => {
+            evento.preventDefault();
+            window.atlasInstallPromptPendente = evento;
+            window.atlasAtualizarBotaoInstalar();
+        });
+
+        window.addEventListener('appinstalled', () => {
+            window.atlasInstallPromptPendente = null;
+            window.atlasAtualizarBotaoInstalar();
+        });
+        window.addEventListener('load', () => setTimeout(window.atlasAtualizarBotaoInstalar, 500));
+
+        (function prepararAtualizacaoAtlas() {
+            const chaveVersao = 'atlas_sistema_versao';
+            const chaveAviso = 'atlas_sistema_mostrar_atualizado';
+            const chaveLimpeza = `atlas_sistema_cache_limpo_${window.ATLAS_SISTEMA_BUILD || 0}_${window.ATLAS_SISTEMA_VERSAO || ''}`;
+            const versaoSalva = localStorage.getItem(chaveVersao);
+            const versaoAtual = window.ATLAS_SISTEMA_VERSAO;
+            if (versaoSalva === versaoAtual) return;
+
+            localStorage.setItem(chaveVersao, versaoAtual);
+            localStorage.setItem(chaveAviso, '1');
+            if (sessionStorage.getItem(chaveLimpeza) === '1') return;
+            sessionStorage.setItem(chaveLimpeza, '1');
+
+            const limparCaches = ('caches' in window)
+                ? caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('atlas-')).map(key => caches.delete(key))))
+                : Promise.resolve();
+
+            const atualizarWorker = ('serviceWorker' in navigator)
+                ? navigator.serviceWorker.getRegistrations().then(regs => Promise.all(regs.map(reg => reg.update().catch(() => null))))
+                : Promise.resolve();
+
+            Promise.allSettled([limparCaches, atualizarWorker]);
+        })();
+    </script>
+    <script src="script.js?v=20260517-sessao-local-169"></script>
+    <script src="historicos-admin.js?v=20260517-sessao-local-169"></script>
+    <script src="atlas-ajustes-fachadas.js?v=20260517-sessao-local-169"></script>
+    <script type="module" src="main.js?v=20260517-sessao-local-169"></script>
+    <script src="atlas-publico.js?v=20260715-publico"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            let atlasAtualizandoPWA = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (atlasAtualizandoPWA) return;
+                atlasAtualizandoPWA = true;
+                window.location.reload();
+            });
+
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js?v=20260517-sessao-local-169')
+                    .then(reg => {
+                        console.log('Atlas PWA: Ativo!');
+                        reg.update();
+                        if (reg.waiting) {
+                            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        }
+                        reg.addEventListener('updatefound', () => {
+                            const novoWorker = reg.installing;
+                            if (!novoWorker) return;
+                            novoWorker.addEventListener('statechange', () => {
+                                if (novoWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    novoWorker.postMessage({ type: 'SKIP_WAITING' });
+                                }
+                            });
+                        });
+                    })
+                    .catch(err => console.log('Erro PWA:', err));
+            });
+        }
+
+        window.addEventListener('load', () => {
+            if (localStorage.getItem('atlas_sistema_mostrar_atualizado') !== '1') return;
+            localStorage.removeItem('atlas_sistema_mostrar_atualizado');
+
+            const overlay = window.atlasMostrarTelaAtualizacao({ finalizado: true });
+            setTimeout(() => overlay?.remove(), 2200);
+        });
+    </script>
+
+    <div id="modal-edicao" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; padding:12px;">
+        <div style="background:#1e293b; width:100%; max-width:920px; max-height:92vh; overflow:auto; padding:16px; border-radius:12px; border:1px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            <h3 style="color:white; margin-top:0; border-bottom:1px solid #334155; padding-bottom:10px;">Editar Registro</h3>
+            <div id="conteudo-modal" style="display:flex; flex-direction:column; gap:10px; margin-top:15px;"></div>
+            <div style="display:flex; gap:10px; margin-top:16px; position:sticky; bottom:0; background:#1e293b; padding-top:10px;">
+                <button onclick="fecharModal()" style="flex:1; background:#475569; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">CANCELAR</button>
+                <button onclick="salvarEdicaoModal()" style="flex:1; background:#10b981; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">SALVAR</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
