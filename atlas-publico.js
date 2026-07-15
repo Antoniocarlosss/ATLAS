@@ -3,6 +3,9 @@
   let originalHomeHTML = "";
   let originalLogout = null;
 
+  localStorage.removeItem(ADMIN_FLAG);
+  localStorage.removeItem("atlas_sessao_usuario_id");
+
   function $(selector) {
     return document.querySelector(selector);
   }
@@ -169,7 +172,6 @@
       return;
     }
 
-    localStorage.setItem(ADMIN_FLAG, "true");
     closeAdminModal();
     enterAdminMode();
   }
@@ -237,11 +239,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     waitReady(() => {
-      if (localStorage.getItem(ADMIN_FLAG) === "true") {
-        enterAdminMode();
-      } else {
-        enterPublicMode();
-      }
+      enterPublicMode();
     });
   });
 
