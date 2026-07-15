@@ -14069,7 +14069,6 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
                 <table class="dados">
                     <thead><tr><th colspan="3">Dados Inje&ccedil;&atilde;o Parciais</th></tr></thead>
                     <tbody>
-                        <tr><th>Comprimento</th><td>${metrosA}</td><td>${metrosB}</td></tr>
                         <tr><th>Metros turno da manh&atilde;</th><td colspan="2" class="turno-pdf">${metrosManha}</td></tr>
                         <tr><th>Metros turno da tarde</th><td colspan="2" class="turno-pdf">${metrosTarde}</td></tr>
                         <tr><th>Metros totais do dia</th><td colspan="2" class="total-dia-pdf">${totalDia.toFixed(2)} m</td></tr>
