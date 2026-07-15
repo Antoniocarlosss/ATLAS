@@ -108,11 +108,103 @@
           <input id="injecaoData" type="date">
         </div>
         <div class="field">
+          <label for="injecaoTipoPainel">Tipo de painel</label>
+          <select id="injecaoTipoPainel">
+            <option>5 Ondas</option>
+            <option>Fachada Oculta</option>
+            <option>Fachada Visível</option>
+            <option>Telha Canudo</option>
+            <option>PIR</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="injecaoRal">RAL do painel</label>
+          <select id="injecaoRal">
+            <option value="">Sem RAL</option>
+            <option>RAL 9002</option>
+            <option>RAL 9006</option>
+            <option>RAL 9010</option>
+            <option>RAL 7016</option>
+            <option>RAL 3000</option>
+            <option>RAL 6005</option>
+            <option>RAL 5010</option>
+          </select>
+        </div>
+        <label class="checkBoxLine" for="injecaoPir">
+          <input id="injecaoPir" type="checkbox">
+          <span>PIR</span>
+        </label>
+        <div class="twoCols">
+          <div class="field">
+            <label for="injecaoEspessura">Espessura</label>
+            <select id="injecaoEspessura">
+              <option value="30">30 mm</option>
+              <option value="40">40 mm</option>
+              <option value="50">50 mm</option>
+              <option value="60">60 mm</option>
+              <option value="80">80 mm</option>
+              <option value="100">100 mm</option>
+              <option value="120">120 mm</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="injecaoMetros">Metros</label>
+            <input id="injecaoMetros" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Qtd">
+          </div>
+        </div>
+        <div class="field">
+          <label for="injecaoEspuma">Espessura da espuma (opcional)</label>
+          <select id="injecaoEspuma">
+            <option value="">Espuma opcional</option>
+            <option>10 mm</option>
+            <option>15 mm</option>
+            <option>20 mm</option>
+            <option>25 mm</option>
+            <option>30 mm</option>
+            <option>40 mm</option>
+          </select>
+        </div>
+        <p class="blueLabel">Parâmetros da máquina</p>
+        <div class="field">
+          <label for="injecaoFita">Fita (opcional)</label>
+          <select id="injecaoFita">
+            <option value="">Fita opcional</option>
+            <option>Fita 40 mm</option>
+            <option>Fita 50 mm</option>
+            <option>Fita 60 mm</option>
+            <option>Fita dupla</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="injecaoDensidade">Densidade / hora (opcional)</label>
+          <input id="injecaoDensidade" type="text" placeholder="Ex: 40 kg/m3 - 14:30">
+        </div>
+        <div class="chemicalGrid">
+          <input id="injecaoPol" type="number" min="0" step="0.01" inputmode="decimal" placeholder="POL kg">
+          <input id="injecaoPolPir" type="number" min="0" step="0.01" inputmode="decimal" placeholder="POL/PIR kg">
+          <input id="injecaoMdi" type="number" min="0" step="0.01" inputmode="decimal" placeholder="MDI kg">
+          <input id="injecaoPen" type="number" min="0" step="0.01" inputmode="decimal" placeholder="PEN kg">
+          <input id="injecaoCat1" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Cat 1 kg">
+          <input id="injecaoCat2" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Cat 2 kg">
+          <input id="injecaoCat3" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Cat 3 kg">
+          <input id="injecaoCat4" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Cat 4 kg">
+          <select id="injecaoVelocidade">
+            <option value="">Velocidade</option>
+            <option>5 m/min</option>
+            <option>6 m/min</option>
+            <option>8 m/min</option>
+            <option>9 m/min</option>
+            <option>10 m/min</option>
+            <option>11 m/min</option>
+            <option>12 m/min</option>
+          </select>
+        </div>
+        <div class="field">
           <label for="injecaoMaquina">Máquina</label>
           <input id="injecaoMaquina" type="text" placeholder="Ex: Injetora 01">
         </div>
         <div class="field">
-          <label for="injecaoProduto">Produto</label>
+          <label for="injecaoProduto">Produto / observação curta</label>
           <input id="injecaoProduto" type="text" placeholder="Nome do produto">
         </div>
         <div class="twoCols">

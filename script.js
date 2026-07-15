@@ -160,6 +160,23 @@
     if (type === "injecao") {
       return {
         ...base,
+        tipoPainel: sanitize($("#injecaoTipoPainel").value),
+        ral: sanitize($("#injecaoRal").value) || "Sem RAL",
+        pir: $("#injecaoPir").checked,
+        espessura: sanitize($("#injecaoEspessura").value),
+        metros: sanitize($("#injecaoMetros").value),
+        espuma: sanitize($("#injecaoEspuma").value),
+        fita: sanitize($("#injecaoFita").value),
+        densidade: sanitize($("#injecaoDensidade").value),
+        pol: sanitize($("#injecaoPol").value),
+        polPir: sanitize($("#injecaoPolPir").value),
+        mdi: sanitize($("#injecaoMdi").value),
+        pen: sanitize($("#injecaoPen").value),
+        cat1: sanitize($("#injecaoCat1").value),
+        cat2: sanitize($("#injecaoCat2").value),
+        cat3: sanitize($("#injecaoCat3").value),
+        cat4: sanitize($("#injecaoCat4").value),
+        velocidade: sanitize($("#injecaoVelocidade").value),
         maquina: sanitize($("#injecaoMaquina").value),
         produto: sanitize($("#injecaoProduto").value),
         quantidade: sanitize($("#injecaoQuantidade").value),
@@ -179,12 +196,29 @@
   }
 
   function isRecordValid(record) {
-    if (record.type === "injecao") return record.maquina && record.produto && record.quantidade;
+    if (record.type === "injecao") return record.tipoPainel && record.espessura && record.metros;
     return record.ordem && record.medida && record.quantidade;
   }
 
   function clearForm(type) {
     if (type === "injecao") {
+      $("#injecaoTipoPainel").value = "5 Ondas";
+      $("#injecaoRal").value = "";
+      $("#injecaoPir").checked = false;
+      $("#injecaoEspessura").value = "30";
+      $("#injecaoMetros").value = "";
+      $("#injecaoEspuma").value = "";
+      $("#injecaoFita").value = "";
+      $("#injecaoDensidade").value = "";
+      $("#injecaoPol").value = "";
+      $("#injecaoPolPir").value = "";
+      $("#injecaoMdi").value = "";
+      $("#injecaoPen").value = "";
+      $("#injecaoCat1").value = "";
+      $("#injecaoCat2").value = "";
+      $("#injecaoCat3").value = "";
+      $("#injecaoCat4").value = "";
+      $("#injecaoVelocidade").value = "";
       $("#injecaoMaquina").value = "";
       $("#injecaoProduto").value = "";
       $("#injecaoQuantidade").value = "";
@@ -220,7 +254,10 @@
 
   function recordSummary(record) {
     if (record.type === "injecao") {
-      return `${record.maquina} | ${record.produto} | ${record.quantidade} un | ${record.status}`;
+      const pir = record.pir ? "PIR - " : "";
+      const maquina = record.maquina ? ` | ${record.maquina}` : "";
+      const velocidade = record.velocidade ? ` | ${record.velocidade}` : "";
+      return `${pir}${record.tipoPainel || record.produto || "Painel"} | ${record.espessura || "--"} mm | ${record.ral || "Sem RAL"} | ${record.metros || record.quantidade || "0"} m${velocidade}${maquina}`;
     }
     return `${record.ordem} | ${record.medida} | ${record.quantidade} un | ${record.status}`;
   }
@@ -292,6 +329,7 @@
       <article class="historyItem">
         <strong>${record.tipo} - ${formatISO(record.dateISO)}</strong>
         <span>${recordSummary(record)}</span>
+        ${record.type === "injecao" ? `<span>${injectionDetailLine(record)}</span>` : ""}
         ${record.observacao ? `<span>Obs: ${record.observacao}</span>` : ""}
         <small>Operador: ${record.operador}</small>
       </article>
@@ -307,13 +345,54 @@
     return type === "injecao" ? "RELATÓRIO DE INJEÇÃO" : "RELATÓRIO DE SERRA";
   }
 
+  function injectionDetailLine(record) {
+    const chemicals = [
+      record.pol ? `POL ${record.pol}` : "",
+      record.polPir ? `POL/PIR ${record.polPir}` : "",
+      record.mdi ? `MDI ${record.mdi}` : "",
+      record.pen ? `PEN ${record.pen}` : "",
+      record.cat1 ? `C1 ${record.cat1}` : "",
+      record.cat2 ? `C2 ${record.cat2}` : "",
+      record.cat3 ? `C3 ${record.cat3}` : "",
+      record.cat4 ? `C4 ${record.cat4}` : ""
+    ].filter(Boolean).join(" | ");
+
+    return [
+      record.espuma ? `Espuma: ${record.espuma}` : "",
+      record.fita ? `Fita: ${record.fita}` : "",
+      record.densidade ? `Densidade: ${record.densidade}` : "",
+      chemicals
+    ].filter(Boolean).join(" | ");
+  }
+
   function buildPrintHTML(type) {
     const records = filteredRecords(type);
     const title = reportTitle(type);
     const generatedAt = new Date().toLocaleString("pt-BR");
     const rows = records.map((record, index) => {
       const cells = type === "injecao"
-        ? [record.maquina, record.produto, record.quantidade, record.status, record.observacao || ""]
+        ? [
+            `${record.pir ? "PIR - " : ""}${record.tipoPainel || record.produto || ""}`,
+            record.espessura ? `${record.espessura} mm` : "",
+            record.ral || "Sem RAL",
+            record.metros || record.quantidade || "",
+            record.velocidade || "",
+            record.espuma || "",
+            record.fita || "",
+            record.densidade || "",
+            [
+              record.pol ? `POL ${record.pol}` : "",
+              record.polPir ? `POL/PIR ${record.polPir}` : "",
+              record.mdi ? `MDI ${record.mdi}` : "",
+              record.pen ? `PEN ${record.pen}` : "",
+              record.cat1 ? `C1 ${record.cat1}` : "",
+              record.cat2 ? `C2 ${record.cat2}` : "",
+              record.cat3 ? `C3 ${record.cat3}` : "",
+              record.cat4 ? `C4 ${record.cat4}` : ""
+            ].filter(Boolean).join(" | "),
+            record.maquina || "",
+            record.observacao || ""
+          ]
         : [record.ordem, record.medida, record.quantidade, record.status, record.observacao || ""];
       return `
         <tr>
@@ -326,7 +405,7 @@
     }).join("");
 
     const headers = type === "injecao"
-      ? ["#", "Data", "Máquina", "Produto", "Qtd", "Status", "Obs", "Operador"]
+      ? ["#", "Data", "Produto", "Esp.", "RAL", "Metros", "Vel.", "Espuma", "Fita", "Densidade", "Químicos", "Máquina", "Obs", "Operador"]
       : ["#", "Data", "Ordem/Cliente", "Medida", "Qtd", "Status", "Obs", "Operador"];
 
     return `
