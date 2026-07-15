@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ATLAS PAINEL</title>
+  <meta name="description" content="Sistema ATLAS para injeção, serra e relatórios liberados por acesso.">
+  <meta name="theme-color" content="#090b0f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ATLAS PAINEL">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="appShell">
+    <header class="topBar">
+      <img class="appIcon" src="icon-192x192.png" alt="ATLAS">
+      <div>
+        <p class="eyebrow">Sistema ATLAS</p>
+        <h1>Atlas Painel</h1>
+      </div>
+      <button class="installButton" id="installButton" type="button">Instalar</button>
+    </header>
+
+    <section class="statusGrid" aria-label="Status">
+      <div class="statusItem">
+        <span id="dayIcon">☀</span>
+        <strong id="currentTime">--:--:--</strong>
+        <em id="currentDate">--/--/----</em>
+        <small>Hora atual</small>
+      </div>
+      <div class="statusItem">
+        <span>°C</span>
+        <strong id="temperature">--°C</strong>
+        <em id="locationLabel">Localização atual</em>
+        <small>Temperatura</small>
+      </div>
+    </section>
+
+    <section class="panel operatorPanel" id="operatorPanel">
+      <label for="operatorName">Nome do operador</label>
+      <div class="inlineForm">
+        <input id="operatorName" type="text" maxlength="32" autocomplete="name" placeholder="Digite seu nome">
+        <button id="saveOperator" type="button">Entrar</button>
+      </div>
+      <p class="helperText">O nome fica salvo apenas neste celular.</p>
+    </section>
+
+    <section class="panel summaryPanel" id="summaryPanel" hidden>
+      <div>
+        <span id="greeting">Bem-vindo</span>
+        <strong id="operatorLabel"></strong>
+      </div>
+      <button class="ghostButton" id="changeOperator" type="button">Trocar</button>
+    </section>
+
+    <section class="accessPanel">
+      <div>
+        <span id="accessState">Modo operador</span>
+        <strong id="accessText">Relatórios bloqueados</strong>
+      </div>
+      <button class="ghostButton" id="loginButton" type="button">Liberar</button>
+      <button class="ghostButton danger" id="logoutButton" type="button" hidden>Sair</button>
+    </section>
+
+    <nav class="moduleTabs" aria-label="Módulos">
+      <button class="moduleTab active" type="button" data-view="injecao">Injeção</button>
+      <button class="moduleTab" type="button" data-view="serra">Serra</button>
+      <button class="moduleTab adminOnly" type="button" data-view="relatorio" hidden>Relatório</button>
+    </nav>
+
+    <section class="moduleView active" id="injecaoView">
+      <div class="sectionTitle">
+        <p class="eyebrow">Produção</p>
+        <h2>Injeção</h2>
+      </div>
+      <div class="field">
+        <label for="injecaoMaquina">Máquina</label>
+        <input id="injecaoMaquina" type="text" placeholder="Ex: Injetora 01">
+      </div>
+      <div class="field">
+        <label for="injecaoProduto">Produto</label>
+        <input id="injecaoProduto" type="text" placeholder="Nome do produto">
+      </div>
+      <div class="twoCols">
+        <div class="field">
+          <label for="injecaoQuantidade">Quantidade</label>
+          <input id="injecaoQuantidade" type="number" min="0" inputmode="numeric" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="injecaoStatus">Status</label>
+          <select id="injecaoStatus">
+            <option>Em produção</option>
+            <option>Finalizado</option>
+            <option>Parado</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="injecaoObs">Observação</label>
+        <textarea id="injecaoObs" rows="3" placeholder="Observações rápidas"></textarea>
+      </div>
+      <button class="primaryButton" type="button" data-save="injecao">Salvar injeção</button>
+    </section>
+
+    <section class="moduleView" id="serraView">
+      <div class="sectionTitle">
+        <p class="eyebrow">Produção</p>
+        <h2>Serra</h2>
+      </div>
+      <div class="field">
+        <label for="serraOrdem">Ordem ou cliente</label>
+        <input id="serraOrdem" type="text" placeholder="Ex: Pedido 1024">
+      </div>
+      <div class="field">
+        <label for="serraMedida">Medida</label>
+        <input id="serraMedida" type="text" placeholder="Ex: 2500 mm">
+      </div>
+      <div class="twoCols">
+        <div class="field">
+          <label for="serraQuantidade">Quantidade</label>
+          <input id="serraQuantidade" type="number" min="0" inputmode="numeric" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="serraStatus">Status</label>
+          <select id="serraStatus">
+            <option>Cortando</option>
+            <option>Finalizado</option>
+            <option>Parado</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="serraObs">Observação</label>
+        <textarea id="serraObs" rows="3" placeholder="Observações rápidas"></textarea>
+      </div>
+      <button class="primaryButton" type="button" data-save="serra">Salvar serra</button>
+    </section>
+
+    <section class="moduleView" id="relatorioView">
+      <div class="sectionTitle">
+        <p class="eyebrow">Área liberada</p>
+        <h2>Relatório</h2>
+      </div>
+      <div class="reportActions">
+        <button class="primaryButton" id="generateReport" type="button">Gerar relatório</button>
+        <button class="ghostButton" id="downloadReport" type="button">Baixar</button>
+        <button class="ghostButton" id="printReport" type="button">Imprimir</button>
+      </div>
+      <textarea id="reportOutput" rows="12" readonly placeholder="O relatório aparece aqui após liberar o sistema."></textarea>
+    </section>
+
+    <section class="historyPanel">
+      <div class="historyHeader">
+        <div>
+          <p class="eyebrow">Histórico local</p>
+          <h2>Últimos registros</h2>
+        </div>
+        <button class="ghostButton danger" id="clearHistory" type="button">Limpar</button>
+      </div>
+      <div class="historyList" id="historyList"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("sw.js");
+      });
+    }
+  </script>
+</body>
+</html>
