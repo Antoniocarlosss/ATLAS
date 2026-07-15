@@ -1548,7 +1548,7 @@ let producoesDoDia = []; // Deve ficar no topo do script
                 <span>PIR</span>
             </label>
             
-            <div style="display:flex; gap:10px; margin-bottom:10px;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-bottom:10px;">
                 <div style="flex:1;">
                     <label style="font-size:12px; color:#94a3b8;">ESPESSURA</label>
                     <select id="inj-esp">
@@ -1562,8 +1562,16 @@ let producoesDoDia = []; // Deve ficar no topo do script
                     </select>
                 </div>
                 <div style="flex:1;">
-                    <label style="font-size:12px; color:#94a3b8;">METROS</label>
-                    <input type="number" id="prod-metros" placeholder="Qtd" style="width:100%; padding:12px; background:#020617; color:white; border:1px solid #334155; border-radius:8px;">
+                    <label style="font-size:12px; color:#94a3b8;">METROS DA MANHÃ</label>
+                    <input type="number" id="prod-metros-manha" placeholder="0" oninput="atualizarTotalMetrosInjecao()" style="width:100%; padding:12px; background:#020617; color:white; border:1px solid #334155; border-radius:8px;">
+                </div>
+                <div style="flex:1;">
+                    <label style="font-size:12px; color:#94a3b8;">METROS DA TARDE</label>
+                    <input type="number" id="prod-metros-tarde" placeholder="0" oninput="atualizarTotalMetrosInjecao()" style="width:100%; padding:12px; background:#020617; color:white; border:1px solid #334155; border-radius:8px;">
+                </div>
+                <div style="flex:1;">
+                    <label style="font-size:12px; color:#94a3b8;">METROS TOTAIS</label>
+                    <input type="number" id="prod-metros" placeholder="0" readonly style="width:100%; padding:12px; background:#111827; color:#22c55e; border:1px solid #334155; border-radius:8px; font-weight:900;">
                 </div>
             </div>
 
@@ -1656,15 +1664,26 @@ function textoDensidadesInjecao(densidades) {
         .join(' | ');
 }
 
+function atualizarTotalMetrosInjecao(manhaId = 'prod-metros-manha', tardeId = 'prod-metros-tarde', totalId = 'prod-metros') {
+    const manha = parseFloat(document.getElementById(manhaId)?.value || 0) || 0;
+    const tarde = parseFloat(document.getElementById(tardeId)?.value || 0) || 0;
+    const total = manha + tarde;
+    const totalInput = document.getElementById(totalId);
+    if (totalInput) totalInput.value = total ? total.toFixed(2) : '';
+}
+
 function salvarNaLista() {
     const painel = document.getElementById('inj-painel').value;
     const esp = document.getElementById('inj-esp').value;
     const espuma = document.getElementById('inj-espuma')?.value || espumaPadraoInjecao(painel);
     const fita = document.getElementById('inj-fita')?.value || '';
     const densidades = coletarDensidadesInjecao();
+    atualizarTotalMetrosInjecao();
+    const metrosManha = document.getElementById('prod-metros-manha')?.value || '';
+    const metrosTarde = document.getElementById('prod-metros-tarde')?.value || '';
     const metros = document.getElementById('prod-metros').value;
 
-    if(!metros) return alert("Por favor, insira a quantidade de metros!");
+    if(!metros) return alert("Por favor, insira os metros da manhã ou da tarde!");
 
     const item = {
         id: Date.now(),
@@ -1675,6 +1694,8 @@ function salvarNaLista() {
         espuma,
         fita,
         densidades,
+        metrosManha,
+        metrosTarde,
         metros: metros,
         pol: document.getElementById('q-pol').value || 0,
         polpir: document.getElementById('q-polpir')?.value || 0,
@@ -1691,6 +1712,8 @@ function salvarNaLista() {
     producoesDoDia.push(item);
     document.getElementById('btn-finalizar').style.display = "block";
     atualizarListaVisual();
+    document.getElementById('prod-metros-manha').value = "";
+    document.getElementById('prod-metros-tarde').value = "";
     document.getElementById('prod-metros').value = "";
 }
 
@@ -1704,7 +1727,7 @@ function atualizarListaVisual() {
                 <div style="font-size:12px; color:white;">
                     <b>${item.pir ? 'PIR - ' : ''}${item.nome} (${item.esp}mm)</b>${item.espuma ? ` <small style="color:#fbbf24;">| Espuma: ${item.espuma}</small>` : ''}${item.fita ? ` <small style="color:#22c55e;">| Fita: ${item.fita}</small>` : ''}<br>
                     ${textoDensidadesInjecao(item.densidades) ? `<small style="color:#38bdf8;">Densidade: ${textoDensidadesInjecao(item.densidades)}</small><br>` : ''}
-                    <span>Mts: ${item.metros} | Vel: ${item.vel}</span>
+                    <span>Manhã: ${item.metrosManha || 0} m | Tarde: ${item.metrosTarde || 0} m | Total: ${item.metros} m | Vel: ${item.vel}</span>
                 </div>
                 <div style="display:flex; gap:5px;">
                     <button onclick="editarTudo(${item.id})" style="background:#eab308; color:black; border:none; padding:5px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:10px;">EDITAR</button>
@@ -1865,8 +1888,14 @@ function editarTudo(id) {
                         <input type="checkbox" id="inj-pir-edit" ${item.pir ? 'checked' : ''} style="width:20px; height:20px;">
                         PIR
                     </label>
-                    <label style="color:#94a3b8; font-size:11px;">METROS
-                        <input type="number" id="edit-metros" value="${item.metros}" style="width:100%; margin-top:4px; padding:10px; border-radius:8px; background:#020617; color:white; border:1px solid #334155;">
+                    <label style="color:#94a3b8; font-size:11px;">METROS DA MANHÃ
+                        <input type="number" id="edit-metros-manha" value="${item.metrosManha || (!item.metrosTarde ? item.metros : '') || ''}" oninput="atualizarTotalMetrosInjecao('edit-metros-manha','edit-metros-tarde','edit-metros')" style="width:100%; margin-top:4px; padding:10px; border-radius:8px; background:#020617; color:white; border:1px solid #334155;">
+                    </label>
+                    <label style="color:#94a3b8; font-size:11px;">METROS DA TARDE
+                        <input type="number" id="edit-metros-tarde" value="${item.metrosTarde || ''}" oninput="atualizarTotalMetrosInjecao('edit-metros-manha','edit-metros-tarde','edit-metros')" style="width:100%; margin-top:4px; padding:10px; border-radius:8px; background:#020617; color:white; border:1px solid #334155;">
+                    </label>
+                    <label style="color:#94a3b8; font-size:11px;">METROS TOTAIS
+                        <input type="number" id="edit-metros" value="${item.metros}" readonly style="width:100%; margin-top:4px; padding:10px; border-radius:8px; background:#111827; color:#22c55e; border:1px solid #334155; font-weight:900;">
                     </label>
                     <label style="color:#94a3b8; font-size:11px;">VELOCIDADE
                         <select id="edit-vel" style="width:100%; margin-top:4px; padding:10px; background:#020617; color:white; border:1px solid #334155; border-radius:8px;">
@@ -1943,6 +1972,7 @@ function editarTudo(id) {
         item.paragens.forEach(p => adicionarLinhaParagem(p.motivo, p.tempo));
     }
 
+    atualizarTotalMetrosInjecao('edit-metros-manha', 'edit-metros-tarde', 'edit-metros');
     document.getElementById('modal-edicao').style.display = 'flex';
 }
 
@@ -1951,6 +1981,9 @@ function salvarEdicaoModal() {
     const item = producoesDoDia.find(p => p.id === id);
     
     if (item) {
+        atualizarTotalMetrosInjecao('edit-metros-manha', 'edit-metros-tarde', 'edit-metros');
+        item.metrosManha = document.getElementById('edit-metros-manha')?.value || '';
+        item.metrosTarde = document.getElementById('edit-metros-tarde')?.value || '';
         item.metros = document.getElementById('edit-metros').value;
         item.nome = document.getElementById('inj-painel-edit')?.value || item.nome;
         item.esp = document.getElementById('edit-esp')?.value || item.esp;
@@ -13923,6 +13956,8 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
     }[c]));
     const itens = Array.isArray(rel.itens) ? rel.itens : [];
     const totalDia = itens.reduce((soma, item) => soma + (parseFloat(item.metros) || 0), 0);
+    const totalManhaDia = itens.reduce((soma, item) => soma + (parseFloat(item.metrosManha) || 0), 0);
+    const totalTardeDia = itens.reduce((soma, item) => soma + (parseFloat(item.metrosTarde) || 0), 0);
     const quimicos = [
         ['MDI', 'mdi', '#9b2c2c', '#fff'],
         ['POL PUR', 'pol', '#d9ead3', '#000'],
@@ -13992,8 +14027,8 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
         }).join('');
         const metrosA = prodA.metros ? `${Number(prodA.metros || 0).toFixed(2)} m` : '';
         const metrosB = prodB.metros ? `${Number(prodB.metros || 0).toFixed(2)} m` : '';
-        const metrosManha = prodA.metros ? `${Number(prodA.metros || 0).toFixed(2)} m` : '';
-        const metrosTarde = prodB.metros ? `${Number(prodB.metros || 0).toFixed(2)} m` : '';
+        const metrosManha = `${totalManhaDia.toFixed(2)} m`;
+        const metrosTarde = `${totalTardeDia.toFixed(2)} m`;
 
         return `
             <section class="page">
