@@ -285,6 +285,7 @@
           <input id="atlas-equipe-novo-nome" type="text" placeholder="Nome de outra pessoa" style="width:100%; padding:11px; background:#020617; color:white; border:1px solid #334155; border-radius:8px;">
           <button type="button" onclick="atlasAdicionarNomeEquipeTurno()" style="background:#ef2332; color:white; border:none; border-radius:8px; padding:0 16px; font-weight:900;">ADICIONAR</button>
         </div>
+        <button type="button" onclick="atlasApagarNomeEquipeTurno()" style="width:100%; margin-top:8px; background:#334155; color:white; border:1px solid #64748b; border-radius:8px; padding:11px 16px; font-weight:900;">APAGAR NOME SELECIONADO</button>
         <small style="display:block; color:#94a3b8; margin-top:8px;">Pode selecionar mais de um nome segurando Ctrl no computador. No celular, toque nos nomes desejados.</small>
       </div>
     `;
@@ -312,6 +313,23 @@
         });
       });
     }
+  };
+
+  window.atlasApagarNomeEquipeTurno = function () {
+    const selecionados = [
+      ...Array.from(document.getElementById("atlas-equipe-manha")?.selectedOptions || []),
+      ...Array.from(document.getElementById("atlas-equipe-tarde")?.selectedOptions || [])
+    ].map(opt => opt.value).filter(Boolean);
+
+    if (!selecionados.length) return alert("Selecione o nome que quer apagar.");
+    if (!confirm(`Apagar ${selecionados.join(", ")} da lista de equipes?`)) return;
+
+    const apagar = new Set(selecionados.map(nome => nome.toLowerCase()));
+    const lista = atlasEquipesNomes().filter(nome => !apagar.has(nome.toLowerCase()));
+    atlasSalvarEquipesNomes(lista);
+
+    const bloco = document.getElementById("atlas-equipe-turnos");
+    if (bloco) bloco.outerHTML = atlasEquipeTurnosHTML();
   };
 
   window.atlasColetarEquipesTurno = function () {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v190-impressao-orientacao';
+const CACHE_NAME = 'atlas-v191-apagar-equipe';
 const assets = [
   './',
   './index.html',
