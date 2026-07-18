@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v187-sem-login-inicial';
+const CACHE_NAME = 'atlas-v188-logo-atalho';
 const assets = [
   './',
   './index.html',
