@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="atlas-public-mode">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
@@ -15,16 +15,18 @@
         }
     </script>
     <style>
+        #tela-login { display: none !important; }
+        #app-principal { display: block !important; }
         html.atlas-route-loading #tela-login { display: none !important; }
         html.atlas-route-loading #app-principal { display: block !important; }
     </style>
-    <link rel="stylesheet" href="style.css?v=20260715-limpa-rota-publica-186">
-    <link rel="stylesheet" href="atlas-publico.css?v=20260715-limpa-rota-publica-186">
+    <link rel="stylesheet" href="style.css?v=20260718-sem-login-inicial-187">
+    <link rel="stylesheet" href="atlas-publico.css?v=20260718-sem-login-inicial-187">
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-    <section id="tela-login">
+    <section id="tela-login" style="display:none;" aria-hidden="true">
         <div class="login-box">
             <div class="logo-container-css login-center">
                 <div class="logo-bars-css">
@@ -51,7 +53,7 @@
         </div>
     </section>
 
-    <div id="app-principal" style="display:none;">
+    <div id="app-principal" style="display:block;">
         <header class="atlas-topbar">
             <div class="atlas-topbar-brand">
                 <div class="logo-container-css header-logo-scale">
@@ -186,8 +188,8 @@
             });
         })();
 
-        window.ATLAS_SISTEMA_VERSAO = '20260715-limpa-rota-publica-186';
-        window.ATLAS_SISTEMA_BUILD = 186;
+        window.ATLAS_SISTEMA_VERSAO = '20260718-sem-login-inicial-187';
+        window.ATLAS_SISTEMA_BUILD = 187;
         window.atlasMostrarTelaAtualizacao = function atlasMostrarTelaAtualizacao(opcoes = {}) {
             const finalizado = opcoes.finalizado === true;
             let overlay = document.getElementById('atlas-update-screen');
@@ -415,11 +417,11 @@
             }
         } catch (erro) {}
     </script>
-    <script src="script.js?v=20260715-limpa-rota-publica-186"></script>
-    <script src="historicos-admin.js?v=20260715-limpa-rota-publica-186"></script>
-    <script src="atlas-ajustes-fachadas.js?v=20260715-limpa-rota-publica-186"></script>
-    <script type="module" src="main.js?v=20260715-limpa-rota-publica-186"></script>
-    <script src="atlas-publico.js?v=20260715-limpa-rota-publica-186"></script>
+    <script src="script.js?v=20260718-sem-login-inicial-187"></script>
+    <script src="historicos-admin.js?v=20260718-sem-login-inicial-187"></script>
+    <script src="atlas-ajustes-fachadas.js?v=20260718-sem-login-inicial-187"></script>
+    <script type="module" src="main.js?v=20260718-sem-login-inicial-187"></script>
+    <script src="atlas-publico.js?v=20260718-sem-login-inicial-187"></script>
     <script>
         if ('serviceWorker' in navigator) {
             let atlasAtualizandoPWA = false;
@@ -430,7 +432,7 @@
             });
 
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=20260715-limpa-rota-publica-186')
+                navigator.serviceWorker.register('sw.js?v=20260718-sem-login-inicial-187')
                     .then(reg => {
                         console.log('Atlas PWA: Ativo!');
                         reg.update();

@@ -468,7 +468,23 @@ async function atlasSairSistema() {
     atlasMarcarDispositivoOffline().catch(erro => {
         console.warn('Nao foi possivel marcar offline antes de sair:', erro);
     });
-    setTimeout(() => location.reload(), 180);
+    setTimeout(() => {
+        if (typeof window.atlasPublicoEntrarVisitante === 'function') {
+            window.atlasSaindoSistema = false;
+            window.atlasPublicoEntrarVisitante();
+            if (botaoSair) {
+                botaoSair.disabled = false;
+                botaoSair.textContent = 'Entrar';
+            }
+            return;
+        }
+        const url = new URL(location.href);
+        url.searchParams.delete('modulo');
+        url.searchParams.delete('pagina');
+        url.searchParams.delete('atlas_modulo');
+        url.searchParams.delete('atlas_nocache');
+        location.replace(url.pathname + (url.search ? url.search : ''));
+    }, 180);
 }
 
 window.addEventListener('pagehide', () => {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v186-limpa-rota-publica';
+const CACHE_NAME = 'atlas-v187-sem-login-inicial';
 const assets = [
   './',
   './index.html',
