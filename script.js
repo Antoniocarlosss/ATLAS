@@ -11157,6 +11157,7 @@ document.addEventListener('click', function(evento) {
             modulo,
             data: d.toLocaleDateString('pt-br'),
             operador: document.getElementById('user-display')?.innerText || 'OPERADOR',
+            equipesTurno: typeof window.atlasColetarEquipesTurno === 'function' ? window.atlasColetarEquipesTurno() : {},
             itens: [...producoesDoDia]
         };
 
@@ -11261,6 +11262,7 @@ document.addEventListener('click', function(evento) {
             mes: parseInt(mes, 10),
             ano,
             operador: document.getElementById('user-display')?.innerText || 'OP. SERRA',
+            equipesTurno: typeof window.atlasColetarEquipesTurno === 'function' ? window.atlasColetarEquipesTurno() : {},
             itens: [...db_serra_live],
             totalGeral: db_serra_live.reduce((acc, cur) => acc + ((parseFloat(cur.metros) || 0) * (parseInt(cur.qtd, 10) || 1)), 0).toFixed(2)
         };
@@ -14292,6 +14294,8 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
     const totalDia = itens.reduce((soma, item) => soma + (parseFloat(item.metros) || 0), 0);
     const totalManhaDia = itens.reduce((soma, item) => soma + (parseFloat(item.metrosManha) || 0), 0);
     const totalTardeDia = itens.reduce((soma, item) => soma + (parseFloat(item.metrosTarde) || 0), 0);
+    const equipeManha = Array.isArray(rel.equipesTurno?.manha) ? rel.equipesTurno.manha.join(', ') : (rel.equipeManha || '');
+    const equipeTarde = Array.isArray(rel.equipesTurno?.tarde) ? rel.equipesTurno.tarde.join(', ') : (rel.equipeTarde || '');
     const quimicos = [
         ['MDI', 'mdi', '#9b2c2c', '#fff'],
         ['POL PUR', 'pol', '#d9ead3', '#000'],
@@ -14374,6 +14378,13 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
                     <div class="titulo">Gest&atilde;o de Produ&ccedil;&atilde;o Di&aacute;ria - Inje&ccedil;&atilde;o</div>
                 </div>
 
+                <table class="equipes">
+                    <tbody>
+                        <tr><th>Equipe turno da manh&atilde;</th><td>${seguro(equipeManha || '-')}</td></tr>
+                        <tr><th>Equipe turno da tarde</th><td>${seguro(equipeTarde || '-')}</td></tr>
+                    </tbody>
+                </table>
+
                 <div class="campos-duplos">
                     ${camposProducao(prodA, 'esquerda', paginaIndex)}
                     ${camposProducao(prodB, 'direita', paginaIndex)}
@@ -14448,6 +14459,9 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
                 .atlas-word { font-family: Arial Black, Arial, sans-serif; font-size: 32px; line-height:.78; letter-spacing:-1px; color:#111; }
                 .painel-word { font-size: 10px; letter-spacing: 7px; font-weight: 800; margin-left: 4px; margin-top: 4px; }
                 .titulo { font-size: 21px; font-weight: 800; text-align: center; flex: 1; margin-bottom: 3mm; }
+                .equipes { width: 100%; margin: -5mm 0 7mm; font-size: 11px; }
+                .equipes th { width: 34%; background: #eee; text-align: left; }
+                .equipes td { font-weight: 700; }
                 .campos-duplos { display: grid; grid-template-columns: 1fr 1fr; gap: 23mm; margin-bottom: 7mm; }
                 .campo { display: grid; grid-template-columns: auto 1fr; align-items: end; gap: 4px; margin-bottom: 2.1mm; font-size: 12px; font-weight: 700; }
                 .linha { border-bottom: 2px solid #111; min-height: 15px; padding-left: 3px; }

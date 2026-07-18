@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v188-logo-atalho';
+const CACHE_NAME = 'atlas-v189-equipes-turnos';
 const assets = [
   './',
   './index.html',

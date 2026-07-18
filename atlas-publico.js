@@ -249,10 +249,95 @@
     renderPublicHome();
   };
 
+  const EQUIPES_KEY = "atlas_equipes_turno_nomes";
+
+  function atlasEquipesNomes() {
+    try {
+      const lista = JSON.parse(localStorage.getItem(EQUIPES_KEY)) || [];
+      return [...new Set(lista.map(nome => String(nome || "").trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function atlasSalvarEquipesNomes(lista) {
+    localStorage.setItem(EQUIPES_KEY, JSON.stringify([...new Set((lista || []).map(nome => String(nome || "").trim()).filter(Boolean))]));
+  }
+
+  function atlasOptionsEquipes(selecionados = []) {
+    const nomes = atlasEquipesNomes();
+    return nomes.map(nome => `<option value="${nome.replace(/"/g, "&quot;")}" ${selecionados.includes(nome) ? "selected" : ""}>${nome}</option>`).join("");
+  }
+
+  function atlasEquipeTurnosHTML() {
+    return `
+      <div id="atlas-equipe-turnos" style="background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px; margin:0 0 15px;">
+        <div style="color:#ef4444; font-weight:900; font-size:13px; margin-bottom:10px;">EQUIPE POR TURNO</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px;">
+          <label style="color:#cbd5e1; font-size:12px; font-weight:800;">Turno da manha
+            <select id="atlas-equipe-manha" multiple size="4" style="width:100%; margin-top:6px; padding:10px; background:#020617; color:white; border:1px solid #334155; border-radius:8px;">${atlasOptionsEquipes()}</select>
+          </label>
+          <label style="color:#cbd5e1; font-size:12px; font-weight:800;">Turno da tarde
+            <select id="atlas-equipe-tarde" multiple size="4" style="width:100%; margin-top:6px; padding:10px; background:#020617; color:white; border:1px solid #334155; border-radius:8px;">${atlasOptionsEquipes()}</select>
+          </label>
+        </div>
+        <div style="display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; margin-top:10px;">
+          <input id="atlas-equipe-novo-nome" type="text" placeholder="Nome de outra pessoa" style="width:100%; padding:11px; background:#020617; color:white; border:1px solid #334155; border-radius:8px;">
+          <button type="button" onclick="atlasAdicionarNomeEquipeTurno()" style="background:#ef2332; color:white; border:none; border-radius:8px; padding:0 16px; font-weight:900;">ADICIONAR</button>
+        </div>
+        <small style="display:block; color:#94a3b8; margin-top:8px;">Pode selecionar mais de um nome segurando Ctrl no computador. No celular, toque nos nomes desejados.</small>
+      </div>
+    `;
+  }
+
+  window.atlasAdicionarNomeEquipeTurno = function () {
+    const input = document.getElementById("atlas-equipe-novo-nome");
+    const nome = String(input?.value || "").trim();
+    if (!nome) return;
+    const lista = atlasEquipesNomes();
+    if (!lista.some(item => item.toLowerCase() === nome.toLowerCase())) {
+      lista.push(nome);
+      atlasSalvarEquipesNomes(lista);
+    }
+    const selecaoAtual = window.atlasColetarEquipesTurno();
+    const bloco = document.getElementById("atlas-equipe-turnos");
+    if (bloco) {
+      bloco.outerHTML = atlasEquipeTurnosHTML();
+      ["manha", "tarde"].forEach(turno => {
+        const select = document.getElementById(`atlas-equipe-${turno}`);
+        (selecaoAtual[turno] || []).concat(nome).forEach(valor => {
+          Array.from(select?.options || []).forEach(opt => {
+            if (opt.value === valor) opt.selected = true;
+          });
+        });
+      });
+    }
+  };
+
+  window.atlasColetarEquipesTurno = function () {
+    const ler = id => Array.from(document.getElementById(id)?.selectedOptions || []).map(opt => opt.value).filter(Boolean);
+    return { manha: ler("atlas-equipe-manha"), tarde: ler("atlas-equipe-tarde") };
+  };
+
+  function instalarEquipesTurnoFormulario() {
+    if (document.getElementById("atlas-equipe-turnos")) return;
+    const dataInjecao = document.getElementById("data-producao");
+    if (dataInjecao) {
+      dataInjecao.insertAdjacentHTML("afterend", atlasEquipeTurnosHTML());
+      return;
+    }
+    const dataSerra = document.getElementById("h-data-rel-serra") || document.getElementById("data-manual-serra");
+    const containerSerra = document.getElementById("container-acao-serra") || document.getElementById("render-modulo");
+    if (dataSerra && containerSerra) {
+      dataSerra.closest("div")?.insertAdjacentHTML("afterend", atlasEquipeTurnosHTML());
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     waitReady(() => {
       enterPublicMode();
     });
+    setInterval(instalarEquipesTurnoFormulario, 700);
   });
 
   function instalarPDFSerraCompleto() {
@@ -376,6 +461,8 @@
       const totalManha = porTurno.manha.reduce((s, i) => s + totalItem(i), 0);
       const totalTarde = porTurno.tarde.reduce((s, i) => s + totalItem(i), 0);
       const totalGeral = totalManha + totalTarde;
+      const equipeManha = Array.isArray(rel.equipesTurno?.manha) ? rel.equipesTurno.manha.join(", ") : (rel.equipeManha || "");
+      const equipeTarde = Array.isArray(rel.equipesTurno?.tarde) ? rel.equipesTurno.tarde.join(", ") : (rel.equipeTarde || "");
 
       janela.document.write(`
         <!DOCTYPE html>
@@ -389,6 +476,7 @@
             .topo{display:flex;justify-content:space-between;align-items:center;background:#000;color:#fff;border-bottom:5px solid #e31c24;padding:12px 14px;margin-bottom:7mm}
             .marca{font-size:24px;font-weight:900}.marca span{color:#e31c24}.dados{text-align:right;font-weight:800;line-height:1.45}
             .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm;margin-bottom:6mm}.card{border:2px solid #000;padding:8px;text-align:center}.card span{display:block;font-size:11px;text-transform:uppercase;font-weight:800}.card b{font-size:22px}
+            .equipes{width:100%;border-collapse:collapse;margin:-2mm 0 5mm;font-size:11px}.equipes th{background:#eee;text-align:left;width:26%}.equipes td{font-weight:700}
             .secao{background:#111;color:#fff;text-align:center;font-weight:900;text-transform:uppercase;border:2px solid #000;padding:7px;margin-top:6mm}
             .subsecao{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;background:#e5e7eb;border:1.5px solid #000;border-top:0;padding:5px 8px;font-weight:900;text-transform:uppercase;font-size:12px}
             .subsecao span{grid-column:2;text-align:center}
@@ -402,6 +490,7 @@
         <body>
           <main class="page">
             <header class="topo"><div><div class="marca"><span>ATLAS</span> PAINEL</div><div>RELATORIO DE SERRA POR TURNO</div></div><div class="dados">DATA: ${seguro(rel.data)}<br>OP: ${seguro(rel.operador)}</div></header>
+            <table class="equipes"><tbody><tr><th>Equipe manha</th><td>${seguro(equipeManha || "-")}</td></tr><tr><th>Equipe tarde</th><td>${seguro(equipeTarde || "-")}</td></tr></tbody></table>
             <section class="cards"><div class="card"><span>Turno da manha</span><b>${totalManha.toFixed(2)} m</b></div><div class="card"><span>Turno da tarde</span><b>${totalTarde.toFixed(2)} m</b></div><div class="card"><span>Total do dia</span><b>${totalGeral.toFixed(2)} m</b></div></section>
             ${blocoTurno("Turno da manha", porTurno.manha)}
             ${blocoTurno("Turno da tarde", porTurno.tarde)}
