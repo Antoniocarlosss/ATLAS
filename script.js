@@ -2240,7 +2240,7 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
 
                 @media print { 
                     .no-print { display: none !important; } 
-                    @page { size: landscape; margin: 0; }
+                    @page { margin: 0; }
                     body { width: 100%; }
                     .header-container { background: #000 !important; -webkit-print-color-adjust: exact; }
                 }
@@ -2383,7 +2383,7 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
                     body { background: #fff; }
                     .page { margin: 0; width: auto; min-height: auto; padding: 18mm 20mm 12mm; }
                     .no-print { display: none !important; }
-                    @page { size: A4 portrait; margin: 0; }
+                    @page { margin: 0; }
                     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 }
             </style>
@@ -2520,7 +2520,7 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
                     body { background: #fff; }
                     .page { margin: 0; width: 210mm; height: 297mm; padding: 14mm 20mm 8mm; }
                     .no-print { display: none !important; }
-                    @page { size: A4 portrait; margin: 0; }
+                    @page { margin: 0; }
                     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 }
             </style>
@@ -3376,7 +3376,7 @@ gerarPDF_Bobines = function(dadosEncoded) {
             <meta charset="UTF-8">
             <title>Gestao de Producao Diaria - Bobines / Filmes</title>
             <style>
-                @page { size:A4; margin:5mm; }
+                @page { margin: 5mm; }
                 * { box-sizing:border-box; }
                 body { font-family:Arial, sans-serif; color:#111; margin:0; background:#fff; }
                 .folha { width:200mm; min-height:287mm; margin:auto; padding:11mm 8mm 7mm; page-break-after:avoid; page-break-inside:avoid; display:flex; flex-direction:column; }
@@ -10042,7 +10042,7 @@ document.addEventListener('click', function(evento) {
                         body { background:#fff; }
                         .page { width:297mm; min-height:210mm; margin:0; padding:9mm; }
                         .no-print { display:none !important; }
-                        @page { size:A4 landscape; margin:0; }
+                        @page { margin: 0; }
                         * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
                     }
                 </style>
@@ -13314,7 +13314,7 @@ document.addEventListener('click', function(evento) {
             <head>
                 <title>Plano de Pedidos</title>
                 <style>
-                    @page { size: A4 portrait; margin: 10mm; }
+                    @page { margin: 10mm; }
                     * { box-sizing: border-box; }
                     body { font-family: Arial, sans-serif; color:#000; margin:0; padding:0; background:#fff; }
                     .cabecalho { display:flex; justify-content:space-between; align-items:center; border-bottom:4px solid #E31C24; padding:6px 0 10px 0; margin-bottom:10px; }
@@ -14060,7 +14060,7 @@ document.addEventListener('click', function(evento) {
             <head>
                 <title>Plano de Pedidos</title>
                 <style>
-                    @page { size: A4 portrait; margin: 10mm; }
+                    @page { margin: 10mm; }
                     * { box-sizing: border-box; }
                     body { font-family: Arial, sans-serif; color:#000; margin:0; padding:0; background:#fff; }
                     .cabecalho { display:flex; justify-content:space-between; align-items:center; border-bottom:4px solid #E31C24; padding:6px 0 10px 0; margin-bottom:10px; }
@@ -14488,7 +14488,7 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
                     body { background: #fff; }
                     .page { margin: 0; width: 210mm; height: 297mm; padding: 17mm 21mm 10mm; }
                     .no-print { display: none !important; }
-                    @page { size: A4 portrait; margin: 0; }
+                    @page { margin: 0; }
                     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
                 }
             </style>
