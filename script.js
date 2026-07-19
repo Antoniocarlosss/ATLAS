@@ -9658,8 +9658,33 @@ document.addEventListener('click', function(evento) {
 
     const windowOpenOriginalAtlas = window.open;
 
+    function atlasModuloPorTextoRetornoPDF(texto = '') {
+        const normalizado = String(texto || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+
+        if (normalizado.includes('relatorio de serra') || normalizado.includes('historico serra') || normalizado.includes('serra por turno')) return 'serra';
+        if (normalizado.includes('relatorio da injecao') || normalizado.includes('relatorio injecao') || normalizado.includes('historico da injecao') || normalizado.includes('injecao')) return 'injecao';
+        if (normalizado.includes('relatorio de bobines') || normalizado.includes('bobines')) return 'bobines';
+        if (normalizado.includes('relatorio embalagem') || normalizado.includes('embalagem')) return 'embalagem';
+        if (normalizado.includes('plano de relatorio') || normalizado.includes('historico de planos')) return 'plano';
+        return '';
+    }
+
     window.atlasVoltarDoPDFParaTelaAnterior = function(contexto = {}) {
         const modulo = contexto.modulo || window.atlasModuloAtual || 'plano';
+        const modoPublico = document.documentElement.classList.contains('atlas-public-mode') || (window.usuarioLogado && window.usuarioLogado.id === 'visitante');
+
+        if (modoPublico && modulo === 'injecao' && typeof window.atlasPublicoAbrirHistoricoInjecao === 'function') {
+            window.atlasPublicoAbrirHistoricoInjecao();
+            return;
+        }
+
+        if (modoPublico && modulo === 'serra' && typeof window.atlasPublicoAbrirHistoricoSerra === 'function') {
+            window.atlasPublicoAbrirHistoricoSerra();
+            return;
+        }
 
         if (modulo === 'injecao') {
             abrirModulo('injecao');
@@ -9727,8 +9752,9 @@ document.addEventListener('click', function(evento) {
 
     function atlasContextoRetornoPDF() {
         const textoTela = String(document.getElementById('render-modulo')?.innerText || '').toLowerCase();
+        const moduloPeloTexto = atlasModuloPorTextoRetornoPDF(textoTela);
         return {
-            modulo: window.atlasModuloAtual || '',
+            modulo: moduloPeloTexto || window.atlasModuloAtual || new URLSearchParams(location.search).get('modulo') || '',
             historico: textoTela.includes('historico') || textoTela.includes('histórico')
         };
     }
@@ -9789,7 +9815,13 @@ document.addEventListener('click', function(evento) {
                 const div = janela.document.createElement('div');
                 div.id = 'atlas-botao-voltar-pdf';
                 div.className = 'no-print';
-                janela.atlasContextoRetornoPDF = contextoRetorno;
+                const textoPDF = `${janela.document.title || ''} ${janela.document.body?.innerText || ''}`;
+                const moduloPeloPDF = atlasModuloPorTextoRetornoPDF(textoPDF);
+                janela.atlasContextoRetornoPDF = {
+                    ...contextoRetorno,
+                    modulo: moduloPeloPDF || contextoRetorno.modulo || '',
+                    historico: true
+                };
                 janela.atlasVoltarFecharPDF = function() {
                     const contexto = janela.atlasContextoRetornoPDF || contextoRetorno || {};
 

@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'atlas-v193-cabecalho-estavel';
+﻿const CACHE_NAME = 'atlas-v194-retorno-pdf-publico';
 const assets = [
   './',
   './index.html',
@@ -84,4 +84,5 @@ self.addEventListener('fetch', e => {
         })))
   );
 });
+
 
