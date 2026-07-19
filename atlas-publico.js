@@ -93,11 +93,12 @@
     const textoSaudacao = document.getElementById("atlas-public-saudacao");
     const topoHora = document.getElementById("atlas-home-datahora");
     const topoSaudacao = document.getElementById("atlas-home-saudacao");
+    const modoPublico = document.documentElement.classList.contains("atlas-public-mode");
     if (textoHora) textoHora.textContent = hora;
     if (textoData) textoData.textContent = data;
     if (textoSaudacao) textoSaudacao.textContent = saudacao;
-    if (topoHora) topoHora.textContent = `${data} ${hora}`;
-    if (topoSaudacao) topoSaudacao.textContent = saudacao;
+    if (modoPublico && topoHora) topoHora.textContent = `${data} ${hora}`;
+    if (modoPublico && topoSaudacao) topoSaudacao.textContent = saudacao;
   }
 
   async function atualizarTempoPublico(lat, lon) {
@@ -208,6 +209,10 @@
 
   function enterAdminMode() {
     document.documentElement.classList.remove("atlas-public-mode");
+    if (window.atlasPublicoRelogioTimer) {
+      clearInterval(window.atlasPublicoRelogioTimer);
+      window.atlasPublicoRelogioTimer = null;
+    }
     if (!originalLogout && typeof window.atlasSairSistema === "function") {
       originalLogout = window.atlasSairSistema;
     }

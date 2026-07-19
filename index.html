@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-br" class="atlas-public-mode">
 <head>
     <meta charset="UTF-8">
@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Atlas Painel - Gestão</title>
+    <title>Atlas Painel - GestÃ£o</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script>
@@ -20,8 +20,8 @@
         html.atlas-route-loading #tela-login { display: none !important; }
         html.atlas-route-loading #app-principal { display: block !important; }
     </style>
-    <link rel="stylesheet" href="style.css?v=20260719-tempo-home-192">
-    <link rel="stylesheet" href="atlas-publico.css?v=20260719-tempo-home-192">
+    <link rel="stylesheet" href="style.css?v=20260719-cabecalho-estavel-193">
+    <link rel="stylesheet" href="atlas-publico.css?v=20260719-cabecalho-estavel-193">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icone-192x192.png">
@@ -43,10 +43,10 @@
                 </div>
             </div>
 
-            <h1>Sistema de Gestão</h1>
+            <h1>Sistema de GestÃ£o</h1>
             <div class="input-wrapper">
                 <i class="fas fa-user"></i>
-                <input type="text" id="login-email" placeholder="ID do Usuário">
+                <input type="text" id="login-email" placeholder="ID do UsuÃ¡rio">
             </div>
             <div class="input-wrapper">
                 <i class="fas fa-lock"></i>
@@ -136,18 +136,18 @@
                     <h2>Modulos</h2>
                     <span>Escolha a area de trabalho</span>
                 </div>
-    <div class="card" onclick="abrirModulo('injecao')"><i class="fas fa-microchip"></i><span>Injeção</span></div>
+    <div class="card" onclick="abrirModulo('injecao')"><i class="fas fa-microchip"></i><span>InjeÃ§Ã£o</span></div>
     <div class="card" onclick="abrirModulo('bobines')"><i class="fas fa-compact-disc"></i><span>Bobines</span></div>
     <div class="card" onclick="abrirModulo('serra')"><i class="fas fa-layer-group"></i><span>Serra</span></div>
     <div class="card" onclick="abrirModulo('embalagem')"><i class="fas fa-boxes-packing"></i><span>Embalagem</span></div>
-    <div id="card-gestao" class="card" onclick="abrirModulo('gestao')"><i class="fas fa-users"></i><span>Usuários</span></div>
+    <div id="card-gestao" class="card" onclick="abrirModulo('gestao')"><i class="fas fa-users"></i><span>UsuÃ¡rios</span></div>
     <div class="card" onclick="abrirModulo('config')"><i class="fas fa-gears"></i><span>Ajustes</span></div>
     <div class="card" onclick="abrirModulo('plano')"><i class="fas fa-clipboard-list"></i><span>Plano</span></div>
     <div id="card-stock" class="card" onclick="abrirModulo('stock')"><i class="fas fa-boxes-stacked"></i><span>Stock</span></div>
-    <div id="card-permissoes" class="card" onclick="abrirModulo('permissoes')"><i class="fas fa-user-shield"></i><span>Permissões</span></div>
+    <div id="card-permissoes" class="card" onclick="abrirModulo('permissoes')"><i class="fas fa-user-shield"></i><span>PermissÃµes</span></div>
     <div id="card-conferencia" class="card" onclick="abrirModulo('conferencia')">
     <i class="fas fa-clipboard-check"></i>
-    <span>Conferência</span>
+    <span>ConferÃªncia</span>
 </div>
     <div id="card-lixeira-atlas" class="card" onclick="abrirModulo('lixeira')">
     <i class="fas fa-trash-can"></i>
@@ -160,7 +160,7 @@
                     <button onclick="voltarHome()" class="btn-voltar-clean">
                         <i class="fas fa-arrow-left"></i> VOLTAR
                     </button>
-                    <h2 id="titulo-modulo" style="font-size:16px;">MÓDULO</h2>
+                    <h2 id="titulo-modulo" style="font-size:16px;">MÃ“DULO</h2>
                 </div>
                 <div id="render-modulo" class="modulo-body"></div>
             </section>
@@ -192,8 +192,8 @@
             });
         })();
 
-        window.ATLAS_SISTEMA_VERSAO = '20260719-tempo-home-192';
-        window.ATLAS_SISTEMA_BUILD = 192;
+        window.ATLAS_SISTEMA_VERSAO = '20260719-cabecalho-estavel-193';
+        window.ATLAS_SISTEMA_BUILD = 193;
         window.atlasMostrarTelaAtualizacao = function atlasMostrarTelaAtualizacao(opcoes = {}) {
             const finalizado = opcoes.finalizado === true;
             let overlay = document.getElementById('atlas-update-screen');
@@ -421,11 +421,11 @@
             }
         } catch (erro) {}
     </script>
-    <script src="script.js?v=20260719-tempo-home-192"></script>
-    <script src="historicos-admin.js?v=20260719-tempo-home-192"></script>
-    <script src="atlas-ajustes-fachadas.js?v=20260719-tempo-home-192"></script>
-    <script type="module" src="main.js?v=20260719-tempo-home-192"></script>
-    <script src="atlas-publico.js?v=20260719-tempo-home-192"></script>
+    <script src="script.js?v=20260719-cabecalho-estavel-193"></script>
+    <script src="historicos-admin.js?v=20260719-cabecalho-estavel-193"></script>
+    <script src="atlas-ajustes-fachadas.js?v=20260719-cabecalho-estavel-193"></script>
+    <script type="module" src="main.js?v=20260719-cabecalho-estavel-193"></script>
+    <script src="atlas-publico.js?v=20260719-cabecalho-estavel-193"></script>
     <script>
         if ('serviceWorker' in navigator) {
             let atlasAtualizandoPWA = false;
@@ -436,7 +436,7 @@
             });
 
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=20260719-tempo-home-192')
+                navigator.serviceWorker.register('sw.js?v=20260719-cabecalho-estavel-193')
                     .then(reg => {
                         console.log('Atlas PWA: Ativo!');
                         reg.update();
@@ -478,3 +478,4 @@
     </div>
 </body>
 </html>
+

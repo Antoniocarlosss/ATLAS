@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v192-tempo-home';
+﻿const CACHE_NAME = 'atlas-v193-cabecalho-estavel';
 const assets = [
   './',
   './index.html',
@@ -35,7 +35,7 @@ function cachearArquivo(cache, asset) {
   return cache.add(asset).catch(() => null);
 }
 
-// Instalação
+// InstalaÃ§Ã£o
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
@@ -84,3 +84,4 @@ self.addEventListener('fetch', e => {
         })))
   );
 });
+
