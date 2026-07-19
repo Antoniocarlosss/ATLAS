@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Atlas Painel - GestÃ£o</title>
+    <title>Atlas Painel - Gestão</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script>
@@ -20,8 +20,8 @@
         html.atlas-route-loading #tela-login { display: none !important; }
         html.atlas-route-loading #app-principal { display: block !important; }
     </style>
-    <link rel="stylesheet" href="style.css?v=20260719-retorno-pdf-publico-194">
-    <link rel="stylesheet" href="atlas-publico.css?v=20260719-retorno-pdf-publico-194">
+    <link rel="stylesheet" href="style.css?v=20260719-titulo-gestao-195">
+    <link rel="stylesheet" href="atlas-publico.css?v=20260719-titulo-gestao-195">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icone-192x192.png">
@@ -43,7 +43,7 @@
                 </div>
             </div>
 
-            <h1>Sistema de GestÃ£o</h1>
+            <h1>Sistema de Gestão</h1>
             <div class="input-wrapper">
                 <i class="fas fa-user"></i>
                 <input type="text" id="login-email" placeholder="ID do UsuÃ¡rio">
@@ -192,8 +192,8 @@
             });
         })();
 
-        window.ATLAS_SISTEMA_VERSAO = '20260719-retorno-pdf-publico-194';
-        window.ATLAS_SISTEMA_BUILD = 194;
+        window.ATLAS_SISTEMA_VERSAO = '20260719-titulo-gestao-195';
+        window.ATLAS_SISTEMA_BUILD = 195;
         window.atlasMostrarTelaAtualizacao = function atlasMostrarTelaAtualizacao(opcoes = {}) {
             const finalizado = opcoes.finalizado === true;
             let overlay = document.getElementById('atlas-update-screen');
@@ -421,11 +421,11 @@
             }
         } catch (erro) {}
     </script>
-    <script src="script.js?v=20260719-retorno-pdf-publico-194"></script>
-    <script src="historicos-admin.js?v=20260719-retorno-pdf-publico-194"></script>
-    <script src="atlas-ajustes-fachadas.js?v=20260719-retorno-pdf-publico-194"></script>
-    <script type="module" src="main.js?v=20260719-retorno-pdf-publico-194"></script>
-    <script src="atlas-publico.js?v=20260719-retorno-pdf-publico-194"></script>
+    <script src="script.js?v=20260719-titulo-gestao-195"></script>
+    <script src="historicos-admin.js?v=20260719-titulo-gestao-195"></script>
+    <script src="atlas-ajustes-fachadas.js?v=20260719-titulo-gestao-195"></script>
+    <script type="module" src="main.js?v=20260719-titulo-gestao-195"></script>
+    <script src="atlas-publico.js?v=20260719-titulo-gestao-195"></script>
     <script>
         if ('serviceWorker' in navigator) {
             let atlasAtualizandoPWA = false;
@@ -436,7 +436,7 @@
             });
 
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js?v=20260719-retorno-pdf-publico-194')
+                navigator.serviceWorker.register('sw.js?v=20260719-titulo-gestao-195')
                     .then(reg => {
                         console.log('Atlas PWA: Ativo!');
                         reg.update();
@@ -478,5 +478,6 @@
     </div>
 </body>
 </html>
+
 
 

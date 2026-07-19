@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'atlas-v194-retorno-pdf-publico';
+﻿const CACHE_NAME = 'atlas-v195-titulo-gestao';
 const assets = [
   './',
   './index.html',
@@ -84,5 +84,6 @@ self.addEventListener('fetch', e => {
         })))
   );
 });
+
 
 
