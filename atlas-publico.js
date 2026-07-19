@@ -66,6 +66,83 @@
     }
   }
 
+  function atlasSaudacaoAtual() {
+    const hora = new Date().getHours();
+    if (hora >= 5 && hora < 12) return "Bom dia";
+    if (hora >= 12 && hora < 19) return "Boa tarde";
+    return "Boa noite";
+  }
+
+  function atlasIconeTempo(codigo, temperatura) {
+    if ([51, 53, 55, 61, 63, 65, 80, 81, 82, 95, 96, 99].includes(Number(codigo))) {
+      return { classe: "fas fa-cloud-showers-heavy", texto: "Chuva" };
+    }
+    if (Number(temperatura) <= 10) return { classe: "fas fa-snowflake", texto: "Frio" };
+    const hora = new Date().getHours();
+    if (hora >= 8 && hora < 18) return { classe: "fas fa-sun", texto: "Dia" };
+    return { classe: "fas fa-moon", texto: "Noite" };
+  }
+
+  function atualizarDataHoraPublica() {
+    const agora = new Date();
+    const hora = agora.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const data = agora.toLocaleDateString("pt-PT");
+    const saudacao = atlasSaudacaoAtual();
+    const textoHora = document.getElementById("atlas-public-hora");
+    const textoData = document.getElementById("atlas-public-data");
+    const textoSaudacao = document.getElementById("atlas-public-saudacao");
+    const topoHora = document.getElementById("atlas-home-datahora");
+    const topoSaudacao = document.getElementById("atlas-home-saudacao");
+    if (textoHora) textoHora.textContent = hora;
+    if (textoData) textoData.textContent = data;
+    if (textoSaudacao) textoSaudacao.textContent = saudacao;
+    if (topoHora) topoHora.textContent = `${data} ${hora}`;
+    if (topoSaudacao) topoSaudacao.textContent = saudacao;
+  }
+
+  async function atualizarTempoPublico(lat, lon) {
+    const temp = document.getElementById("atlas-public-temp");
+    const clima = document.getElementById("atlas-public-clima");
+    const icone = document.getElementById("atlas-public-clima-icone");
+    if (!temp || !clima || !icone) return;
+
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&current=temperature_2m,weather_code&timezone=auto`;
+      const resposta = await fetch(url);
+      const dados = await resposta.json();
+      const temperatura = Math.round(Number(dados.current?.temperature_2m));
+      const info = atlasIconeTempo(dados.current?.weather_code, temperatura);
+      temp.textContent = Number.isFinite(temperatura) ? `${temperatura}°C` : "--°C";
+      clima.textContent = info.texto;
+      icone.className = info.classe;
+    } catch (error) {
+      temp.textContent = "--°C";
+      clima.textContent = "Local";
+      icone.className = "fas fa-location-dot";
+    }
+  }
+
+  function iniciarTempoPublico() {
+    atualizarDataHoraPublica();
+    clearInterval(window.atlasPublicoRelogioTimer);
+    window.atlasPublicoRelogioTimer = setInterval(atualizarDataHoraPublica, 1000);
+
+    const temp = document.getElementById("atlas-public-temp");
+    const clima = document.getElementById("atlas-public-clima");
+    if (temp) temp.textContent = "Buscando...";
+    if (clima) clima.textContent = "Local";
+
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      pos => atualizarTempoPublico(pos.coords.latitude, pos.coords.longitude),
+      () => {
+        if (temp) temp.textContent = "--°C";
+        if (clima) clima.textContent = "Sem local";
+      },
+      { enableHighAccuracy: false, timeout: 9000, maximumAge: 20 * 60 * 1000 }
+    );
+  }
+
   function renderPublicHome() {
     const grid = $("#grid-home");
     const content = $("#conteudo-modulo");
@@ -76,6 +153,25 @@
     grid.style.display = "grid";
     grid.innerHTML = `
       <div class="atlas-public-home">
+        <section class="atlas-public-weather" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px;">
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:14px; padding:16px; color:white;">
+            <div style="color:#94a3b8; font-size:13px;">Sauda&ccedil;&atilde;o</div>
+            <strong id="atlas-public-saudacao" style="display:block; font-size:24px; margin-top:5px;">${atlasSaudacaoAtual()}</strong>
+          </div>
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:14px; padding:16px; color:white;">
+            <div style="color:#94a3b8; font-size:13px;">Hora atual</div>
+            <strong id="atlas-public-hora" style="display:block; font-size:24px; margin-top:5px;">--:--:--</strong>
+            <span id="atlas-public-data" style="color:#cbd5e1; font-size:13px;">--/--/----</span>
+          </div>
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:14px; padding:16px; color:white; display:flex; align-items:center; gap:14px;">
+            <i id="atlas-public-clima-icone" class="fas fa-location-dot" style="font-size:30px; color:#facc15;"></i>
+            <div>
+              <div style="color:#94a3b8; font-size:13px;">Temperatura local</div>
+              <strong id="atlas-public-temp" style="display:block; font-size:24px; margin-top:5px;">--&deg;C</strong>
+              <span id="atlas-public-clima" style="color:#cbd5e1; font-size:13px;">Local</span>
+            </div>
+          </div>
+        </section>
         <section class="atlas-public-hero">
           <p class="eyebrow">ATLAS PAINEL</p>
           <h2>Relatórios de produção</h2>
@@ -95,6 +191,7 @@
         </div>
       </div>
     `;
+    iniciarTempoPublico();
   }
 
   function enterPublicMode() {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atlas-v191-apagar-equipe';
+const CACHE_NAME = 'atlas-v192-tempo-home';
 const assets = [
   './',
   './index.html',
