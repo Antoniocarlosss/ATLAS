@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'atlas-v195-titulo-gestao';
+﻿const CACHE_NAME = 'atlas-v196-exclusao-definitiva';
 const assets = [
   './',
   './index.html',
@@ -84,6 +84,7 @@ self.addEventListener('fetch', e => {
         })))
   );
 });
+
 
 
 

@@ -15292,6 +15292,7 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
 
 const ATLAS_LIXEIRA_KEY = 'atlas_lixeira';
 const ATLAS_LIXEIRA_DIAS = 7;
+const ATLAS_RELATORIOS_EXCLUIDOS_KEY = 'atlas_relatorios_excluidos';
 
 function atlasUsuarioAtualNome() {
     return document.getElementById('user-display')?.innerText || usuarioLogado?.nome || usuarioLogado?.id || 'SEM USUARIO';
@@ -15307,6 +15308,46 @@ function atlasLixeiraLer() {
 
 function atlasLixeiraSalvar(lista) {
     localStorage.setItem(ATLAS_LIXEIRA_KEY, JSON.stringify(lista));
+}
+
+function atlasChaveRelatorioExcluido(chave, item, index = 0) {
+    if (!item || typeof item !== 'object') return `${chave}_${index}_${String(item)}`;
+    if (item.id) return `${chave}_id_${item.id}`;
+    if (chave === 'atlas_stock_bobinas') return `${chave}_${item.numero || ''}_${item.ral || ''}_${item.medida || ''}_${item.espessura || ''}`;
+    if (chave === 'atlas_stock_filmes') return `${chave}_${item.tipo || ''}_${item.fornecedor || ''}`;
+    if (item.chavePedido) return `${chave}_pedido_${item.chavePedido}`;
+    return `${chave}_${item.data || ''}_${item.operador || item.operadorSerra || ''}_${JSON.stringify(item.itens || item.unidades || []).slice(0, 200)}`;
+}
+
+function atlasRelatoriosExcluidosLer() {
+    try {
+        const dados = JSON.parse(localStorage.getItem(ATLAS_RELATORIOS_EXCLUIDOS_KEY) || '{}');
+        return dados && typeof dados === 'object' ? dados : {};
+    } catch (erro) {
+        return {};
+    }
+}
+
+window.atlasRegistrarRelatorioExcluido = function(chave, rel, index = 0) {
+    const excluidos = atlasRelatoriosExcluidosLer();
+    const id = atlasChaveRelatorioExcluido(chave, rel, index);
+    excluidos[id] = {
+        id,
+        chave,
+        data: rel?.data || '',
+        operador: rel?.operador || rel?.operadorSerra || '',
+        excluidoPor: atlasUsuarioAtualNome(),
+        excluidoEm: new Date().toISOString()
+    };
+    localStorage.setItem(ATLAS_RELATORIOS_EXCLUIDOS_KEY, JSON.stringify(excluidos));
+};
+
+function atlasRemoverMarcaRelatorioExcluido(chave, rel, index = 0) {
+    const excluidos = atlasRelatoriosExcluidosLer();
+    const id = atlasChaveRelatorioExcluido(chave, rel, index);
+    if (!excluidos[id]) return;
+    delete excluidos[id];
+    localStorage.setItem(ATLAS_RELATORIOS_EXCLUIDOS_KEY, JSON.stringify(excluidos));
 }
 
 function atlasLixeiraLimparExpirados() {
@@ -15345,6 +15386,7 @@ function atlasLixeiraRestaurarItem(item) {
     if (!item) return false;
 
     if (item.chave === 'historicoBobines') {
+        atlasRemoverMarcaRelatorioExcluido(item.chave, item.dados);
         historicoBobines = JSON.parse(localStorage.getItem('historicoBobines')) || [];
         historicoBobines.unshift(item.dados);
         localStorage.setItem('historicoBobines', JSON.stringify(historicoBobines));
@@ -15352,6 +15394,7 @@ function atlasLixeiraRestaurarItem(item) {
     }
 
     if (['atlas_serra_hist', 'atlas_emb_hist', 'atlas_plano_hist'].includes(item.chave)) {
+        atlasRemoverMarcaRelatorioExcluido(item.chave, item.dados);
         const hist = JSON.parse(localStorage.getItem(item.chave)) || [];
         hist.unshift(item.dados);
         localStorage.setItem(item.chave, JSON.stringify(hist));
@@ -15369,6 +15412,7 @@ function atlasLixeiraRestaurarItem(item) {
     }
 
     if (item.chave === 'atlas_db') {
+        atlasRemoverMarcaRelatorioExcluido(item.chave, item.dados);
         const db = JSON.parse(localStorage.getItem('atlas_db')) || {};
         const ano = item.extras?.ano || item.dados?.ano || new Date().getFullYear();
         const mes = item.extras?.mes || item.dados?.mesNome || item.dados?.mes || 'SEM MES';
@@ -15604,6 +15648,7 @@ function atlasInstalarLixeira() {
             if (!rel) return alert('Relatório não encontrado.');
             if (!confirm('Mover este relatório para a lixeira?')) return;
             atlasLixeiraEnviar('Bobines', `Bobines - ${rel.data || 'sem data'}`, 'historicoBobines', rel);
+            atlasRegistrarRelatorioExcluido('historicoBobines', rel, index);
             historicoBobines.splice(index, 1);
             localStorage.setItem('historicoBobines', JSON.stringify(historicoBobines));
             atlasFecharModal('modal-gerir-bobines');
@@ -15621,6 +15666,7 @@ function atlasInstalarLixeira() {
             if (!rel) return alert('Relatório não encontrado.');
             if (!confirm('Mover este relatório para a lixeira?')) return;
             atlasLixeiraEnviar(tipo === 'serra' ? 'Serra' : 'Embalagem', `${tipo} - ${rel.data || 'sem data'}`, cfg.key, rel);
+            atlasRegistrarRelatorioExcluido(cfg.key, rel, index);
             cfg.hist.splice(index, 1);
             localStorage.setItem(cfg.key, JSON.stringify(cfg.hist));
             if (tipo === 'serra') db_serra_hist = cfg.hist;
@@ -15640,6 +15686,7 @@ function atlasInstalarLixeira() {
             if (!rel) return alert('Relatório não encontrado.');
             if (!confirm('Mover este relatório para a lixeira?')) return;
             atlasLixeiraEnviar('Injecao', `Injecao - ${rel.data || 'sem data'}`, 'atlas_db', rel, { ano, mes });
+            atlasRegistrarRelatorioExcluido('atlas_db', rel, index);
             db[ano][mes].splice(index, 1);
             if (db[ano][mes].length === 0) delete db[ano][mes];
             if (Object.keys(db[ano]).length === 0) delete db[ano];

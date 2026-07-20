@@ -39,6 +39,7 @@ let atlasFirebaseUltimoHistoricoBackupMs = 0;
 let atlasFirebaseUltimoSnapshotAutomaticoMs = 0;
 let atlasFirebaseUltimaAlteracaoLocal = 0;
 const ATLAS_FIREBASE_SYNC_KEY = "atlas_sync_local_updated_ms";
+const ATLAS_RELATORIOS_EXCLUIDOS_KEY = "atlas_relatorios_excluidos";
 const ATLAS_FIREBASE_HISTORICO_BACKUP_INTERVALO_MS = 5 * 60 * 1000;
 const ATLAS_FIREBASE_SNAPSHOT_AUTOMATICO_INTERVALO_MS = 60 * 1000;
 
@@ -859,9 +860,27 @@ function atlasFirebaseChaveRegistro(chave, item, index) {
     return `${chave}_${item.data || ""}_${item.operador || item.operadorSerra || ""}_${JSON.stringify(item.itens || item.unidades || []).slice(0, 200)}`;
 }
 
+function atlasFirebaseRelatoriosExcluidos() {
+    const dados = atlasParseJSON(ATLAS_RELATORIOS_EXCLUIDOS_KEY, {});
+    return dados && typeof dados === "object" ? dados : {};
+}
+
+function atlasFirebaseRegistroFoiExcluido(chave, item, index) {
+    const excluidos = atlasFirebaseRelatoriosExcluidos();
+    const id = atlasFirebaseChaveRegistro(chave, item, index);
+    return Boolean(excluidos[id]);
+}
+
+function atlasFirebaseFiltrarRelatoriosExcluidos(chave, lista) {
+    return (Array.isArray(lista) ? lista : []).filter((item, index) => !atlasFirebaseRegistroFoiExcluido(chave, item, index));
+}
+
 function atlasFirebaseMesclarArrays(chave, localLista, nuvemLista) {
     const mapa = new Map();
-    [...(Array.isArray(localLista) ? localLista : []), ...(Array.isArray(nuvemLista) ? nuvemLista : [])].forEach((item, index) => {
+    [
+        ...atlasFirebaseFiltrarRelatoriosExcluidos(chave, localLista),
+        ...atlasFirebaseFiltrarRelatoriosExcluidos(chave, nuvemLista)
+    ].forEach((item, index) => {
         const id = atlasFirebaseChaveRegistro(chave, item, index);
         if (!mapa.has(id)) {
             mapa.set(id, item);
@@ -878,12 +897,20 @@ function atlasFirebaseMesclarDbInjecao(localDb, nuvemDb) {
         resultado[ano] ||= {};
         Object.keys(nuvemDb[ano] || {}).forEach(mes => {
             resultado[ano][mes] = atlasFirebaseMesclarArrays("atlas_db", resultado[ano][mes] || [], nuvemDb[ano][mes] || []);
+            if (Array.isArray(resultado[ano][mes]) && resultado[ano][mes].length === 0) delete resultado[ano][mes];
         });
+        if (Object.keys(resultado[ano] || {}).length === 0) delete resultado[ano];
     });
     return resultado;
 }
 
 function atlasFirebaseMesclarValorBackup(chave, valorLocalBruto, valorNuvemBruto) {
+    if (chave === ATLAS_RELATORIOS_EXCLUIDOS_KEY) {
+        const local = atlasFirebaseParseValorBackup(valorLocalBruto, {});
+        const nuvem = atlasFirebaseParseValorBackup(valorNuvemBruto, {});
+        return JSON.stringify({ ...(nuvem && typeof nuvem === "object" ? nuvem : {}), ...(local && typeof local === "object" ? local : {}) });
+    }
+
     if (!ATLAS_CHAVES_DADOS_PRINCIPAIS.includes(chave)) return valorNuvemBruto;
 
     const local = atlasFirebaseParseValorBackup(valorLocalBruto, chave === "atlas_db" ? {} : []);
