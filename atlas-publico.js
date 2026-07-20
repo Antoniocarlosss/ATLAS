@@ -325,9 +325,12 @@
   window.atlasPublicoFecharLogin = closeAdminModal;
 
   window.atlasPublicoAbrirHistoricoInjecao = function () {
+    window.atlasModuloAtual = "injecao";
     showAppShell();
     $("#grid-home").style.display = "none";
     $("#conteudo-modulo").style.display = "block";
+    const titulo = $("#titulo-modulo");
+    if (titulo) titulo.textContent = "INJEÇÃO";
     $("#render-modulo").innerHTML = `<button class="atlas-public-back" onclick="atlasPublicoVoltar()">← VOLTAR</button>`;
     window.exibirHistoricoModulo("injecao");
     const render = $("#render-modulo");
@@ -337,9 +340,12 @@
   };
 
   window.atlasPublicoAbrirHistoricoSerra = function () {
+    window.atlasModuloAtual = "serra";
     showAppShell();
     $("#grid-home").style.display = "none";
     $("#conteudo-modulo").style.display = "block";
+    const titulo = $("#titulo-modulo");
+    if (titulo) titulo.textContent = "SERRA";
     window.listarHistoricoSerra();
     const render = $("#render-modulo");
     if (render) {
@@ -348,6 +354,7 @@
   };
 
   window.atlasPublicoVoltar = function () {
+    window.atlasModuloAtual = "";
     renderPublicHome();
   };
 

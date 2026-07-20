@@ -1475,6 +1475,25 @@ function atlasAtualizarTelaAposSyncNuvem(evento) {
     const chavesAtualizadas = evento?.detail?.chaves || [];
     if (chavesAtualizadas.length === 1 && chavesAtualizadas[0] === 'atlas_guias_injecao') return;
 
+    const modoPublico = document.documentElement.classList.contains('atlas-public-mode') || String(usuarioLogado?.id || '').toLowerCase() === 'visitante';
+    if (modoPublico) {
+        const textoTela = String(document.getElementById('render-modulo')?.innerText || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+        clearTimeout(window.atlasTimerAtualizacaoPublicaNuvem);
+        window.atlasTimerAtualizacaoPublicaNuvem = setTimeout(() => {
+            if (chavesAtualizadas.includes('atlas_db') && textoTela.includes('injec')) {
+                if (typeof window.atlasPublicoAbrirHistoricoInjecao === 'function') window.atlasPublicoAbrirHistoricoInjecao();
+                return;
+            }
+            if (chavesAtualizadas.includes('atlas_serra_hist') && textoTela.includes('serra')) {
+                if (typeof window.atlasPublicoAbrirHistoricoSerra === 'function') window.atlasPublicoAbrirHistoricoSerra();
+            }
+        }, 80);
+        return;
+    }
+
     if (typeof aplicarPermissoesUsuario === 'function') aplicarPermissoesUsuario();
     if (typeof aplicarPreferenciasVisuaisUsuario === 'function') aplicarPreferenciasVisuaisUsuario();
 

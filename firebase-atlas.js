@@ -1408,6 +1408,15 @@ function atlasFirebaseAplicarBackupNuvem(dados, opcoes = {}) {
     atlasFirebaseCriarBackupLocalSnapshot(`antes_de_aplicar_${opcoes.origem || "firebase"}`);
     atlasFirebaseBloqueado = true;
 
+    if (typeof dados[ATLAS_RELATORIOS_EXCLUIDOS_KEY] === "string") {
+        const valorMescladoExcluidos = atlasFirebaseMesclarValorBackup(
+            ATLAS_RELATORIOS_EXCLUIDOS_KEY,
+            localStorage.getItem(ATLAS_RELATORIOS_EXCLUIDOS_KEY),
+            dados[ATLAS_RELATORIOS_EXCLUIDOS_KEY]
+        );
+        atlasLocalStorageSetItemOriginal.call(localStorage, ATLAS_RELATORIOS_EXCLUIDOS_KEY, valorMescladoExcluidos);
+    }
+
     chaves.forEach(chave => {
         if (chave !== "atlas_usuarios" && typeof dados[chave] === "string") {
             const valorMesclado = atlasFirebaseMesclarValorBackup(chave, localStorage.getItem(chave), dados[chave]);
