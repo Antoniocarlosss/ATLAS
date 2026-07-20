@@ -15343,6 +15343,17 @@ function atlasChaveRelatorioExcluido(chave, item, index = 0) {
     return `${chave}_${item.data || ''}_${item.operador || item.operadorSerra || ''}_${JSON.stringify(item.itens || item.unidades || []).slice(0, 200)}`;
 }
 
+function atlasChavesRelatorioExcluido(chave, item, index = 0) {
+    const chaves = new Set();
+    chaves.add(atlasChaveRelatorioExcluido(chave, item, index));
+    if (item && typeof item === 'object') {
+        if (item.id) chaves.add(`${chave}_id_${item.id}`);
+        if (item.chavePedido) chaves.add(`${chave}_pedido_${item.chavePedido}`);
+        chaves.add(`${chave}_${item.data || ''}_${item.operador || item.operadorSerra || ''}_${JSON.stringify(item.itens || item.unidades || []).slice(0, 200)}`);
+    }
+    return Array.from(chaves).filter(Boolean);
+}
+
 function atlasGarantirIdRelatorio(chave, rel, index = 0) {
     if (!rel || typeof rel !== 'object') return rel;
     if (!rel.id) {
@@ -15368,10 +15379,12 @@ function atlasRelatoriosExcluidosLer() {
 }
 
 window.atlasRegistrarRelatorioExcluido = function(chave, rel, index = 0) {
+    const chavesAntesDoId = atlasChavesRelatorioExcluido(chave, rel, index);
     atlasGarantirIdRelatorio(chave, rel, index);
+    const todasChaves = new Set([...chavesAntesDoId, ...atlasChavesRelatorioExcluido(chave, rel, index)]);
     const excluidos = atlasRelatoriosExcluidosLer();
     const id = atlasChaveRelatorioExcluido(chave, rel, index);
-    excluidos[id] = {
+    const registro = {
         id,
         chave,
         data: rel?.data || '',
@@ -15379,6 +15392,9 @@ window.atlasRegistrarRelatorioExcluido = function(chave, rel, index = 0) {
         excluidoPor: atlasUsuarioAtualNome(),
         excluidoEm: new Date().toISOString()
     };
+    todasChaves.forEach(chaveExclusao => {
+        excluidos[chaveExclusao] = { ...registro, id: chaveExclusao };
+    });
     localStorage.setItem(ATLAS_RELATORIOS_EXCLUIDOS_KEY, JSON.stringify(excluidos));
     return id;
 };

@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'atlas-v200-publico-limpo';
+﻿const CACHE_NAME = 'atlas-v201-publico-limpo';
 const assets = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const assets = [
   './atlas-publico.css',
   './script.js',
   './atlas-publico.js',
+  './atlas-texto-limpo.js',
   './historicos-admin.js',
   './atlas-ajustes-fachadas.js',
   './firebase-atlas.js',
@@ -84,6 +85,7 @@ self.addEventListener('fetch', e => {
         })))
   );
 });
+
 
 
 

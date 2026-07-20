@@ -860,6 +860,17 @@ function atlasFirebaseChaveRegistro(chave, item, index) {
     return `${chave}_${item.data || ""}_${item.operador || item.operadorSerra || ""}_${JSON.stringify(item.itens || item.unidades || []).slice(0, 200)}`;
 }
 
+function atlasFirebaseChavesRegistro(chave, item, index) {
+    const chaves = new Set();
+    chaves.add(atlasFirebaseChaveRegistro(chave, item, index));
+    if (item && typeof item === "object") {
+        if (item.id) chaves.add(`${chave}_id_${item.id}`);
+        if (item.chavePedido) chaves.add(`${chave}_pedido_${item.chavePedido}`);
+        chaves.add(`${chave}_${item.data || ""}_${item.operador || item.operadorSerra || ""}_${JSON.stringify(item.itens || item.unidades || []).slice(0, 200)}`);
+    }
+    return Array.from(chaves).filter(Boolean);
+}
+
 function atlasFirebaseColecaoPorChaveRelatorio(chave) {
     return {
         atlas_db: "injecao",
@@ -901,8 +912,7 @@ function atlasFirebaseRelatoriosExcluidos() {
 
 function atlasFirebaseRegistroFoiExcluido(chave, item, index) {
     const excluidos = atlasFirebaseRelatoriosExcluidos();
-    const id = atlasFirebaseChaveRegistro(chave, item, index);
-    return Boolean(excluidos[id]);
+    return atlasFirebaseChavesRegistro(chave, item, index).some(id => Boolean(excluidos[id]));
 }
 
 function atlasFirebaseFiltrarRelatoriosExcluidos(chave, lista) {
@@ -1032,6 +1042,7 @@ function atlasFirebaseCriarBackupLocalSnapshot(motivo = "snapshot") {
 
 async function atlasEnviarBackupLocalStorage() {
     const backup = {};
+    atlasFirebaseAplicarExclusoesRelatoriosLocais();
     if (!atlasFirebaseBloqueado && !localStorage.getItem(ATLAS_FIREBASE_SYNC_KEY)) {
         atlasLocalStorageSetItemOriginal.call(localStorage, ATLAS_FIREBASE_SYNC_KEY, String(Date.now()));
     }
@@ -1081,6 +1092,7 @@ async function atlasEnviarBackupLocalStorage() {
 
 async function atlasFirebaseEnviarTudoOrganizadoInterno() {
     if (atlasFirebaseBloqueado) return;
+    atlasFirebaseAplicarExclusoesRelatoriosLocais();
 
     if (atlasFirebaseContarDadosLocais() === 0) {
         const snapAtual = await getDoc(doc(atlasFirestore, "backups_localstorage", "ultimo_backup")).catch(() => null);
