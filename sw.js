@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'atlas-v203-publico-limpo';
+﻿const CACHE_NAME = 'atlas-v204-publico-limpo';
 const assets = [
   './',
   './index.html',
@@ -86,6 +86,7 @@ self.addEventListener('fetch', e => {
         })))
   );
 });
+
 
 
 
