@@ -57,7 +57,7 @@
     if (user) user.textContent = "VISITANTE";
 
     const subtitle = $(".atlas-system-title span");
-    if (subtitle) subtitle.textContent = "RelatÃ³rios pÃºblicos";
+    if (subtitle) subtitle.textContent = "Relat\u00f3rios p\u00fablicos";
 
     const logout = $(".btn-logout");
     if (logout) {
@@ -113,11 +113,11 @@
       const dados = await resposta.json();
       const temperatura = Math.round(Number(dados.current?.temperature_2m));
       const info = atlasIconeTempo(dados.current?.weather_code, temperatura);
-      temp.textContent = Number.isFinite(temperatura) ? `${temperatura}Â°C` : "--Â°C";
+      temp.textContent = Number.isFinite(temperatura) ? `${temperatura}\u00b0C` : "--\u00b0C";
       clima.textContent = info.texto;
       icone.className = info.classe;
     } catch (error) {
-      temp.textContent = "--Â°C";
+      temp.textContent = "--\u00b0C";
       clima.textContent = "Local";
       icone.className = "fas fa-location-dot";
     }
@@ -137,7 +137,7 @@
     navigator.geolocation.getCurrentPosition(
       pos => atualizarTempoPublico(pos.coords.latitude, pos.coords.longitude),
       () => {
-        if (temp) temp.textContent = "--Â°C";
+        if (temp) temp.textContent = "--\u00b0C";
         if (clima) clima.textContent = "Sem local";
       },
       { enableHighAccuracy: false, timeout: 9000, maximumAge: 20 * 60 * 1000 }
@@ -175,25 +175,27 @@
         </section>
         <section class="atlas-public-hero">
           <p class="eyebrow">ATLAS PAINEL</p>
-          <h2>RelatÃ³rios de produÃ§Ã£o</h2>
-          <p>Visualize e imprima os histÃ³ricos da InjeÃ§Ã£o e da Serra. Para lanÃ§ar relatÃ³rios e acessar o sistema completo, toque em Entrar.</p>
+          <h2>Relat&oacute;rios de produ&ccedil;&atilde;o</h2>
+          <p>Visualize e imprima os hist&oacute;ricos da Inje&ccedil;&atilde;o e da Serra. Para lan&ccedil;ar relat&oacute;rios e acessar o sistema completo, toque em Entrar.</p>
         </section>
         <div class="atlas-public-cards">
           <button class="atlas-public-card" type="button" onclick="atlasPublicoAbrirHistoricoInjecao()">
             <i class="fas fa-microchip"></i>
-            <strong>HistÃ³rico da InjeÃ§Ã£o</strong>
-            <span>Ver relatÃ³rios por ano, mÃªs e dia, com PDF e impressÃ£o.</span>
+            <strong>Hist&oacute;rico da Inje&ccedil;&atilde;o</strong>
+            <span>Ver relat&oacute;rios por ano, m&ecirc;s e dia, com PDF e impress&atilde;o.</span>
           </button>
           <button class="atlas-public-card serra" type="button" onclick="atlasPublicoAbrirHistoricoSerra()">
             <i class="fas fa-layer-group"></i>
-            <strong>HistÃ³rico da Serra</strong>
-            <span>Ver relatÃ³rios de corte por ano, mÃªs e dia, com PDF e impressÃ£o.</span>
+            <strong>Hist&oacute;rico da Serra</strong>
+            <span>Ver relat&oacute;rios de corte por ano, m&ecirc;s e dia, com PDF e impress&atilde;o.</span>
           </button>
         </div>
       </div>
     `;
     iniciarTempoPublico();
   }
+
+  window.atlasPublicoRenderHome = renderPublicHome;
 
   function enterPublicMode() {
     localStorage.removeItem("atlas_sessao_usuario_id");
@@ -324,6 +326,20 @@
 
   window.atlasPublicoFecharLogin = closeAdminModal;
 
+  const abrirModuloBasePublico = window.abrirModulo;
+  if (typeof abrirModuloBasePublico === "function" && !window.atlasAbrirModuloPublicoProtegido) {
+    window.atlasAbrirModuloPublicoProtegido = true;
+    window.abrirModulo = function (nome) {
+      const modoPublico = document.documentElement.classList.contains("atlas-public-mode") || String(window.usuarioLogado?.id || "").toLowerCase() === "visitante";
+      if (modoPublico) {
+        if (nome === "injecao") return window.atlasPublicoAbrirHistoricoInjecao();
+        if (nome === "serra") return window.atlasPublicoAbrirHistoricoSerra();
+        return window.atlasPublicoVoltar();
+      }
+      return abrirModuloBasePublico.apply(this, arguments);
+    };
+  }
+
   window.atlasPublicoAbrirHistoricoInjecao = function () {
     window.atlasModuloAtual = "injecao";
     showAppShell();
@@ -332,6 +348,7 @@
     const titulo = $("#titulo-modulo");
     if (titulo) titulo.textContent = "INJE\u00c7\u00c3O";
     window.exibirHistoricoModulo("injecao");
+    atlasPublicoCorrigirHistoricoAberto("injecao");
   };
 
   window.atlasPublicoAbrirHistoricoSerra = function () {
@@ -342,12 +359,34 @@
     const titulo = $("#titulo-modulo");
     if (titulo) titulo.textContent = "SERRA";
     window.listarHistoricoSerra();
+    atlasPublicoCorrigirHistoricoAberto("serra");
   };
 
   window.atlasPublicoVoltar = function () {
     window.atlasModuloAtual = "";
     renderPublicHome();
   };
+
+  function atlasPublicoCorrigirHistoricoAberto(tipo) {
+    const render = $("#render-modulo");
+    if (!render) return;
+
+    render.querySelectorAll("button").forEach(botao => {
+      const texto = String(botao.textContent || "").trim().toUpperCase();
+      const onclick = String(botao.getAttribute("onclick") || "");
+      if (texto === "" || texto === "\u2190" || onclick.includes("renderizarMenuSerra") || onclick.includes("renderizarMenu")) {
+        botao.onclick = window.atlasPublicoVoltar;
+        botao.setAttribute("onclick", "atlasPublicoVoltar()");
+      }
+    });
+
+    if (tipo === "serra") {
+      render.querySelectorAll(".card").forEach(card => {
+        const texto = String(card.textContent || "").toLowerCase();
+        if (texto.includes("novo relat") || texto.includes("pacotes")) card.remove();
+      });
+    }
+  }
 
   const EQUIPES_KEY = "atlas_equipes_turno_nomes";
 

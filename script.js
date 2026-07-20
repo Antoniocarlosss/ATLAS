@@ -989,6 +989,11 @@ if (typeof producoesDoDia !== "undefined") {
 }
 
 function voltarHome() {
+    const modoPublico = document.documentElement.classList.contains('atlas-public-mode') || String(usuarioLogado?.id || '').toLowerCase() === 'visitante';
+    if (modoPublico && typeof window.atlasPublicoVoltar === 'function') {
+        window.atlasPublicoVoltar();
+        return;
+    }
     window.atlasModuloAtual = '';
     document.getElementById('grid-home').style.display = 'grid';
     document.getElementById('conteudo-modulo').style.display = 'none';
