@@ -638,7 +638,7 @@ async function atlasEnviarInjecao() {
             (db[ano][mesNome] || []).forEach((rel, index) => {
                 if (rel.modulo !== "injecao") return;
 
-                const id = atlasDocId(`${ano}_${mesNome}_${rel.data}_${index}`);
+                const id = atlasDocId(rel.id || `${ano}_${mesNome}_${rel.data}_${index}`);
                 promessas.push(atlasSetDoc(["injecao", id], {
                     id,
                     ano: Number(ano),
@@ -860,6 +860,40 @@ function atlasFirebaseChaveRegistro(chave, item, index) {
     return `${chave}_${item.data || ""}_${item.operador || item.operadorSerra || ""}_${JSON.stringify(item.itens || item.unidades || []).slice(0, 200)}`;
 }
 
+function atlasFirebaseColecaoPorChaveRelatorio(chave) {
+    return {
+        atlas_db: "injecao",
+        historicoBobines: "bobines",
+        atlas_serra_hist: "serra",
+        atlas_emb_hist: "embalagem",
+        atlas_plano_hist: "planos"
+    }[chave] || "";
+}
+
+async function atlasFirebaseApagarRelatorioDocumento(chave, rel, index = 0) {
+    const colecao = atlasFirebaseColecaoPorChaveRelatorio(chave);
+    if (!colecao || !rel || typeof rel !== "object") return false;
+
+    const ids = new Set();
+    if (rel.id) ids.add(atlasDocId(rel.id));
+
+    if (chave === "atlas_db") {
+        const partes = atlasDataPartes(rel.data);
+        const ano = rel.ano || partes.ano || "";
+        const mes = rel.mesNome || rel.mes || partes.mes || "";
+        ids.add(atlasDocId(`${ano}_${mes}_${rel.data || ""}_${index}`));
+    } else {
+        ids.add(atlasDocId(`${rel.data || ""}_${index}`));
+    }
+
+    await Promise.all(Array.from(ids).filter(Boolean).map(id =>
+        deleteDoc(doc(atlasFirestore, colecao, id)).catch(erro => {
+            console.warn("Nao foi possivel apagar relatorio antigo da nuvem:", colecao, id, erro);
+        })
+    ));
+    return true;
+}
+
 function atlasFirebaseRelatoriosExcluidos() {
     const dados = atlasParseJSON(ATLAS_RELATORIOS_EXCLUIDOS_KEY, {});
     return dados && typeof dados === "object" ? dados : {};
@@ -873,6 +907,40 @@ function atlasFirebaseRegistroFoiExcluido(chave, item, index) {
 
 function atlasFirebaseFiltrarRelatoriosExcluidos(chave, lista) {
     return (Array.isArray(lista) ? lista : []).filter((item, index) => !atlasFirebaseRegistroFoiExcluido(chave, item, index));
+}
+
+function atlasFirebaseAplicarExclusoesRelatoriosLocais() {
+    let mudou = false;
+    const chavesLista = ["historicoBobines", "atlas_serra_hist", "atlas_emb_hist", "atlas_plano_hist"];
+
+    chavesLista.forEach(chave => {
+        const lista = atlasParseJSON(chave, []);
+        if (!Array.isArray(lista)) return;
+        const filtrada = atlasFirebaseFiltrarRelatoriosExcluidos(chave, lista);
+        if (filtrada.length !== lista.length) {
+            atlasLocalStorageSetItemOriginal.call(localStorage, chave, JSON.stringify(filtrada));
+            mudou = true;
+        }
+    });
+
+    const db = atlasParseJSON("atlas_db", {});
+    if (db && typeof db === "object") {
+        Object.keys(db).forEach(ano => {
+            Object.keys(db[ano] || {}).forEach(mes => {
+                const lista = Array.isArray(db[ano][mes]) ? db[ano][mes] : [];
+                const filtrada = atlasFirebaseFiltrarRelatoriosExcluidos("atlas_db", lista);
+                if (filtrada.length !== lista.length) {
+                    if (filtrada.length) db[ano][mes] = filtrada;
+                    else delete db[ano][mes];
+                    mudou = true;
+                }
+            });
+            if (Object.keys(db[ano] || {}).length === 0) delete db[ano];
+        });
+        if (mudou) atlasLocalStorageSetItemOriginal.call(localStorage, "atlas_db", JSON.stringify(db));
+    }
+
+    return mudou;
 }
 
 function atlasFirebaseMesclarArrays(chave, localLista, nuvemLista) {
@@ -1149,6 +1217,17 @@ window.atlasFirebaseEnviarTudo = function() {
         });
 };
 
+window.atlasFirebaseRegistrarRelatorioExcluidoAgora = async function(chave, rel, index = 0) {
+    try {
+        await atlasFirebaseApagarRelatorioDocumento(chave, rel, index);
+        await atlasFirebaseExecutarEnvioAgendado();
+        return true;
+    } catch (erro) {
+        console.error("Erro ao sincronizar exclusao do relatorio:", erro);
+        return false;
+    }
+};
+
 window.atlasFirebaseStatus = {
     app: atlasFirebaseApp,
     db: atlasFirestore
@@ -1398,24 +1477,40 @@ window.atlasFirebaseRestaurarUltimoSnapshotLocal = async function() {
 function atlasFirebaseAplicarBackupNuvem(dados, opcoes = {}) {
     const chaves = Object.keys(dados || {}).filter(chave => atlasFirebaseChaveSincronizada(chave) && chave !== "atlas_guias_injecao");
     if (chaves.length === 0) return false;
-    if (atlasFirebaseContarDadosBackup(dados) === 0 && atlasFirebaseContarDadosLocais() > 0) {
-        console.warn("Backup vazio da nuvem ignorado para proteger dados locais.");
-        return false;
-    }
-    if (!atlasFirebaseBackupPodeEntrar(dados, opcoes)) return false;
-    if (Date.now() - atlasFirebaseUltimaAlteracaoLocal < 5000 && !opcoes.forcar && !opcoes.tempoReal) return false;
 
-    atlasFirebaseCriarBackupLocalSnapshot(`antes_de_aplicar_${opcoes.origem || "firebase"}`);
-    atlasFirebaseBloqueado = true;
-
+    let exclusoesAtualizadas = false;
     if (typeof dados[ATLAS_RELATORIOS_EXCLUIDOS_KEY] === "string") {
         const valorMescladoExcluidos = atlasFirebaseMesclarValorBackup(
             ATLAS_RELATORIOS_EXCLUIDOS_KEY,
             localStorage.getItem(ATLAS_RELATORIOS_EXCLUIDOS_KEY),
             dados[ATLAS_RELATORIOS_EXCLUIDOS_KEY]
         );
-        atlasLocalStorageSetItemOriginal.call(localStorage, ATLAS_RELATORIOS_EXCLUIDOS_KEY, valorMescladoExcluidos);
+        if (valorMescladoExcluidos !== localStorage.getItem(ATLAS_RELATORIOS_EXCLUIDOS_KEY)) {
+            atlasFirebaseBloqueado = true;
+            atlasLocalStorageSetItemOriginal.call(localStorage, ATLAS_RELATORIOS_EXCLUIDOS_KEY, valorMescladoExcluidos);
+            exclusoesAtualizadas = atlasFirebaseAplicarExclusoesRelatoriosLocais();
+            atlasFirebaseBloqueado = false;
+        }
     }
+
+    if (atlasFirebaseContarDadosBackup(dados) === 0 && atlasFirebaseContarDadosLocais() > 0) {
+        console.warn("Backup vazio da nuvem ignorado para proteger dados locais.");
+        return false;
+    }
+    if (!atlasFirebaseBackupPodeEntrar(dados, opcoes)) {
+        if (exclusoesAtualizadas) {
+            window.dispatchEvent(new CustomEvent("atlasDadosNuvemAtualizados", {
+                detail: { chaves: [...ATLAS_CHAVES_DADOS_PRINCIPAIS, ATLAS_RELATORIOS_EXCLUIDOS_KEY], origem: opcoes.origem || "firebase_exclusao" }
+            }));
+            setTimeout(() => atlasFirebaseAgendarEnvio("atlas_db"), 300);
+        }
+        return exclusoesAtualizadas;
+    }
+    if (Date.now() - atlasFirebaseUltimaAlteracaoLocal < 5000 && !opcoes.forcar && !opcoes.tempoReal) return false;
+
+    atlasFirebaseCriarBackupLocalSnapshot(`antes_de_aplicar_${opcoes.origem || "firebase"}`);
+    atlasFirebaseBloqueado = true;
+    atlasFirebaseAplicarExclusoesRelatoriosLocais();
 
     chaves.forEach(chave => {
         if (chave !== "atlas_usuarios" && typeof dados[chave] === "string") {

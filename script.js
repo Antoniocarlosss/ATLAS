@@ -1,20 +1,20 @@
-// --- BANCO DE USUARIOS ---
+﻿// --- BANCO DE USUARIOS ---
 let usuariosSistema = atlasArrayLocal('atlas_usuarios', [
     { id: "admin", senha: "123", cargo: "admin" }
 ]);
 
 let usuarioLogado = null;
 const MODULOS_SISTEMA = [
-    { chave: 'injecao', nome: 'Injeção' },
+    { chave: 'injecao', nome: 'InjeÃ§Ã£o' },
     { chave: 'bobines', nome: 'Bobines' },
     { chave: 'serra', nome: 'Serra' },
     { chave: 'embalagem', nome: 'Embalagem' },
     { chave: 'plano', nome: 'Plano' },
     { chave: 'stock', nome: 'Stock' },
-    { chave: 'gestao', nome: 'Gestão' },
+    { chave: 'gestao', nome: 'GestÃ£o' },
     { chave: 'config', nome: 'Ajustes' },
     { chave: 'lixeira', nome: 'Lixeira' },
-    { chave: 'permissoes', nome: 'PermissÃµes' }
+    { chave: 'permissoes', nome: 'PermissÃƒÂµes' }
 ];
 
 function obterChavePreferenciasUsuario(idUsuario) {
@@ -727,7 +727,7 @@ function garantirCardPermissoesAdmin() {
     card.id = 'card-permissoes';
     card.className = 'card';
     card.setAttribute('onclick', "abrirModulo('permissoes')");
-    card.innerHTML = `<i class="fas fa-user-shield"></i><span>PermissÃµes</span>`;
+    card.innerHTML = `<i class="fas fa-user-shield"></i><span>PermissÃƒÂµes</span>`;
     gridHome.appendChild(card);
 }
 
@@ -944,7 +944,7 @@ async function fazerLogin() {
 
     if (usuarioEncontrado) {
         if (usuarioEncontrado.bloqueado) {
-            alert("Usuário bloqueado. Fale com o administrador.");
+            alert("UsuÃ¡rio bloqueado. Fale com o administrador.");
             return;
         }
 
@@ -1398,7 +1398,7 @@ function fecharModal() {
 
 function abrirModulo(nome) {
     if (nome === 'permissoes' && !usuarioEhAdmin()) {
-        alert("Apenas ADMIN ou SUPERVISOR podem acessar esta área.");
+        alert("Apenas ADMIN ou SUPERVISOR podem acessar esta Ã¡rea.");
         return;
     }
     if (!usuarioPodeVerModulo(nome)) {
@@ -1411,13 +1411,13 @@ function abrirModulo(nome) {
     window.atlasModuloAtual = nome;
 
     const titulos = {
-        injecao: "INJEÇÃO",
+        injecao: "INJEÃ‡ÃƒO",
         bobines: "BOBINES",
         serra: "SERRA",
         embalagem: "EMBALAGEM",
         plano: "PLANO",
         stock: "STOCK",
-        gestao: "GESTÃO",
+        gestao: "GESTÃƒO",
         config: "AJUSTES",
         lixeira: "LIXEIRA",
         permissoes: "PERMISSOES"
@@ -1429,8 +1429,8 @@ function abrirModulo(nome) {
     if (nome === 'injecao') {
         render.innerHTML = `
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; padding:15px;">
-                <div class="card" onclick="exibirFormulario('injecao')"><i class="fas fa-plus"></i><span>Novo Relatório</span></div>
-                <div class="card" onclick="exibirHistoricoModulo('injecao')"><i class="fas fa-history"></i><span>Histórico</span></div>
+                <div class="card" onclick="exibirFormulario('injecao')"><i class="fas fa-plus"></i><span>Novo RelatÃ³rio</span></div>
+                <div class="card" onclick="exibirHistoricoModulo('injecao')"><i class="fas fa-history"></i><span>HistÃ³rico</span></div>
             </div>`;
     } 
     else if (nome === 'bobines') {
@@ -1563,14 +1563,14 @@ function atlasInjecaoPreviewFinalizar(modulo) {
 }
 
 /* ==========================================================================
-   SEÇÃO: INJEÇÃO (ORIGINAL)
+   SEÃ‡ÃƒO: INJEÃ‡ÃƒO (ORIGINAL)
    ========================================================================== */
 let producoesDoDia = []; // Deve ficar no topo do script
    function exibirFormulario(modulo) {
     const hoje = new Date().toISOString().split('T')[0];
     document.getElementById('render-modulo').innerHTML = `
         <div style="padding: 15px;">
-            <label style="font-size:12px; color:#94a3b8;">DATA DA PRODUÇÃO</label>
+            <label style="font-size:12px; color:#94a3b8;">DATA DA PRODUÃ‡ÃƒO</label>
             <input type="date" id="data-producao" value="${hoje}" style="width:100%; padding:12px; background:#020617; color:white; border:1px solid #334155; border-radius:8px; margin-bottom:15px;">
 <label style="font-size:12px; color:#94a3b8;">TIPO DE PAINEL</label>
             <select id="inj-painel" onchange="atualizarEspumaInjecaoPadrao()" style="width:100%; padding:12px; background:#020617; color:white; border:1px solid #334155; border-radius:8px; margin-bottom:15px;">
@@ -1602,7 +1602,7 @@ let producoesDoDia = []; // Deve ficar no topo do script
                     </select>
                 </div>
                 <div style="flex:1;">
-                    <label style="font-size:12px; color:#94a3b8;">METROS DA MANHÃ</label>
+                    <label style="font-size:12px; color:#94a3b8;">METROS DA MANHÃƒ</label>
                     <input type="number" id="prod-metros-manha" placeholder="0" oninput="atualizarTotalMetrosInjecao()" style="width:100%; padding:12px; background:#020617; color:white; border:1px solid #334155; border-radius:8px;">
                 </div>
                 <div style="flex:1;">
@@ -1620,7 +1620,7 @@ let producoesDoDia = []; // Deve ficar no topo do script
                 ${opcoesEspumaInjecaoHTML()}
             </select>
 
-            <label style="font-size:11px; color:#3b82f6; font-weight:bold;">PARÂMETROS DA MÁQUINA</label>
+            <label style="font-size:11px; color:#3b82f6; font-weight:bold;">PARÃ‚METROS DA MÃQUINA</label>
             <label style="font-size:12px; color:#94a3b8;">FITA (OPCIONAL)</label>
             <select id="inj-fita" style="width:100%; padding:12px; background:#020617; color:white; border:1px solid #334155; border-radius:8px; margin-bottom:15px;">
                 ${opcoesFitaInjecaoHTML()}
@@ -1648,7 +1648,7 @@ let producoesDoDia = []; // Deve ficar no topo do script
                 </select>
             </div>
 
-            <button onclick="salvarNaLista()" class="btn-primary btn-add-lista">ADICIONAR À LISTA</button>
+            <button onclick="salvarNaLista()" class="btn-primary btn-add-lista">ADICIONAR Ã€ LISTA</button>
             <div id="lista-temp" style="margin-top:15px;"></div>
             <button id="btn-finalizar" onclick="atlasFinalizarDiaInjecao('${modulo}')" class="btn-primary btn-finish-dia" style="display:none;">FINALIZAR DIA</button>
         </div>`;
@@ -1723,7 +1723,7 @@ function salvarNaLista() {
     const metrosTarde = document.getElementById('prod-metros-tarde')?.value || '';
     const metros = document.getElementById('prod-metros').value;
 
-    if(!metros) return alert("Por favor, insira os metros da manhã ou da tarde!");
+    if(!metros) return alert("Por favor, insira os metros da manhÃ£ ou da tarde!");
 
     const item = {
         id: Date.now(),
@@ -1767,7 +1767,7 @@ function atualizarListaVisual() {
                 <div style="font-size:12px; color:white;">
                     <b>${item.pir ? 'PIR - ' : ''}${item.nome} (${item.esp}mm)</b>${item.espuma ? ` <small style="color:#fbbf24;">| Espuma: ${item.espuma}</small>` : ''}${item.fita ? ` <small style="color:#22c55e;">| Fita: ${item.fita}</small>` : ''}<br>
                     ${textoDensidadesInjecao(item.densidades) ? `<small style="color:#38bdf8;">Densidade: ${textoDensidadesInjecao(item.densidades)}</small><br>` : ''}
-                    <span>Manhã: ${item.metrosManha || 0} m | Tarde: ${item.metrosTarde || 0} m | Total: ${item.metros} m | Vel: ${item.vel}</span>
+                    <span>ManhÃ£: ${item.metrosManha || 0} m | Tarde: ${item.metrosTarde || 0} m | Total: ${item.metros} m | Vel: ${item.vel}</span>
                 </div>
                 <div style="display:flex; gap:5px;">
                     <button onclick="editarTudo(${item.id})" style="background:#eab308; color:black; border:none; padding:5px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:10px;">EDITAR</button>
@@ -1778,7 +1778,7 @@ function atualizarListaVisual() {
 }
 
 /* ==========================================================================
-   SISTEMA DE EDIÇÃO (MODAL)
+   SISTEMA DE EDIÃ‡ÃƒO (MODAL)
    ========================================================================== */
 function editarTudo(id) {
     const item = producoesDoDia.find(p => p.id === id);
@@ -1847,7 +1847,7 @@ function editarTudo(id) {
             <label style="color:white; font-size:11px;">METROS</label>
             <input type="number" id="edit-metros" value="${item.metros}" style="padding:8px; border-radius:5px; background:#020617; color:white; border:1px solid #334155;">
 
-            <label style="color:#3b82f6; font-size:12px; font-weight:bold; margin-top:10px;">QUÍMICOS / CATALISADORES</label>
+            <label style="color:#3b82f6; font-size:12px; font-weight:bold; margin-top:10px;">QUÃMICOS / CATALISADORES</label>
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
                 <div>
                     <label style="color:white; font-size:10px;">POL</label>
@@ -1928,7 +1928,7 @@ function editarTudo(id) {
                         <input type="checkbox" id="inj-pir-edit" ${item.pir ? 'checked' : ''} style="width:20px; height:20px;">
                         PIR
                     </label>
-                    <label style="color:#94a3b8; font-size:11px;">METROS DA MANHÃ
+                    <label style="color:#94a3b8; font-size:11px;">METROS DA MANHÃƒ
                         <input type="number" id="edit-metros-manha" value="${item.metrosManha || (!item.metrosTarde ? item.metros : '') || ''}" oninput="atualizarTotalMetrosInjecao('edit-metros-manha','edit-metros-tarde','edit-metros')" style="width:100%; margin-top:4px; padding:10px; border-radius:8px; background:#020617; color:white; border:1px solid #334155;">
                     </label>
                     <label style="color:#94a3b8; font-size:11px;">METROS DA TARDE
@@ -2057,7 +2057,7 @@ function salvarEdicaoModal() {
 function adicionarLinhaParagem(motivo = '', tempo = '') {
     const container = document.getElementById('container-paragens');
     const div = document.createElement('div');
-    // Aumentei um pouco a largura da coluna do tempo (de 60px para 80px) para caber o relógio digital
+    // Aumentei um pouco a largura da coluna do tempo (de 60px para 80px) para caber o relÃ³gio digital
     div.style = "display:grid; grid-template-columns: 1fr 80px 30px; gap:5px; margin-bottom:5px;"; 
     div.innerHTML = `
         <input type="text" placeholder="Motivo" value="${motivo}" class="paragem-motivo" style="padding:5px; border-radius:4px; background:#0f172a; color:white; border:1px solid #334155; font-size:11px;">
@@ -2080,7 +2080,7 @@ function removerItem(id) {
 }
 
 /* ==========================================================================
-   GERAÇÃO DE PDF E HISTÓRICO
+   GERAÃ‡ÃƒO DE PDF E HISTÃ“RICO
    ========================================================================== */
 function finalizarTurno(modulo) {
     const dataInput = document.getElementById('data-producao').value;
@@ -2100,7 +2100,7 @@ function finalizarTurno(modulo) {
     });
 
     localStorage.setItem('atlas_db', JSON.stringify(db));
-    alert("Relatório salvo!");
+    alert("RelatÃ³rio salvo!");
     voltarHome();
 }
 
@@ -2109,13 +2109,13 @@ function exibirHistoricoModulo(modulo) {
     const render = document.getElementById('render-modulo');
     let html = `
         <div style="padding:15px; color:white;">
-            <h2 style="border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">📂 Histórico da injeççao</h2>
+            <h2 style="border-bottom: 2px solid #3b82f6; padding-bottom: 10px;">ðŸ“‚ HistÃ³rico da injeÃ§Ã§ao</h2>
     `;
 
     for(let ano in db) {
         html += `
             <div class="folder-year" onclick="toggleElement('folder-ano-${ano}')" style="background:#334155; padding:12px; margin-top:8px; border-radius:8px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:bold; color:white;">
-                <span>📂 ANO ${ano}</span>
+                <span>ðŸ“‚ ANO ${ano}</span>
                 <i class="fas fa-chevron-down"></i>
             </div>
             <div id="folder-ano-${ano}" style="display:none; padding:5px 10px;">`;
@@ -2126,7 +2126,7 @@ function exibirHistoricoModulo(modulo) {
                 const mesId = `folder-mes-${ano}-${mes}`;
                 html += `
                     <div class="folder-month" onclick="toggleElement('${mesId}')" style="color:#3b82f6; padding:10px; cursor:pointer; border-bottom:1px solid #1e293b; display:flex; justify-content:space-between; align-items:center; font-weight:600;">
-                        <span>📅 ${mes}</span>
+                        <span>ðŸ“… ${mes}</span>
                         <i class="fas fa-caret-down"></i>
                     </div>
                     <div id="${mesId}" style="display:none; padding-left:10px; border-left:2px solid #3b82f6; margin-bottom:10px;">`;
@@ -2158,10 +2158,10 @@ function exibirHistoricoModulo(modulo) {
         }
         html += `</div>`;
     }
-    render.innerHTML = html || "<p style='text-align:center; padding:20px; color:gray;'>Nenhum histórico encontrado.</p>";
+    render.innerHTML = html || "<p style='text-align:center; padding:20px; color:gray;'>Nenhum histÃ³rico encontrado.</p>";
 }
 
-// Função auxiliar para abrir e fechar (Toggle)
+// FunÃ§Ã£o auxiliar para abrir e fechar (Toggle)
 function toggleElement(id) {
     const el = document.getElementById(id);
     if (el.style.display === "none") {
@@ -2200,7 +2200,7 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
             </tr>`;
         
         if(item.paragens && item.paragens.length > 0) {
-            let pTexto = item.paragens.map(p => `• ${p.motivo} (${p.tempo}min)`).join("  |  ");
+            let pTexto = item.paragens.map(p => `â€¢ ${p.motivo} (${p.tempo}min)`).join("  |  ");
             tabelaItens += `
                 <tr>
                     <td colspan="14" style="border: 1px solid #000; padding: 8px; font-size: 12px; background: #f2f2f2;">
@@ -2225,7 +2225,7 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
                     width: 100vw; 
                 }
 
-                /* CABEÇALHO OCUPANDO 100% DA LARGURA */
+                /* CABEÃ‡ALHO OCUPANDO 100% DA LARGURA */
                 .header-container { 
                     background: #000; 
                     color: #fff; 
@@ -2282,7 +2282,7 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
                     </div>
                 </div>
                 <div style="text-align: center;">
-                    <h2 style="margin:0; font-size: 16px;">RELATÓRIO DE INJEÇÃO</h2>
+                    <h2 style="margin:0; font-size: 16px;">RELATÃ“RIO DE INJEÃ‡ÃƒO</h2>
                 </div>
             </div>
 
@@ -2315,7 +2315,7 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
 
                 <div class="no-print" style="text-align: center;">
                     <button onclick="window.print()" style="padding: 20px; background: #000; color: #fff; border: 3px solid #E31C24; width: 100%; font-size: 18px; font-weight: bold; border-radius: 10px;">
-                        🖨️ CONFIRMAR E GERAR PDF
+                        ðŸ–¨ï¸ CONFIRMAR E GERAR PDF
                     </button>
                 </div>
             </div>
@@ -2324,10 +2324,10 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
     `);
     janela.document.close();
 }
-//final da injeççao
+//final da injeÃ§Ã§ao
 
 /* ==========================================================================
-   MÓDULO: BOBINES
+   MÃ“DULO: BOBINES
    ========================================================================== */
 function gerarPDF_Injecao_Final(dadosEncoded) {
     const rel = JSON.parse(decodeURIComponent(dadosEncoded));
@@ -2416,7 +2416,7 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
             <div class="page">
                 <div class="topo">
                     <img src="logo.png" class="logo" alt="Atlas Painel">
-                    <div class="titulo">Gestão de Produção Diária - Injeção</div>
+                    <div class="titulo">GestÃ£o de ProduÃ§Ã£o DiÃ¡ria - InjeÃ§Ã£o</div>
                 </div>
                 <div class="campos-duplos">
                     <div>
@@ -2446,11 +2446,11 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
                     <tbody>${linhasConsumo}</tbody>
                 </table>
                 <table class="dados">
-                    <thead><tr><th colspan="3">Dados Injeção Parciais</th></tr></thead>
+                    <thead><tr><th colspan="3">Dados InjeÃ§Ã£o Parciais</th></tr></thead>
                     <tbody><tr><th>Comprimento</th><td>${totalMetrosDia.toFixed(2)} m</td><td></td></tr></tbody>
                 </table>
                 <table class="observacoes">
-                    <thead><tr><th class="hora">Hora</th><th>Observações: (arranque, paragem união rebentou, valor incorreto, etc)</th></tr></thead>
+                    <thead><tr><th class="hora">Hora</th><th>ObservaÃ§Ãµes: (arranque, paragem uniÃ£o rebentou, valor incorreto, etc)</th></tr></thead>
                     <tbody>${htmlObservacoes}</tbody>
                 </table>
             </div>
@@ -2609,11 +2609,11 @@ function renderizarMenuBobines() {
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; padding:15px;">
             <div class="card" onclick="moduloBobine('novo')">
                 <i class="fas fa-file-circle-plus"></i>
-                <span style="font-size:11px;">CRIAR RELATÓRIO</span>
+                <span style="font-size:11px;">CRIAR RELATÃ“RIO</span>
             </div>
             <div class="card" onclick="moduloBobine('historico')">
                 <i class="fas fa-clock-rotate-left"></i>
-                <span style="font-size:11px;">HISTÓRICO</span>
+                <span style="font-size:11px;">HISTÃ“RICO</span>
             </div>
             <div class="card" onclick="moduloBobine('calculadora')">
                 <i class="fas fa-calculator"></i>
@@ -2627,9 +2627,9 @@ function renderizarMenuBobines() {
     `;
 }
 
-// Direcionamento das funções de Bobines
+// Direcionamento das funÃ§Ãµes de Bobines
 /* ==========================================================================
-   MÓDULO: BOBINES (VERSÃO SEM EDITAR - APENAS STATUS E EXCLUIR)
+   MÃ“DULO: BOBINES (VERSÃƒO SEM EDITAR - APENAS STATUS E EXCLUIR)
    ========================================================================== */
 
 let lancamentosTemporarios = [];
@@ -2657,7 +2657,7 @@ function moduloBobine(tipo) {
 }
 function renderizarNovoRelatorio() {
     const render = document.getElementById('render-modulo');
-    // Mantém a data de hoje como padrão se for o primeiro acesso
+    // MantÃ©m a data de hoje como padrÃ£o se for o primeiro acesso
     const dataHojeIso = new Date().toISOString().split('T')[0]; 
 
     render.innerHTML = `
@@ -2671,10 +2671,10 @@ function renderizarNovoRelatorio() {
                 </div>
 
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h3 style="color:#E31C24; margin:0;">NOVO LANÇAMENTO</h3>
+                    <h3 style="color:#E31C24; margin:0;">NOVO LANÃ‡AMENTO</h3>
                 </div>
 
-                <label style="color:#94a3b8; font-size:12px;">O QUE DESEJA LANÇAR?</label>
+                <label style="color:#94a3b8; font-size:12px;">O QUE DESEJA LANÃ‡AR?</label>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin:10px 0 20px 0;">
                     <button onclick="setTipoLancamento('filme')" id="btn-filme" class="btn-opt">FILME</button>
                     <button onclick="setTipoLancamento('chapa')" id="btn-chapa" class="btn-opt">BOBINA CHAPA</button>
@@ -2683,14 +2683,14 @@ function renderizarNovoRelatorio() {
                 <div id="area-configuracao"></div>
 
                 <button onclick="adicionarAoLancamento()" id="btn-add" style="display:none; width:100%; padding:15px; background:#10b981; color:white; border:none; border-radius:8px; font-weight:bold; margin-top:15px; cursor:pointer;">
-                    ADICIONAR AO LANÇAMENTO
+                    ADICIONAR AO LANÃ‡AMENTO
                 </button>
             </div>
 
             <div id="lista-lancamentos" style="margin-top:20px;"></div>
 
             <div id="acoes-finais" style="display:none; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
-                <button onclick="encerrarProducao()" style="padding:15px; background:#3b82f6; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">FIM PRODUÇÃO</button>
+                <button onclick="encerrarProducao()" style="padding:15px; background:#3b82f6; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">FIM PRODUÃ‡ÃƒO</button>
                 <button onclick="fecharDia()" style="padding:15px; background:#E31C24; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">FECHAR DIA</button>
             </div>
         </div>
@@ -2715,7 +2715,7 @@ function setTipoLancamento(tipo) {
     document.getElementById('btn-add').style.display = 'block';
 
     area.innerHTML = `
-        <label style="color:#94a3b8; font-size:12px; display:block; margin-top:10px;">POSIÇÃO</label>
+        <label style="color:#94a3b8; font-size:12px; display:block; margin-top:10px;">POSIÃ‡ÃƒO</label>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin:5px 0 15px 0;">
             <button onclick="setLado('superior')" class="btn-opt btn-lado">SUPERIOR</button>
             <button onclick="setLado('inferior')" class="btn-opt btn-lado">INFERIOR</button>
@@ -2757,7 +2757,7 @@ function setLado(lado) {
         setQtd(1);
     } else {
         areaDet.innerHTML = `
-            <input type="text" id="num_bobine" list="lista-bobinas-stock" placeholder="Nº DA BOBINA" class="input-style" autocomplete="off">
+            <input type="text" id="num_bobine" list="lista-bobinas-stock" placeholder="NÂº DA BOBINA" class="input-style" autocomplete="off">
             <datalist id="lista-bobinas-stock">${opcoesBobinasStockDatalist()}</datalist>
             <div id="info-bobine-stock"></div>
             <select id="ral_chapa" class="input-style">
@@ -2767,7 +2767,7 @@ function setLado(lado) {
             <label style="color:#94a3b8; font-size:12px;">ACABOU?</label>
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px; margin-top:5px;">
                 <button onclick="setStatusForm('SIM')" class="btn-opt btn-status">SIM</button>
-                <button onclick="setStatusForm('NÃO')" class="btn-opt btn-status">NÃO</button>
+                <button onclick="setStatusForm('NÃƒO')" class="btn-opt btn-status">NÃƒO</button>
                 <button onclick="setStatusForm('ANDAMENTO')" class="btn-opt btn-status">ANDAMENTO</button>
             </div>
         `;
@@ -2857,7 +2857,7 @@ function preencherInfoBobinaLancamento() {
 }
 
 function adicionarAoLancamento() {
-    if(!lancamentoAtual.lado) { alert('Selecione a posição!'); return; }
+    if(!lancamentoAtual.lado) { alert('Selecione a posiÃ§Ã£o!'); return; }
 
     if(lancamentoAtual.tipo === 'filme') {
         lancamentoAtual.subtipo = document.getElementById('subtipo_filme')?.value || 'Filme 1060';
@@ -2899,7 +2899,7 @@ function atualizarLista() {
     
     lancamentosTemporarios.forEach((item, index) => {
         if(item.producao !== ultimaProd) {
-            lista.innerHTML += `<div style="color:#E31C24; font-weight:bold; margin: 15px 0 5px 0; font-size:12px; border-bottom:1px solid #334155;">PRODUÇÃO ${item.producao}</div>`;
+            lista.innerHTML += `<div style="color:#E31C24; font-weight:bold; margin: 15px 0 5px 0; font-size:12px; border-bottom:1px solid #334155;">PRODUÃ‡ÃƒO ${item.producao}</div>`;
             ultimaProd = item.producao;
         }
 
@@ -2919,7 +2919,7 @@ function atualizarLista() {
 }
 
 function alternarStatus(index) {
-    const statusCiclo = ['ANDAMENTO', 'SIM', 'NÃO'];
+    const statusCiclo = ['ANDAMENTO', 'SIM', 'NÃƒO'];
     let atual = lancamentosTemporarios[index].status;
     let novoIndex = (statusCiclo.indexOf(atual) + 1) % statusCiclo.length;
     lancamentosTemporarios[index].status = statusCiclo[novoIndex];
@@ -2933,11 +2933,11 @@ function removerLancamento(index) {
 
 function encerrarProducao() {
     producaoAtiva++;
-    alert("Próxima Produção: " + producaoAtiva);
+    alert("PrÃ³xima ProduÃ§Ã£o: " + producaoAtiva);
     atualizarLista();
 }
 
-// --- FUNÇÃO PARA SALVAR E GERAR PDF ---
+// --- FUNÃ‡ÃƒO PARA SALVAR E GERAR PDF ---
 function normalizarStockAtlas(valor) {
     return String(valor || '')
         .normalize('NFD')
@@ -3023,7 +3023,7 @@ function fecharDia() {
         dataRef = new Date(partes[0], partes[1] - 1, partes[2]);
     }
 
-    // --- CORREÇÃO AQUI: BUSCA O NOME DA TELA OU DA VARIÁVEL ---
+    // --- CORREÃ‡ÃƒO AQUI: BUSCA O NOME DA TELA OU DA VARIÃVEL ---
     const elementoNome = document.getElementById('user-display');
     const operadorSistema = elementoNome ? elementoNome.innerText : (window.usuarioLogado || "OPERADOR");
 
@@ -3038,7 +3038,7 @@ function fecharDia() {
         itens: [...lancamentosTemporarios]
     };
 
-    // Salva no histórico
+    // Salva no histÃ³rico
     baixarStockPorLancamentosBobines(relFinal.itens);
     historicoBobines.unshift(relFinal);
     localStorage.setItem('historicoBobines', JSON.stringify(historicoBobines));
@@ -3050,18 +3050,18 @@ function fecharDia() {
     lancamentosTemporarios = [];
     producaoAtiva = 1;
     renderizarMenuBobines();
-    alert("Relatório fechado com sucesso!");
+    alert("RelatÃ³rio fechado com sucesso!");
 }
-//FUNÇÃO PARA RENDERIZAR O HISTÓRICO NA TELA ---
+//FUNÃ‡ÃƒO PARA RENDERIZAR O HISTÃ“RICO NA TELA ---
 function renderizarHistoricoBobines() {
     const container = document.getElementById('render-modulo');
     
-    // Simulação de estrutura organizada (Ano > Mês > Registros)
+    // SimulaÃ§Ã£o de estrutura organizada (Ano > MÃªs > Registros)
     // No seu sistema real, essa estrutura vem do seu Banco de Dados/Firebase
     let htmlHistorico = `
         <div style="padding: 20px; color: white;">
             <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 18px;">
-                <span style="color: #E31C24;">📁</span> HISTÓRICO DE BOBINES
+                <span style="color: #E31C24;">ðŸ“</span> HISTÃ“RICO DE BOBINES
             </h3>
     `;
 
@@ -3070,7 +3070,7 @@ function renderizarHistoricoBobines() {
         <div class="pasta-ano" style="margin-bottom: 10px;">
             <div style="background: #1e293b; padding: 10px; cursor: pointer; border-radius: 4px; font-weight: bold; display: flex; align-items: center; gap: 10px;" 
                  onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
-                <span>📁</span> ANO 2026
+                <span>ðŸ“</span> ANO 2026
             </div>
             
             <div class="meses-container" style="display: none; padding-left: 20px; margin-top: 5px;">
@@ -3078,13 +3078,13 @@ function renderizarHistoricoBobines() {
                 <div class="pasta-mes">
                     <div style="background: #334155; padding: 8px; cursor: pointer; border-radius: 4px; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 10px; margin-bottom: 2px;"
                          onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
-                        <span>📅</span> ABRIL
+                        <span>ðŸ“…</span> ABRIL
                     </div>
 
                     <div class="dias-container" style="display: none; background: rgba(15, 23, 42, 0.5); border-radius: 0 0 4px 4px;">
     `;
 
-    // AQUI entram os registros do dia com o visual novo (AMARELO da sua marcação)
+    // AQUI entram os registros do dia com o visual novo (AMARELO da sua marcaÃ§Ã£o)
     historicoBobines.forEach(rel => {
         htmlHistorico += `
     <div style="
@@ -3123,7 +3123,7 @@ function renderizarHistoricoBobines() {
                     align-items: center;
                     gap: 6px;
                 ">
-                <span style="font-size: 14px;">📄</span> PDF
+                <span style="font-size: 14px;">ðŸ“„</span> PDF
             </button>
         </div>
     </div>
@@ -3136,7 +3136,7 @@ function renderizarHistoricoBobines() {
 
     container.innerHTML = htmlHistorico;
 }
-// Função genérica para abrir/fechar as pastas
+// FunÃ§Ã£o genÃ©rica para abrir/fechar as pastas
 function toggleElemento(id) {
     const el = document.getElementById(id);
     if (el) {
@@ -3181,15 +3181,15 @@ function calcularTotais(itens) {
 }
 function deletarHistoricoBobine(index) {
     if (!usuarioPodeExcluirModulo('bobines')) return alert('Sem permissao para excluir em Bobines.');
-    if(confirm("Excluir este relatório permanentemente?")) {
+    if(confirm("Excluir este relatÃ³rio permanentemente?")) {
         historicoBobines.splice(index, 1);
         localStorage.setItem('historicoBobines', JSON.stringify(historicoBobines));
         renderizarHistoricoBobines();
     }
 }
 
-// Mantenha suas funções de renderizarNovoRelatorio, atualizarLista, adicionarAoLancamento e as calculadoras EXATAMENTE como você já tem.
-// Apenas certifique-se de que a função fecharDia e a gerarPDF_Bobines estejam como abaixo:
+// Mantenha suas funÃ§Ãµes de renderizarNovoRelatorio, atualizarLista, adicionarAoLancamento e as calculadoras EXATAMENTE como vocÃª jÃ¡ tem.
+// Apenas certifique-se de que a funÃ§Ã£o fecharDia e a gerarPDF_Bobines estejam como abaixo:
 
 function gerarPDF_Bobines(dadosEncoded) {
     const rel = JSON.parse(decodeURIComponent(dadosEncoded));
@@ -3197,19 +3197,19 @@ function gerarPDF_Bobines(dadosEncoded) {
 
     let conteudoGeral = "";
     
-    // Agrupamento por produção
+    // Agrupamento por produÃ§Ã£o
     const producoes = {};
     rel.itens.forEach(item => {
         if (!producoes[item.producao]) producoes[item.producao] = [];
         producoes[item.producao].push(item);
     });
 
-    // Gera o conteúdo para cada produção
+    // Gera o conteÃºdo para cada produÃ§Ã£o
     Object.keys(producoes).sort((a,b) => a-b).forEach(numProd => {
         let itensFilme = producoes[numProd].filter(i => i.tipo === 'filme');
         let itensChapa = producoes[numProd].filter(i => i.tipo === 'chapa');
 
-        // Cálculo das somas de filmes (Superior e Inferior)
+        // CÃ¡lculo das somas de filmes (Superior e Inferior)
         const somaSuperior = itensFilme
             .filter(f => f.lado.toLowerCase() === 'superior')
             .reduce((acc, curr) => acc + Number(curr.qtd), 0);
@@ -3221,17 +3221,17 @@ function gerarPDF_Bobines(dadosEncoded) {
         conteudoGeral += `
             <div style="margin-bottom: 30px; border: 2px solid #000; padding: 10px; border-radius: 5px; -webkit-print-color-adjust: exact;">
                 <div style="background: #000; color: #fff; padding: 8px; text-align: center; font-weight: bold; margin-bottom: 15px; -webkit-print-color-adjust: exact;">
-                    PRODUÇÃO ${numProd}
+                    PRODUÃ‡ÃƒO ${numProd}
                 </div>`;
 
         // Tabela de Filmes
         if (itensFilme.length > 0) {
             conteudoGeral += `
-                <div style="text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 5px;">▶ LANÇAMENTO DE FILMES</div>
+                <div style="text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 5px;">â–¶ LANÃ‡AMENTO DE FILMES</div>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 5px;">
                     <thead>
                         <tr style="background: #e2e8f0; -webkit-print-color-adjust: exact;">
-                            <th style="border: 2px solid #000; padding: 6px; font-size: 11px;">POSIÇÃO</th>
+                            <th style="border: 2px solid #000; padding: 6px; font-size: 11px;">POSIÃ‡ÃƒO</th>
                             <th style="border: 2px solid #000; padding: 6px; font-size: 11px;">TIPO DE FILME</th>
                             <th style="border: 2px solid #000; padding: 6px; font-size: 11px;">QUANTIDADE</th>
                         </tr>
@@ -3256,12 +3256,12 @@ function gerarPDF_Bobines(dadosEncoded) {
         // Tabela de Bobinas (Chapa)
         if (itensChapa.length > 0) {
             conteudoGeral += `
-                <div style="text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 5px;">▶ LANÇAMENTO DE BOBINAS (CHAPA)</div>
+                <div style="text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 5px;">â–¶ LANÃ‡AMENTO DE BOBINAS (CHAPA)</div>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
                     <thead>
                         <tr style="background: #e2e8f0; -webkit-print-color-adjust: exact;">
-                            <th style="border: 2px solid #000; padding: 6px; font-size: 11px;">POSIÇÃO</th>
-                            <th style="border: 2px solid #000; padding: 6px; font-size: 11px;">Nº BOBINA</th>
+                            <th style="border: 2px solid #000; padding: 6px; font-size: 11px;">POSIÃ‡ÃƒO</th>
+                            <th style="border: 2px solid #000; padding: 6px; font-size: 11px;">NÂº BOBINA</th>
                             <th style="border: 2px solid #000; padding: 6px; font-size: 11px;">RAL</th>
                             <th style="border: 2px solid #000; padding: 6px; font-size: 11px;">STATUS</th>
                         </tr>
@@ -3305,7 +3305,7 @@ function gerarPDF_Bobines(dadosEncoded) {
             <div class="header-black">
                 <div>
                     <b style="font-size: 22px;">ATLAS PAINEL</b><br>
-                    <span style="font-size: 11px; text-transform: uppercase;">Relatório de Bobines / Filme</span>
+                    <span style="font-size: 11px; text-transform: uppercase;">RelatÃ³rio de Bobines / Filme</span>
                 </div>
                 <div style="text-align: right; font-size: 12px; font-weight: bold;">
                     DATA: ${rel.data}<br>
@@ -3317,19 +3317,19 @@ function gerarPDF_Bobines(dadosEncoded) {
                 ${conteudoGeral}
 
                 <div class="resumo-final">
-                    <b style="font-size: 16px;">TOTAL GERAL DE PRODUÇÕES: ${Object.keys(producoes).length}</b>
+                    <b style="font-size: 16px;">TOTAL GERAL DE PRODUÃ‡Ã•ES: ${Object.keys(producoes).length}</b>
                 </div>
 
                 <div class="assinatura-area">
                     <div class="linha"></div>
                     <b style="font-size: 13px;">${rel.operador.toUpperCase()}</b><br>
-                    <span style="font-size: 11px;">Responsável pela Produção</span>
+                    <span style="font-size: 11px;">ResponsÃ¡vel pela ProduÃ§Ã£o</span>
                 </div>
 
                 <div class="no-print" style="text-align: center; margin-top: 30px;">
                     <div class="no-print" style="text-align: center;">
                     <button onclick="window.print()" style="padding: 20px; background: #000; color: #fff; border: 3px solid #E31C24; width: 100%; font-size: 18px; font-weight: bold; border-radius: 10px;">
-                        🖨️ CONFIRMAR E GERAR PDF
+                        ðŸ–¨ï¸ CONFIRMAR E GERAR PDF
                     </button>
                 </div>
                 </div>
@@ -3499,7 +3499,7 @@ function renderizarCalculadoraBobina() {
                 <div style="background:#0f172a; padding:15px; border-radius:10px; border-left:5px solid #E31C24;">
                     <div id="res_metros" style="font-size:18px; margin-bottom:5px;">Metros: <b>0</b></div>
                     <div id="res_tempo" style="font-size:18px; margin-bottom:5px;">Tempo: <b>0</b></div>
-                    <div id="res_hora" style="font-size:18px; color:#E31C24; font-weight:bold;">Finaliza às: <b>--:--</b></div>
+                    <div id="res_hora" style="font-size:18px; color:#E31C24; font-weight:bold;">Finaliza Ã s: <b>--:--</b></div>
                 </div>
             </div>
         </div>
@@ -3513,7 +3513,7 @@ function renderizarCalculadoraBobina() {
         let o = document.createElement("option");
         o.value = i;
         o.text = (i % 1 === 0) ? i + " cm" : i.toFixed(1) + " cm";
-        if(i === 20) o.selected = true; // Valor padrão
+        if(i === 20) o.selected = true; // Valor padrÃ£o
         selLargura.appendChild(o);
     }
 
@@ -3557,7 +3557,7 @@ function renderizarCalculadoraBobina() {
         divVel.appendChild(b);
     });
 
-    // 4. Lógica de Cálculo (Sua fórmula antiga)
+    // 4. LÃ³gica de CÃ¡lculo (Sua fÃ³rmula antiga)
     window.calcularLogicaBobina = function() {
         const L = parseFloat(document.getElementById("calc_largura").value);
         const interno = 500;
@@ -3580,10 +3580,10 @@ function renderizarCalculadoraBobina() {
 
         document.getElementById("res_metros").innerHTML = `Metros: <b>${metros} m</b>`;
         document.getElementById("res_tempo").innerHTML = `Tempo: <b>${textoTempo}</b>`;
-        document.getElementById("res_hora").innerHTML = `Finaliza às: <b>${fim.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</b>`;
+        document.getElementById("res_hora").innerHTML = `Finaliza Ã s: <b>${fim.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</b>`;
     };
 
-    // Rodar cálculo inicial
+    // Rodar cÃ¡lculo inicial
     calcularLogicaBobina();
 }
 function renderizarCalculadoraAgro() {
@@ -3606,7 +3606,7 @@ function renderizarCalculadoraAgro() {
                 <div style="background:#0f172a; padding:15px; border-radius:10px; border-left:5px solid #E31C24;">
                     <div id="agro_res_metros" style="font-size:18px; margin-bottom:5px;">Metros: <b>0</b></div>
                     <div id="agro_res_tempo" style="font-size:18px; margin-bottom:5px;">Tempo: <b>0</b></div>
-                    <div id="agro_res_hora" style="font-size:18px; color:#E31C24; font-weight:bold;">Finaliza às: <b>--:--</b></div>
+                    <div id="agro_res_hora" style="font-size:18px; color:#E31C24; font-weight:bold;">Finaliza Ã s: <b>--:--</b></div>
                 </div>
             </div>
         </div>
@@ -3642,7 +3642,7 @@ function renderizarCalculadoraAgro() {
         divVel.appendChild(b);
     });
 
-    // 3. Lógica Específica Agropainel
+    // 3. LÃ³gica EspecÃ­fica Agropainel
     window.calcularLogicaAgro = function() {
         const L = parseFloat(document.getElementById("agro_largura").value);
         const espAgro = 0.60; // Fixo conforme pedido
@@ -3666,7 +3666,7 @@ function renderizarCalculadoraAgro() {
 
         document.getElementById("agro_res_metros").innerHTML = `Metros: <b>${metros} m</b>`;
         document.getElementById("agro_res_tempo").innerHTML = `Tempo: <b>${textoTempo}</b>`;
-        document.getElementById("agro_res_hora").innerHTML = `Finaliza às: <b>${fim.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</b>`;
+        document.getElementById("agro_res_hora").innerHTML = `Finaliza Ã s: <b>${fim.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</b>`;
     };
 
     calcularLogicaAgro();
@@ -3674,10 +3674,10 @@ function renderizarCalculadoraAgro() {
 //aqui termina as bobines
 
 /* ==========================================================================
-   MÓDULO: SERRA
+   MÃ“DULO: SERRA
    ========================================================================== */
 
-// --- VARIÁVEIS DE CONTROLE ---
+// --- VARIÃVEIS DE CONTROLE ---
 // --- BANCO DE DADOS ---
 let db_serra_live = atlasArrayLocal('atlas_serra_live');
 let db_serra_hist = atlasArrayLocal('atlas_serra_hist');
@@ -3689,11 +3689,11 @@ function renderizarMenuSerra() {
         <div id="menu-inicial-serra" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:15px; padding:15px;">
             <div class="card" onclick="exibirSetupSerra()" style="cursor:pointer; background:#1e293b; border-radius:10px; padding:30px 15px; text-align:center; border:1px solid #334155;">
                 <i class="fas fa-plus" style="color:#3b82f6; font-size:2.5rem; margin-bottom:15px;"></i>
-                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">Novo Relatório</span>
+                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">Novo RelatÃ³rio</span>
             </div>
             <div class="card" onclick="listarHistoricoSerra()" style="cursor:pointer; background:#1e293b; border-radius:10px; padding:30px 15px; text-align:center; border:1px solid #334155;">
                 <i class="fas fa-history" style="color:#3b82f6; font-size:2.5rem; margin-bottom:15px;"></i>
-                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">Histórico Serra</span>
+                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">HistÃ³rico Serra</span>
             </div>
             <div class="card" onclick="abrirPacotesSerraPlano()" style="cursor:pointer; background:#1e293b; border-radius:10px; padding:30px 15px; text-align:center; border:1px solid #334155;">
                 <i class="fas fa-box-open" style="color:#10b981; font-size:2.5rem; margin-bottom:15px;"></i>
@@ -3722,7 +3722,7 @@ function alternarAbaSerra(mostrarAcao) {
     }
 }
 
-// --- 3. CONFIGURAÇÃO INICIAL ---
+// --- 3. CONFIGURAÃ‡ÃƒO INICIAL ---
 function obterLimitePacoteSerra(tipo, espessura) {
     const regra = (OPCOES_PACOTES_SERRA || []).find(r =>
         normalizarStockAtlas(r.tipo) === normalizarStockAtlas(tipo) &&
@@ -3851,11 +3851,11 @@ function exibirSetupSerra() {
             <button onclick="alternarAbaSerra(false)" style="background:none; border:none; color:#94a3b8; font-size:18px; cursor:pointer; margin-right:15px;">
                 <i class="fas fa-arrow-left"></i>
             </button>
-            <h3 style="color:#E31C24; font-size:14px; margin:0; text-transform:uppercase;">Configurar Produção</h3>
+            <h3 style="color:#E31C24; font-size:14px; margin:0; text-transform:uppercase;">Configurar ProduÃ§Ã£o</h3>
         </div>
 
         <div style="margin-bottom:15px; padding:10px; background:#1e293b; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:10px; border:1px solid #334155;">
-            <label style="color:#94a3b8; font-weight:bold; font-size:12px;">DATA DO RELATÓRIO:</label>
+            <label style="color:#94a3b8; font-weight:bold; font-size:12px;">DATA DO RELATÃ“RIO:</label>
             <input type="date" id="data-manual-serra" style="background:#0f172a; color:white; border:1px solid #3b82f6; padding:5px; border-radius:4px; font-weight:bold; outline:none; cursor:pointer;">
         </div>
 
@@ -3871,12 +3871,12 @@ function exibirSetupSerra() {
             </select>
 
             <div style="background:#0f172a; border:1px solid #334155; border-radius:10px; padding:14px; margin-bottom:18px;">
-                <label style="display:block; color:#fbbf24; font-size:12px; font-weight:900; margin-bottom:10px; text-transform:uppercase;">Marcar turno do relatÃ³rio</label>
+                <label style="display:block; color:#fbbf24; font-size:12px; font-weight:900; margin-bottom:10px; text-transform:uppercase;">Marcar turno do relatÃƒÂ³rio</label>
                 <input type="hidden" id="s-turno-setup-serra" value="manha">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                     <label id="btn-turno-manha-serra" onclick="selecionarTurnoSetupSerra('manha')" style="display:flex; align-items:center; gap:12px; background:#E31C24; color:white; border:none; padding:14px; border-radius:8px; font-weight:900; cursor:pointer;">
                         <input type="radio" name="turno-serra-setup" id="radio-turno-manha-serra" value="manha" checked style="width:22px; height:22px;">
-                        <span>TURNO DA MANHÃ</span>
+                        <span>TURNO DA MANHÃƒ</span>
                     </label>
                     <label id="btn-turno-tarde-serra" onclick="selecionarTurnoSetupSerra('tarde')" style="display:flex; align-items:center; gap:12px; background:#1e293b; color:white; border:1px solid #334155; padding:14px; border-radius:8px; font-weight:900; cursor:pointer;">
                         <input type="radio" name="turno-serra-setup" id="radio-turno-tarde-serra" value="tarde" style="width:22px; height:22px;">
@@ -3919,7 +3919,7 @@ function selecionarTurnoSetupSerra(turno) {
     if (abrir) abrir.textContent = valor === 'tarde' ? 'Abrir lancamento da tarde' : 'Abrir lancamento da manha';
 }
 
-// --- 4. INTERFACE DE LANÇAMENTO ---
+// --- 4. INTERFACE DE LANÃ‡AMENTO ---
 function iniciarInterfaceCorteSerra() {
     alternarAbaSerra(true);
 
@@ -4009,7 +4009,7 @@ function setModoCorteSerra(modo) {
 
     if (modo === 'pedido') {
         container.innerHTML = `
-            <input type="text" id="s-ped-serra" placeholder="Nº Pedido" style="width:100%; margin-bottom:10px; padding:10px; background:#1e293b; color:white; border:1px solid #334155; border-radius:5px;">
+            <input type="text" id="s-ped-serra" placeholder="NÂº Pedido" style="width:100%; margin-bottom:10px; padding:10px; background:#1e293b; color:white; border:1px solid #334155; border-radius:5px;">
             ${rals}
             <input type="number" id="s-metros-serra" placeholder="Comprimento (m)" style="width:100%; margin-bottom:10px; padding:10px; background:#1e293b; color:white; border:1px solid #334155; border-radius:5px;">
             <button onclick="addLinhaSerra('pedido')" style="width:100%; background:#E31C24; color:white; border:none; padding:12px; border-radius:5px; font-weight:bold;">ADICIONAR</button>
@@ -4032,7 +4032,7 @@ function setModoCorteSerra(modo) {
     }
 }
 
-// --- 5. LÓGICA DE DADOS ---
+// --- 5. LÃ“GICA DE DADOS ---
 function addLinhaSerra(modo) {
     const metrosInput = document.getElementById('s-metros-serra');
     if (!metrosInput) return;
@@ -4203,11 +4203,11 @@ function fecharDiaSerra() {
     db_serra_live = [];
     localStorage.removeItem('atlas_serra_live');
 
-    alert(`Relatório salvo com sucesso para o dia ${dataFinal}!`);
+    alert(`RelatÃ³rio salvo com sucesso para o dia ${dataFinal}!`);
     renderizarMenuSerra();
 }
 
-// --- 7. HISTÓRICO ---
+// --- 7. HISTÃ“RICO ---
 function listarHistoricoSerra() {
     const render = document.getElementById('render-modulo');
     let agrupado = {};
@@ -4218,25 +4218,25 @@ function listarHistoricoSerra() {
         agrupado[rel.ano][rel.mes].push(rel);
     });
 
-    const mesesNome = ["", "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+    const mesesNome = ["", "JANEIRO", "FEVEREIRO", "MARÃ‡O", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
 
     let html = `
         <div style="padding:15px; color:white;">
             <div style="display:flex; align-items:center; margin-bottom:20px;">
                 <button onclick="renderizarMenuSerra()" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer; margin-right:15px;"><i class="fas fa-arrow-left"></i></button>
-                <h2 style="border-bottom:2px solid #E31C24; padding-bottom:10px; margin:0; flex:1; font-size:18px;">📂 Histórico da Serra</h2>
+                <h2 style="border-bottom:2px solid #E31C24; padding-bottom:10px; margin:0; flex:1; font-size:18px;">ðŸ“‚ HistÃ³rico da Serra</h2>
             </div>
     `;
 
     if (db_serra_hist.length === 0) {
-        html += `<div style="text-align:center; padding:50px; color:gray;">Nenhum relatório encontrado no sistema.</div>`;
+        html += `<div style="text-align:center; padding:50px; color:gray;">Nenhum relatÃ³rio encontrado no sistema.</div>`;
     }
 
     Object.keys(agrupado).sort((a, b) => b - a).forEach(ano => {
         html += `
             <div style="margin-bottom:10px;">
                 <div onclick="toggleElemento('ano-s-${ano}')" style="background:#1e293b; padding:12px; border-radius:5px; font-weight:bold; cursor:pointer; border:1px solid #334155; display:flex; justify-content:space-between;">
-                    <span>📁 ANO ${ano}</span>
+                    <span>ðŸ“ ANO ${ano}</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div id="ano-s-${ano}" style="display:none; padding-left:10px; margin-top:5px; border-left:2px solid #E31C24;">`;
@@ -4244,7 +4244,7 @@ function listarHistoricoSerra() {
         Object.keys(agrupado[ano]).sort((a, b) => b - a).forEach(mes => {
             html += `
                 <div onclick="toggleElemento('mes-s-${ano}-${mes}')" style="cursor:pointer; padding:10px; color:#3b82f6; background:#0f172a; margin-top:5px; border-radius:4px; font-weight:bold;">
-                   📅 ${mesesNome[mes]}
+                   ðŸ“… ${mesesNome[mes]}
                 </div>
                 <div id="mes-s-${ano}-${mes}" style="display:none; padding-left:10px; background:#1a202c;">`;
 
@@ -4315,7 +4315,7 @@ function gerarPDF_Serra(dadosEncoded) {
                             <th style="border:2px solid #000; width:90px;">Mts Un.</th>
                             <th style="border:2px solid #000; width:100px;">Total</th>
                             <th style="border:2px solid #000;">RAL (INF/SUP)</th>
-                            <th style="border:2px solid #000;">Identificação</th>
+                            <th style="border:2px solid #000;">IdentificaÃ§Ã£o</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -4335,7 +4335,7 @@ function gerarPDF_Serra(dadosEncoded) {
         if (blocos[nome].stock.length > 0) {
             htmlConteudo += `
                 <div style="text-align:center; padding:5px; background:#ddd; font-weight:bold; border:2px solid #000; border-top:none; color:#000;">
-                    PRODUÇÃO STOCK
+                    PRODUÃ‡ÃƒO STOCK
                 </div>
                 <table style="width:100%; border-collapse:collapse; font-size:14px; color:#000;">
                     <thead>
@@ -4367,7 +4367,7 @@ function gerarPDF_Serra(dadosEncoded) {
     janela.document.write(`
         <html>
         <head>
-            <title>Relatório Serra</title>
+            <title>RelatÃ³rio Serra</title>
             <style>
                 body { font-family: Arial, sans-serif; padding: 20px; color: #000; }
                 table tr td, table tr th { border: 2px solid #000 !important; padding: 8px; }
@@ -4379,7 +4379,7 @@ function gerarPDF_Serra(dadosEncoded) {
         </head>
         <body>
             <div style="display:flex; justify-content:space-between; border-bottom:5px solid #E31C24; background:#000; color:#fff; padding:15px; align-items:center;">
-                <div><b style="font-size:22px;">ATLAS PAINEL</b><br>RELATÓRIO DE SERRA</div>
+                <div><b style="font-size:22px;">ATLAS PAINEL</b><br>RELATÃ“RIO DE SERRA</div>
                 <div style="text-align:right; font-weight:bold;">DATA: ${rel.data}<br>OP: ${rel.operador}</div>
             </div>
 
@@ -4393,13 +4393,13 @@ function gerarPDF_Serra(dadosEncoded) {
             <div style="margin-top:80px; text-align:center; width:100%;">
                 <div style="display:inline-block; width:350px; border-top:2px solid #000; padding-top:5px;">
                     <b style="text-transform:uppercase; font-size:14px;">${rel.operador}</b><br>
-                    <span>Responsável pela Produção</span>
+                    <span>ResponsÃ¡vel pela ProduÃ§Ã£o</span>
                 </div>
             </div>
 
             <div class="no-print" style="text-align:center;">
                 <button onclick="window.print()" style="padding:20px; background:#000; color:#fff; border:3px solid #E31C24; width:100%; font-size:18px; font-weight:bold; border-radius:10px;">
-                    🖨️ CONFIRMAR E GERAR PDF
+                    ðŸ–¨ï¸ CONFIRMAR E GERAR PDF
                 </button>
             </div>
         </body>
@@ -4424,11 +4424,11 @@ function renderizarMenuEmbalagem() {
         <div id="container-menu-emb" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; padding:15px;">
             <div class="card" onclick="exibirSetupEmbalagem()" style="cursor:pointer; background:#1e293b; border-radius:10px; padding:30px 15px; text-align:center; border: 1px solid #334155;">
                 <i class="fas fa-plus" style="color:#3b82f6; font-size:2.5rem; margin-bottom:15px;"></i>
-                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">Novo Relatório</span>
+                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">Novo RelatÃ³rio</span>
             </div>
             <div class="card" onclick="listarHistoricoEmbalagem()" style="cursor:pointer; background:#1e293b; border-radius:10px; padding:30px 15px; text-align:center; border: 1px solid #334155;">
                 <i class="fas fa-history" style="color:#3b82f6; font-size:2.5rem; margin-bottom:15px;"></i>
-                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">Histórico Embalagem</span>
+                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">HistÃ³rico Embalagem</span>
             </div>
         </div>
         <div id="container-acao-emb" style="display:none; padding:15px;"></div>
@@ -4476,13 +4476,13 @@ function exibirSetupEmbalagem() {
             <select id="s-esp" style="background:#1e293b; color:white; border:1px solid #334155; width:100%; padding:12px; border-radius:6px; margin-bottom:20px; font-weight:bold;">
                 ${[30,40,50,60,80,100,120].map(e => `<option value="${e}">${e} mm</option>`).join('')}
             </select>
-            <button onclick="iniciarInterfaceCorte()" style="width:100%; background:white; color:black; font-weight:800; border:none; padding:15px; border-radius:6px; cursor:pointer; text-transform:uppercase;">Abrir Lançamento</button>
+            <button onclick="iniciarInterfaceCorte()" style="width:100%; background:white; color:black; font-weight:800; border:none; padding:15px; border-radius:6px; cursor:pointer; text-transform:uppercase;">Abrir LanÃ§amento</button>
         </div>
     `;
     document.getElementById('data-manual-Embalagem').valueAsDate = new Date();
 }
 
-// --- 3. INTERFACE DE LANÇAMENTO ---
+// --- 3. INTERFACE DE LANÃ‡AMENTO ---
 function iniciarInterfaceCorte() {
     alternarAbaEmbalagem(true);
     const tipo = document.getElementById('s-tipo')?.value || db_emb_live[0]?.tipo || "5 Ondas";
@@ -4538,7 +4538,7 @@ function setModoCorte(modo) {
 
     if(modo === 'pedido') {
         container.innerHTML = `
-            <input type="text" id="s-ped" placeholder="Nº Pedido" style="width:100%; margin-bottom:10px; padding:10px; background:#1e293b; color:white; border:1px solid #334155; border-radius:5px;">
+            <input type="text" id="s-ped" placeholder="NÂº Pedido" style="width:100%; margin-bottom:10px; padding:10px; background:#1e293b; color:white; border:1px solid #334155; border-radius:5px;">
             ${rals}
             <input type="number" id="s-metros" placeholder="Comprimento (m)" style="width:100%; margin-bottom:10px; padding:10px; background:#1e293b; color:white; border:1px solid #334155; border-radius:5px;">
             <button onclick="addLinhaEmbalagem('pedido')" style="width:100%; background:#E31C24; color:white; border:none; padding:12px; border-radius:5px; font-weight:bold;">ADICIONAR</button>
@@ -4558,7 +4558,7 @@ function setModoCorte(modo) {
     }
 }
 
-// --- 4. LÓGICA DE DADOS ---
+// --- 4. LÃ“GICA DE DADOS ---
 function addLinhaEmbalagem(modo) {
     const metrosInput = document.getElementById('s-metros');
     const metros = parseFloat(metrosInput.value);
@@ -4599,7 +4599,7 @@ function atualizarTabelaEmbalagem() {
             <div style="background:#1e293b; padding:8px; border-radius:5px; margin-bottom:5px; border-left:4px solid #3b82f6; display:flex; justify-content:space-between; align-items:center; color:white; font-size:11px;">
                 <span>
                     <b style="color:#10b981;">${metrosLinha.toFixed(2)}m</b> 
-                    <small>(${it.qtd}x ${it.metros}m)</small> — ${it.desc} 
+                    <small>(${it.qtd}x ${it.metros}m)</small> â€” ${it.desc} 
                     <br><small style="color:#94a3b8;">INF: ${it.ralI} / SUP: ${it.ralS}</small>
                 </span>
                 <i class="fas fa-trash" onclick="removerCorteEmbalagem(${idx})" style="color:#ef4444; cursor:pointer; padding:5px;"></i>
@@ -4654,11 +4654,11 @@ function fecharDiaEmbalagem() {
     db_emb_live = [];
     localStorage.removeItem('atlas_emb_live');
     
-    alert(`Relatório salvo com sucesso!`);
+    alert(`RelatÃ³rio salvo com sucesso!`);
     renderizarMenuEmbalagem();
 }
 
-// --- 5. HISTÓRICO ---
+// --- 5. HISTÃ“RICO ---
 function listarHistoricoEmbalagem() {
     alternarAbaEmbalagem(true);
     const container = document.getElementById('container-acao-emb');
@@ -4671,25 +4671,25 @@ function listarHistoricoEmbalagem() {
         agrupado[rel.ano][rel.mes].push(rel);
     });
 
-    const mesesNome = ["", "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+    const mesesNome = ["", "JANEIRO", "FEVEREIRO", "MARÃ‡O", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
 
     let html = `
         <div style="color:white;">
             <div style="display:flex; align-items:center; margin-bottom:20px;">
                 <button onclick="alternarAbaEmbalagem(false)" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer; margin-right:15px;"><i class="fas fa-arrow-left"></i></button>
-                <h2 style="border-bottom: 2px solid #E31C24; padding-bottom: 10px; margin:0; flex:1; font-size:18px; text-transform:uppercase;">📂 Histórico Embalagem</h2>
+                <h2 style="border-bottom: 2px solid #E31C24; padding-bottom: 10px; margin:0; flex:1; font-size:18px; text-transform:uppercase;">ðŸ“‚ HistÃ³rico Embalagem</h2>
             </div>
     `;
 
     if (db_emb_hist.length === 0) {
-        html += `<div style="text-align:center; padding:50px; color:gray;">Nenhum relatório encontrado.</div>`;
+        html += `<div style="text-align:center; padding:50px; color:gray;">Nenhum relatÃ³rio encontrado.</div>`;
     }
 
     Object.keys(agrupado).sort((a,b) => b-a).forEach(ano => {
         html += `
             <div style="margin-bottom:10px;">
                 <div onclick="toggleElemento('ano-emb-${ano}')" style="background:#1e293b; padding:12px; border-radius:5px; font-weight:bold; cursor:pointer; border: 1px solid #334155; display:flex; justify-content:space-between;">
-                    <span>📁 ANO ${ano}</span>
+                    <span>ðŸ“ ANO ${ano}</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div id="ano-emb-${ano}" style="display:none; padding-left:10px; margin-top:5px; border-left: 2px solid #E31C24;">`;
@@ -4697,7 +4697,7 @@ function listarHistoricoEmbalagem() {
         Object.keys(agrupado[ano]).sort((a,b) => b-a).forEach(mes => {
             html += `
                 <div onclick="toggleElemento('mes-emb-${ano}-${mes}')" style="cursor:pointer; padding:10px; color:#3b82f6; background: #0f172a; margin-top:5px; border-radius:4px; font-weight:bold;">
-                    📅 ${mesesNome[mes]}
+                    ðŸ“… ${mesesNome[mes]}
                 </div>
                 <div id="mes-emb-${ano}-${mes}" style="display:none; padding-left:10px; background: #1a202c;">`;
                 
@@ -4723,7 +4723,7 @@ function listarHistoricoEmbalagem() {
     container.innerHTML = html;
 }
 
-// --- 6. FUNÇÕES AUXILIARES ---
+// --- 6. FUNÃ‡Ã•ES AUXILIARES ---
 function toggleElemento(id) {
     const el = document.getElementById(id);
     if(el) el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
@@ -4756,7 +4756,7 @@ function gerarPDF_Embalagem(dadosEncoded) {
                             <th style="border:2px solid #000; width:90px;">Mts Un.</th>
                             <th style="border:2px solid #000; width:100px;">Total</th>
                             <th style="border:2px solid #000;">RAL (INF/SUP)</th>
-                            <th style="border:2px solid #000;">Identificação</th>
+                            <th style="border:2px solid #000;">IdentificaÃ§Ã£o</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -4772,7 +4772,7 @@ function gerarPDF_Embalagem(dadosEncoded) {
         }
         
         if(blocos[nome].stock.length > 0) {
-            htmlConteudo += `<div style="text-align: center; padding:5px; background:#ddd; font-weight:bold; border:2px solid #000; border-top:none; color:#000;"> PRODUÇÃO STOCK</div>
+            htmlConteudo += `<div style="text-align: center; padding:5px; background:#ddd; font-weight:bold; border:2px solid #000; border-top:none; color:#000;"> PRODUÃ‡ÃƒO STOCK</div>
                 <table style="width:100%; border-collapse:collapse; font-size:14px; color:#000;">
                     <thead>
                         <tr style="background:#eee;">
@@ -4800,7 +4800,7 @@ function gerarPDF_Embalagem(dadosEncoded) {
     janela.document.write(`
         <html>
         <head>
-            <title>Relatório Embalagem</title>
+            <title>RelatÃ³rio Embalagem</title>
             <style>
                 body { font-family: Arial, sans-serif; padding: 20px; color: #000; }
                 table tr td, table tr th { border: 2px solid #000 !important; padding: 8px; }
@@ -4812,7 +4812,7 @@ function gerarPDF_Embalagem(dadosEncoded) {
         </head>
         <body>
             <div style="display:flex; justify-content:space-between; border-bottom:5px solid #E31C24; background:#000; color:#fff; padding:15px; align-items:center;">
-                <div><b style="font-size:22px;">ATLAS PAINEL</b><br>RELATÓRIO DE EMBALAGEM</div>
+                <div><b style="font-size:22px;">ATLAS PAINEL</b><br>RELATÃ“RIO DE EMBALAGEM</div>
                 <div style="text-align:right; font-weight:bold;">DATA: ${rel.data}<br>OP: ${rel.operador}</div>
             </div>
 
@@ -4826,13 +4826,13 @@ function gerarPDF_Embalagem(dadosEncoded) {
             <div style="margin-top:80px; text-align:center; width:100%;">
                 <div style="display:inline-block; width:350px; border-top:2px solid #000; padding-top:5px;">
                     <b style="text-transform:uppercase; font-size:14px;">${rel.operador}</b><br>
-                    <span>Responsável pela Produção</span>
+                    <span>ResponsÃ¡vel pela ProduÃ§Ã£o</span>
                 </div>
             </div>
 
             <div class="no-print" style="text-align: center;">
                     <button onclick="window.print()" style="padding: 20px; background: #000; color: #fff; border: 3px solid #E31C24; width: 100%; font-size: 18px; font-weight: bold; border-radius: 10px;">
-                        🖨️ CONFIRMAR E GERAR PDF
+                        ðŸ–¨ï¸ CONFIRMAR E GERAR PDF
                     </button>
                 </div>
             </div>
@@ -4853,7 +4853,7 @@ function renderizarMenuGestao() {
             </div>
             <div class="card" onclick="listarUsuariosSistema()" style="cursor:pointer; background:#1e293b; border-radius:10px; padding:30px 15px; text-align:center; border:1px solid #334155;">
                 <i class="fas fa-users" style="color:#3b82f6; font-size:2.5rem; margin-bottom:15px;"></i>
-                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">Lista de Usuários</span>
+                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">Lista de UsuÃ¡rios</span>
             </div>
         </div>
         <div id="gestao-conteudo" style="padding:15px;"></div>
@@ -4866,19 +4866,19 @@ function exibirCriarUsuario() {
 
     container.innerHTML = `
         <div style="background:#111827; padding:20px; border-radius:12px; border:1px solid #334155;">
-            <h3 style="color:white; margin-top:0; margin-bottom:15px;">Criar Usuário</h3>
+            <h3 style="color:white; margin-top:0; margin-bottom:15px;">Criar UsuÃ¡rio</h3>
 
-            <input type="text" id="novo-id-usuario" placeholder="ID do funcionário" style="width:100%; margin-bottom:10px; padding:12px; background:#1e293b; color:white; border:1px solid #334155; border-radius:6px;">
+            <input type="text" id="novo-id-usuario" placeholder="ID do funcionÃ¡rio" style="width:100%; margin-bottom:10px; padding:12px; background:#1e293b; color:white; border:1px solid #334155; border-radius:6px;">
 
             <input type="password" id="nova-senha-usuario" placeholder="Senha" style="width:100%; margin-bottom:10px; padding:12px; background:#1e293b; color:white; border:1px solid #334155; border-radius:6px;">
 
             <select id="novo-cargo-usuario" style="width:100%; margin-bottom:15px; padding:12px; background:#1e293b; color:white; border:1px solid #334155; border-radius:6px;">
-                <option value="operario">Operário</option>
+                <option value="operario">OperÃ¡rio</option>
                 <option value="supervisor">Supervisor</option>
             </select>
 
             <button onclick="criarUsuarioSistema()" style="width:100%; background:#10b981; color:white; border:none; padding:14px; border-radius:8px; font-weight:bold;">
-                CRIAR USUÁRIO
+                CRIAR USUÃRIO
             </button>
         </div>
     `;
@@ -4896,7 +4896,7 @@ function criarUsuarioSistema() {
 
     const jaExiste = usuariosSistema.some(u => u.id.toLowerCase() === id.toLowerCase());
     if (jaExiste) {
-        alert("Este ID já existe.");
+        alert("Este ID jÃ¡ existe.");
         return;
     }
 
@@ -4908,7 +4908,7 @@ function criarUsuarioSistema() {
     });
 
     localStorage.setItem('atlas_usuarios', JSON.stringify(usuariosSistema));
-    alert("Usuário criado com sucesso!");
+    alert("UsuÃ¡rio criado com sucesso!");
     exibirCriarUsuario();
 }
 
@@ -5126,7 +5126,7 @@ function listarUsuariosSistema() {
                             </button>
                         ` : `
                             <select onchange="alterarCargoUsuario(${index}, this.value)" style="padding:10px; background:#0f172a; color:white; border:1px solid #334155; border-radius:6px; font-weight:bold;">
-                                <option value="operario" ${u.cargo === 'operario' ? 'selected' : ''}>Operário</option>
+                                <option value="operario" ${u.cargo === 'operario' ? 'selected' : ''}>OperÃ¡rio</option>
                                 <option value="supervisor" ${u.cargo === 'supervisor' ? 'selected' : ''}>Supervisor</option>
                             </select>
                         `}
@@ -5159,7 +5159,7 @@ function listarUsuariosSistema() {
 function alterarCargoUsuario(index, novoCargo) {
     if (!usuariosSistema[index]) return;
     if (usuarioProtegidoAdminAtlas(usuariosSistema[index])) {
-        alert("O cargo ADMIN não pode ser alterado.");
+        alert("O cargo ADMIN nÃ£o pode ser alterado.");
         listarUsuariosSistema();
         return;
     }
@@ -5236,7 +5236,7 @@ function alternarBloqueioUsuario(index) {
     if (!usuariosSistema[index]) return;
 
     if (usuarioProtegidoAdminAtlas(usuariosSistema[index])) {
-        alert("O usuário ADMIN não pode ser bloqueado.");
+        alert("O usuÃ¡rio ADMIN nÃ£o pode ser bloqueado.");
         return;
     }
 
@@ -5245,18 +5245,18 @@ function alternarBloqueioUsuario(index) {
     salvarUsuariosSistemaAtlas();
     if (typeof window.atlasFirebaseSincronizarAgora === 'function') window.atlasFirebaseSincronizarAgora();
 
-    alert(usuariosSistema[index].bloqueado ? "Usuário bloqueado." : "Usuário desbloqueado.");
+    alert(usuariosSistema[index].bloqueado ? "UsuÃ¡rio bloqueado." : "UsuÃ¡rio desbloqueado.");
     listarUsuariosSistema();
 }
 function excluirUsuario(index) {
     if (!usuariosSistema[index]) return;
 
     if (usuarioProtegidoAdminAtlas(usuariosSistema[index])) {
-        alert("O usuário ADMIN não pode ser excluído.");
+        alert("O usuÃ¡rio ADMIN nÃ£o pode ser excluÃ­do.");
         return;
     }
 
-    const confirmar = confirm(`Deseja excluir o usuário ${usuariosSistema[index].id}?`);
+    const confirmar = confirm(`Deseja excluir o usuÃ¡rio ${usuariosSistema[index].id}?`);
     if (!confirmar) return;
 
     const usuarioExcluido = usuariosSistema[index];
@@ -5269,14 +5269,14 @@ function excluirUsuario(index) {
     salvarUsuariosSistemaAtlas();
     if (typeof window.atlasFirebaseSincronizarAgora === 'function') window.atlasFirebaseSincronizarAgora();
 
-    alert("Usuário excluído com sucesso.");
+    alert("UsuÃ¡rio excluÃ­do com sucesso.");
     listarUsuariosSistema();
 }
  
-// --- MÓDULO PLANO ---
+// --- MÃ“DULO PLANO ---
 var db_plano_live = atlasJSONLocal('atlas_plano_live', null);
 var db_plano_hist = atlasArrayLocal('atlas_plano_hist');
-var destinosPlano = atlasArrayLocal('atlas_plano_destinos', ["Ansião", "Leiria", "Algarve", "Sobreda", "Abrantes"]);
+var destinosPlano = atlasArrayLocal('atlas_plano_destinos', ["AnsiÃ£o", "Leiria", "Algarve", "Sobreda", "Abrantes"]);
 
 function atlasListaConfig(chave, padrao) {
     try {
@@ -5329,7 +5329,7 @@ function atlasListaObjetosConfig(chave, padrao) {
     }
 }
 
-var OPCOES_TIPO_PLANO = atlasListaConfig('atlas_config_tipos_painel', ["5 Ondas", "Fachada Oculta", "Fachada Visível", "Telha Canudo"]);
+var OPCOES_TIPO_PLANO = atlasListaConfig('atlas_config_tipos_painel', ["5 Ondas", "Fachada Oculta", "Fachada VisÃ­vel", "Telha Canudo"]);
 var OPCOES_ESPESSURA_PLANO = [30, 40, 50, 60, 80, 100, 120];
 var OPCOES_RAL_SUP = atlasListaConfig('atlas_config_ral_superior', ["9010", "9006", "7016"]);
 var OPCOES_RAL_INF = atlasListaConfig('atlas_config_ral_inferior', ["3009", "9010", "6009", "9006", "9005", "8004 T", "8004 L", "7016"]);
@@ -5781,12 +5781,12 @@ function listarHistoricoPlano() {
         agrupado[rel.ano][rel.mes][rel.dia] ||= [];
         agrupado[rel.ano][rel.mes][rel.dia].push(rel);
     });
-    let html = `<div style="color:white;"><div style="display:flex; align-items:center; margin-bottom:20px;"><button onclick="alternarAbaPlano(false)" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer; margin-right:15px;"><i class="fas fa-arrow-left"></i></button><h2 style="border-bottom:2px solid #E31C24; padding-bottom:10px; margin:0; flex:1; font-size:18px; text-transform:uppercase;">📂 Historico de Planos</h2></div>`;
+    let html = `<div style="color:white;"><div style="display:flex; align-items:center; margin-bottom:20px;"><button onclick="alternarAbaPlano(false)" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer; margin-right:15px;"><i class="fas fa-arrow-left"></i></button><h2 style="border-bottom:2px solid #E31C24; padding-bottom:10px; margin:0; flex:1; font-size:18px; text-transform:uppercase;">ðŸ“‚ Historico de Planos</h2></div>`;
     if (db_plano_hist.length === 0) html += `<div style="text-align:center; padding:50px; color:gray;">Nenhum plano encontrado.</div>`;
     Object.keys(agrupado).sort((a,b)=>b-a).forEach(ano => {
-        html += `<div style="margin-bottom:10px;"><div onclick="togglePlanoElemento('ano-plano-${ano}')" style="background:#1e293b; padding:12px; border-radius:5px; font-weight:bold; cursor:pointer; border:1px solid #334155; display:flex; justify-content:space-between;"><span>📁 ANO ${ano}</span><i class="fas fa-chevron-down"></i></div><div id="ano-plano-${ano}" style="display:none; padding-left:10px; margin-top:5px; border-left:2px solid #E31C24;">`;
+        html += `<div style="margin-bottom:10px;"><div onclick="togglePlanoElemento('ano-plano-${ano}')" style="background:#1e293b; padding:12px; border-radius:5px; font-weight:bold; cursor:pointer; border:1px solid #334155; display:flex; justify-content:space-between;"><span>ðŸ“ ANO ${ano}</span><i class="fas fa-chevron-down"></i></div><div id="ano-plano-${ano}" style="display:none; padding-left:10px; margin-top:5px; border-left:2px solid #E31C24;">`;
         Object.keys(agrupado[ano]).sort((a,b)=>b-a).forEach(mes => {
-            html += `<div onclick="togglePlanoElemento('mes-plano-${ano}-${mes}')" style="cursor:pointer; padding:10px; color:#3b82f6; background:#0f172a; margin-top:5px; border-radius:4px; font-weight:bold;"> 📅${MESES_PT[mes]}</div><div id="mes-plano-${ano}-${mes}" style="display:none; padding-left:10px; background:#1a202c;">`;
+            html += `<div onclick="togglePlanoElemento('mes-plano-${ano}-${mes}')" style="cursor:pointer; padding:10px; color:#3b82f6; background:#0f172a; margin-top:5px; border-radius:4px; font-weight:bold;"> ðŸ“…${MESES_PT[mes]}</div><div id="mes-plano-${ano}-${mes}" style="display:none; padding-left:10px; background:#1a202c;">`;
             Object.keys(agrupado[ano][mes]).sort((a,b)=>b-a).forEach(dia => {
                 html += `<div onclick="togglePlanoElemento('dia-plano-${ano}-${mes}-${dia}')" style="cursor:pointer; padding:10px; color:white; border-bottom:1px solid #334155;">DIA ${dia}/${String(mes).padStart(2,'0')}</div><div id="dia-plano-${ano}-${mes}-${dia}" style="display:none; padding:8px 0 8px 10px;">`;
                 agrupado[ano][mes][dia].forEach(rel => {
@@ -6430,8 +6430,8 @@ function renderizarMenuAjustes() {
         <div id="menu-ajustes" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:15px;">
             <div class="card" onclick="abrirAjustesUsuario()" style="cursor:pointer; background:#1e293b; border-radius:10px; padding:30px 15px; text-align:center; border:1px solid #334155;">
                 <i class="fas fa-user-cog" style="color:#3b82f6; font-size:2.5rem; margin-bottom:15px;"></i>
-                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">Usuário</span>
-                <small style="color:#94a3b8;">Senha, tema e módulos</small>
+                <span style="display:block; color:white; font-weight:bold; font-size:13px; text-transform:uppercase;">UsuÃ¡rio</span>
+                <small style="color:#94a3b8;">Senha, tema e mÃ³dulos</small>
             </div>
 
             <div class="card" onclick="abrirAjustesBackup()" style="cursor:pointer; background:#1e293b; border-radius:10px; padding:30px 15px; text-align:center; border:1px solid #334155;">
@@ -6489,7 +6489,7 @@ function abrirAjustesUsuario() {
                 <i class="fas fa-arrow-left"></i>
             </button>
             <h2 style="border-bottom:2px solid #3b82f6; padding-bottom:10px; margin:0; flex:1; font-size:18px; text-transform:uppercase;">
-                Ajustes do Usuário
+                Ajustes do UsuÃ¡rio
             </h2>
         </div>
 
@@ -6513,7 +6513,7 @@ function abrirAjustesUsuario() {
             </div>
 
             <div style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:20px;">
-                <h3 style="margin-top:0; margin-bottom:15px;">Aparência</h3>
+                <h3 style="margin-top:0; margin-bottom:15px;">AparÃªncia</h3>
 
                 <select id="seletor-tema-ajustes" style="width:100%; margin-bottom:12px; padding:12px; background:#0f172a; color:white; border:1px solid #334155; border-radius:8px;">
                     <option value="escuro" ${preferencias.tema === 'escuro' ? 'selected' : ''}>Modo escuro</option>
@@ -6526,7 +6526,7 @@ function abrirAjustesUsuario() {
             </div>
 
             <div style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:20px;">
-                <h3 style="margin-top:0; margin-bottom:15px;">Meus módulos</h3>
+                <h3 style="margin-top:0; margin-bottom:15px;">Meus mÃ³dulos</h3>
 
                 <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:15px;">
                     ${MODULOS_SISTEMA
@@ -6541,7 +6541,7 @@ function abrirAjustesUsuario() {
                 </div>
 
                 <button onclick="salvarModulosVisiveis()" style="width:100%; background:#3b82f6; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold;">
-                    CONFIRMAR MÓDULOS
+                    CONFIRMAR MÃ“DULOS
                 </button>
             </div>
         </div>
@@ -6808,8 +6808,8 @@ function abrirAjustesSistema() {
             ${htmlEditorListaSistema('RAL inferior', 'atlas_config_ral_inferior', OPCOES_RAL_INF, 'OPCOES_RAL_INF')}
             ${htmlEditorListaSistema('RAL superior', 'atlas_config_ral_superior', OPCOES_RAL_SUP, 'OPCOES_RAL_SUP')}
             ${htmlEditorListaSistema('Espessura de chapa opcional', 'atlas_config_esp_chapa', OPCOES_ESP_CHAPA, 'OPCOES_ESP_CHAPA')}
-            ${htmlEditorListaSistema('Espessura da espuma - Injeção', 'atlas_config_espuma_injecao', OPCOES_ESPUMA_INJECAO, 'OPCOES_ESPUMA_INJECAO')}
-            ${htmlEditorListaSistema('Fita - InjeÃ§Ã£o', 'atlas_config_fita_injecao', OPCOES_FITA_INJECAO, 'OPCOES_FITA_INJECAO')}
+            ${htmlEditorListaSistema('Espessura da espuma - InjeÃ§Ã£o', 'atlas_config_espuma_injecao', OPCOES_ESPUMA_INJECAO, 'OPCOES_ESPUMA_INJECAO')}
+            ${htmlEditorListaSistema('Fita - InjeÃƒÂ§ÃƒÂ£o', 'atlas_config_fita_injecao', OPCOES_FITA_INJECAO, 'OPCOES_FITA_INJECAO')}
             ${htmlEditorListaSistema('Medidas de chapa - Stock', 'atlas_config_medidas_chapa_stock', OPCOES_MEDIDAS_CHAPA_STOCK, 'OPCOES_MEDIDAS_CHAPA_STOCK')}
             ${htmlEditorListaSistema('Fornecedores - Stock', 'atlas_config_fornecedores_stock', OPCOES_FORNECEDORES_STOCK, 'OPCOES_FORNECEDORES_STOCK')}
             ${htmlEditorListaSistema('Filmes - Stock / Bobines', 'atlas_config_filmes_stock', OPCOES_FILMES_STOCK, 'OPCOES_FILMES_STOCK')}
@@ -7767,10 +7767,10 @@ function importarBackupSistema() {
                 localStorage.setItem(chave, dados[chave]);
             });
 
-            alert('Backup importado com sucesso. A página será recarregada.');
+            alert('Backup importado com sucesso. A pÃ¡gina serÃ¡ recarregada.');
             location.reload();
         } catch (erro) {
-            alert('Arquivo de backup inválido.');
+            alert('Arquivo de backup invÃ¡lido.');
         }
     };
 
@@ -7818,13 +7818,13 @@ function salvarModulosVisiveis() {
         alert('Meus modulos atualizados com sucesso.');
         return;
     }
-    if (!usuarioEhAdmin()) return alert('Somente ADMIN pode alterar permissões de módulos. Use o módulo Permissões.');
+    if (!usuarioEhAdmin()) return alert('Somente ADMIN pode alterar permissÃµes de mÃ³dulos. Use o mÃ³dulo PermissÃµes.');
 
     const checks = document.querySelectorAll('.check-modulo-ajustes:checked');
     const modulosSelecionados = Array.from(checks).map(el => el.value);
 
     if (modulosSelecionados.length === 0) {
-        alert('Selecione pelo menos um módulo.');
+        alert('Selecione pelo menos um mÃ³dulo.');
         return;
     }
 
@@ -7835,7 +7835,7 @@ function salvarModulosVisiveis() {
     aplicarPermissoesUsuario();
     aplicarPreferenciasVisuaisUsuario();
 
-    alert('Módulos atualizados com sucesso.');
+    alert('MÃ³dulos atualizados com sucesso.');
 }
 
 function textoSeguroPermissoes(valor) {
@@ -8023,7 +8023,7 @@ function aplicarTemaUsuario(tema) {
     }
 }
 /* ==========================================================
-   PLANO - REMOVER PEDIDO/CLIENTE CANCELADO DO HISTÓRICO
+   PLANO - REMOVER PEDIDO/CLIENTE CANCELADO DO HISTÃ“RICO
    Cole no FINAL do script.js
    ========================================================== */
 
@@ -8045,12 +8045,12 @@ function salvarPlanoHistoricoEditado(index, rel) {
 
 function abrirGestaoPlanoHistorico(index) {
     if (!usuarioPodeEditarPlanoHistorico()) {
-        alert('Apenas ADMIN ou SUPERVISOR podem gerir planos do histórico.');
+        alert('Apenas ADMIN ou SUPERVISOR podem gerir planos do histÃ³rico.');
         return;
     }
 
     const rel = db_plano_hist[index];
-    if (!rel) return alert('Plano não encontrado.');
+    if (!rel) return alert('Plano nÃ£o encontrado.');
 
     if (!document.getElementById('modal-plano-historico')) {
         const modal = document.createElement('div');
@@ -8080,7 +8080,7 @@ function removerItemPlanoHistorico(indexPlano, idItem) {
     rel.itens = rel.itens.filter(i => String(i.id) !== String(idItem));
 
     if (rel.itens.length === 0) {
-        const apagarPlano = confirm('Este era o último item do plano. Deseja apagar o plano inteiro do histórico?');
+        const apagarPlano = confirm('Este era o Ãºltimo item do plano. Deseja apagar o plano inteiro do histÃ³rico?');
         if (apagarPlano) {
             db_plano_hist.splice(indexPlano, 1);
             localStorage.setItem('atlas_plano_hist', JSON.stringify(db_plano_hist));
@@ -8107,7 +8107,7 @@ function removerPedidoPlanoHistorico(indexPlano, pedidoNumero, destino) {
     });
 
     if (rel.itens.length === 0) {
-        const apagarPlano = confirm('Este era o último pedido do plano. Deseja apagar o plano inteiro do histórico?');
+        const apagarPlano = confirm('Este era o Ãºltimo pedido do plano. Deseja apagar o plano inteiro do histÃ³rico?');
         if (apagarPlano) {
             db_plano_hist.splice(indexPlano, 1);
             localStorage.setItem('atlas_plano_hist', JSON.stringify(db_plano_hist));
@@ -8172,7 +8172,7 @@ function renderizarGestaoPlanoHistorico(indexPlano) {
                             </div>
                             <button onclick="removerItemPlanoHistorico(${indexPlano}, '${item.id}')"
                                 style="margin-top:8px; width:100%; background:#7f1d1d; color:white; border:none; padding:9px; border-radius:7px; font-weight:bold;">
-                                REMOVER SÓ ESTE ITEM
+                                REMOVER SÃ“ ESTE ITEM
                             </button>
                         </div>
                     `).join('')}
@@ -8250,7 +8250,7 @@ function listarHistoricoPlano() {
                     <i class="fas fa-arrow-left"></i>
                 </button>
                 <h2 style="border-bottom:2px solid #E31C24; padding-bottom:10px; margin:0; flex:1; font-size:18px; text-transform:uppercase;">
-                    Histórico de Planos
+                    HistÃ³rico de Planos
                 </h2>
             </div>
     `;
@@ -8354,7 +8354,7 @@ function salvarPlanoHistoricoEditado(index, rel, acao) {
 
 function abrirEdicaoItemPlanoHistorico(indexPlano, idItem) {
     if (!usuarioPodeEditarPlanoHistorico()) {
-        alert('Apenas ADMIN ou SUPERVISOR podem editar planos do histórico.');
+        alert('Apenas ADMIN ou SUPERVISOR podem editar planos do histÃ³rico.');
         return;
     }
 
@@ -8362,7 +8362,7 @@ function abrirEdicaoItemPlanoHistorico(indexPlano, idItem) {
     if (!rel) return;
 
     const item = rel.itens.find(i => String(i.id) === String(idItem));
-    if (!item) return alert('Item não encontrado.');
+    if (!item) return alert('Item nÃ£o encontrado.');
 
     const modal = document.getElementById('modal-plano-historico');
     if (!modal) return;
@@ -8401,7 +8401,7 @@ function abrirEdicaoItemPlanoHistorico(indexPlano, idItem) {
 
                 <button onclick="salvarEdicaoItemPlanoHistorico(${indexPlano}, '${String(idItem).replace(/'/g, "\\'")}')"
                     style="width:100%; background:#10b981; color:white; border:none; padding:14px; border-radius:8px; font-weight:bold; font-size:14px;">
-                    SALVAR ALTERAÇÃO
+                    SALVAR ALTERAÃ‡ÃƒO
                 </button>
             </div>
         </div>
@@ -8418,8 +8418,8 @@ function salvarEdicaoItemPlanoHistorico(indexPlano, idItem) {
     const qtd = Number(document.getElementById('edit-plano-qtd')?.value);
     const metros = Number(document.getElementById('edit-plano-metros')?.value);
 
-    if (!qtd || qtd <= 0) return alert('Informe uma quantidade válida.');
-    if (!metros || metros <= 0) return alert('Informe os metros válidos.');
+    if (!qtd || qtd <= 0) return alert('Informe uma quantidade vÃ¡lida.');
+    if (!metros || metros <= 0) return alert('Informe os metros vÃ¡lidos.');
 
     item.quantidadeChapas = qtd;
     item.metrosUnidade = metros;
@@ -8448,7 +8448,7 @@ function removerItemPlanoHistorico(indexPlano, idItem) {
     rel.itens = rel.itens.filter(i => String(i.id) !== String(idItem));
 
     if (rel.itens.length === 0) {
-        const apagarPlano = confirm('Este era o último item do plano. Deseja apagar o plano inteiro do histórico?');
+        const apagarPlano = confirm('Este era o Ãºltimo item do plano. Deseja apagar o plano inteiro do histÃ³rico?');
         if (apagarPlano) {
             db_plano_hist.splice(indexPlano, 1);
             localStorage.setItem('atlas_plano_hist', JSON.stringify(db_plano_hist));
@@ -8475,7 +8475,7 @@ function removerPedidoPlanoHistorico(indexPlano, pedidoNumero, destino) {
     });
 
     if (rel.itens.length === 0) {
-        const apagarPlano = confirm('Este era o último pedido do plano. Deseja apagar o plano inteiro do histórico?');
+        const apagarPlano = confirm('Este era o Ãºltimo pedido do plano. Deseja apagar o plano inteiro do histÃ³rico?');
         if (apagarPlano) {
             db_plano_hist.splice(indexPlano, 1);
             localStorage.setItem('atlas_plano_hist', JSON.stringify(db_plano_hist));
@@ -8512,7 +8512,7 @@ function renderizarGestaoPlanoHistorico(indexPlano) {
     if (rel.editadoPor && rel.editadoEm) {
         infoEdicao = `
             <div style="margin-top:8px; background:#1e293b; border:1px solid #334155; color:#facc15; padding:8px; border-radius:8px; font-size:12px;">
-                Última edição: <b>${rel.editadoPor}</b> em <b>${rel.editadoEm}</b>
+                Ãšltima ediÃ§Ã£o: <b>${rel.editadoPor}</b> em <b>${rel.editadoEm}</b>
             </div>
         `;
     }
@@ -8627,7 +8627,7 @@ function renderizarGestaoPlanoHistorico(indexPlano) {
     modal.style.display = 'block';
 }
 
-/* Mostra última edição no PDF do Plano */
+/* Mostra Ãºltima ediÃ§Ã£o no PDF do Plano */
 if (typeof montarHTMLPlano === 'function' && !window.montarHTMLPlanoOriginalComEdicao) {
     window.montarHTMLPlanoOriginalComEdicao = montarHTMLPlano;
 
@@ -8636,18 +8636,18 @@ if (typeof montarHTMLPlano === 'function' && !window.montarHTMLPlanoOriginalComE
     };
 }
 /* ==========================================================
-   PLANO - ADICIONAR MAIS ITENS AO PEDIDO NO HISTÓRICO
+   PLANO - ADICIONAR MAIS ITENS AO PEDIDO NO HISTÃ“RICO
    Cole no FINAL do script.js
    ========================================================== */
 
 function abrirAdicionarItemPedidoPlanoHistorico(indexPlano, pedidoNumero, destino) {
     if (!usuarioPodeEditarPlanoHistorico()) {
-        alert('Apenas ADMIN ou SUPERVISOR podem editar planos do histórico.');
+        alert('Apenas ADMIN ou SUPERVISOR podem editar planos do histÃ³rico.');
         return;
     }
 
     const rel = db_plano_hist[indexPlano];
-    if (!rel) return alert('Plano não encontrado.');
+    if (!rel) return alert('Plano nÃ£o encontrado.');
 
     const modal = document.getElementById('modal-plano-historico');
     if (!modal) return;
@@ -8723,7 +8723,7 @@ function salvarNovoItemPedidoPlanoHistorico(indexPlano, pedidoNumero, destino) {
 
     if (!tipo) return alert('Selecione o tipo de chapa.');
     if (!espessura) return alert('Selecione a espessura.');
-    if (!qtd || qtd <= 0) return alert('Informe uma quantidade válida.');
+    if (!qtd || qtd <= 0) return alert('Informe uma quantidade vÃ¡lida.');
     if (!metros || metros <= 0) return alert('Informe os metros por chapa.');
 
     const novoItem = {
@@ -8757,7 +8757,7 @@ function salvarNovoItemPedidoPlanoHistorico(indexPlano, pedidoNumero, destino) {
     listarHistoricoPlano();
 }
 
-/* Substitui novamente a tela GERIR para mostrar o botão ADICIONAR ITEM AO PEDIDO */
+/* Substitui novamente a tela GERIR para mostrar o botÃ£o ADICIONAR ITEM AO PEDIDO */
 const renderizarGestaoPlanoHistoricoComEditar = renderizarGestaoPlanoHistorico;
 
 renderizarGestaoPlanoHistorico = function(indexPlano) {
@@ -8782,7 +8782,7 @@ renderizarGestaoPlanoHistorico = function(indexPlano) {
     if (rel.editadoPor && rel.editadoEm) {
         infoEdicao = `
             <div style="margin-top:8px; background:#1e293b; border:1px solid #334155; color:#facc15; padding:8px; border-radius:8px; font-size:12px;">
-                Última edição: <b>${rel.editadoPor}</b> em <b>${rel.editadoEm}</b>
+                Ãšltima ediÃ§Ã£o: <b>${rel.editadoPor}</b> em <b>${rel.editadoEm}</b>
             </div>
         `;
     }
@@ -8904,18 +8904,18 @@ renderizarGestaoPlanoHistorico = function(indexPlano) {
     modal.style.display = 'block';
 };
 /* ==========================================================
-   PLANO - ADICIONAR NOVO PEDIDO AO PLANO JÁ FECHADO
+   PLANO - ADICIONAR NOVO PEDIDO AO PLANO JÃ FECHADO
    Cole no FINAL do script.js
    ========================================================== */
 
 function abrirAdicionarNovoPedidoPlanoHistorico(indexPlano) {
     if (!usuarioPodeEditarPlanoHistorico()) {
-        alert('Apenas ADMIN ou SUPERVISOR podem editar planos do histórico.');
+        alert('Apenas ADMIN ou SUPERVISOR podem editar planos do histÃ³rico.');
         return;
     }
 
     const rel = db_plano_hist[indexPlano];
-    if (!rel) return alert('Plano não encontrado.');
+    if (!rel) return alert('Plano nÃ£o encontrado.');
 
     const modal = document.getElementById('modal-plano-historico');
     if (!modal) return;
@@ -8935,7 +8935,7 @@ function abrirAdicionarNovoPedidoPlanoHistorico(indexPlano) {
             </div>
 
             <div style="padding-top:15px;">
-                <label style="color:#94a3b8; font-size:12px; font-weight:bold;">NÚMERO DO PEDIDO</label>
+                <label style="color:#94a3b8; font-size:12px; font-weight:bold;">NÃšMERO DO PEDIDO</label>
                 <input type="text" id="novo-pedido-numero" placeholder="Ex: 12345"
                     style="width:100%; margin:6px 0 14px 0; padding:14px; background:#1e293b; color:white; border:1px solid #334155; border-radius:8px; font-size:16px;">
 
@@ -8999,9 +8999,9 @@ function salvarNovoPedidoPlanoHistorico(indexPlano) {
     const qtd = Number(document.getElementById('novo-pedido-qtd')?.value);
     const metros = Number(document.getElementById('novo-pedido-metros')?.value);
 
-    if (!pedidoNumero) return alert('Informe o número do pedido.');
+    if (!pedidoNumero) return alert('Informe o nÃºmero do pedido.');
     if (!destino) return alert('Informe o cliente/destino.');
-    if (!qtd || qtd <= 0) return alert('Informe uma quantidade válida.');
+    if (!qtd || qtd <= 0) return alert('Informe uma quantidade vÃ¡lida.');
     if (!metros || metros <= 0) return alert('Informe os metros por chapa.');
 
     const novoItem = {
@@ -9041,7 +9041,7 @@ function salvarNovoPedidoPlanoHistorico(indexPlano) {
     listarHistoricoPlano();
 }
 
-/* Coloca o botão NOVO PEDIDO no topo do GERIR PLANO */
+/* Coloca o botÃ£o NOVO PEDIDO no topo do GERIR PLANO */
 const renderizarGestaoPlanoHistoricoComNovoPedido = renderizarGestaoPlanoHistorico;
 
 renderizarGestaoPlanoHistorico = function(indexPlano) {
@@ -9066,13 +9066,13 @@ renderizarGestaoPlanoHistorico = function(indexPlano) {
     topo.appendChild(btn);
 };
 /* ==========================================================
-   MÓDULO CONFERÊNCIA - PEDIDOS DA SERRA
+   MÃ“DULO CONFERÃŠNCIA - PEDIDOS DA SERRA
    ========================================================== */
 
 let db_conferencia_serra = atlasArrayLocal('atlas_conferencia_serra');
 
 if (typeof MODULOS_SISTEMA !== 'undefined' && !MODULOS_SISTEMA.some(m => m.chave === 'conferencia')) {
-    MODULOS_SISTEMA.push({ chave: 'conferencia', nome: 'Conferência' });
+    MODULOS_SISTEMA.push({ chave: 'conferencia', nome: 'ConferÃªncia' });
 }
 
 const abrirModuloOriginalConferencia = abrirModulo;
@@ -9081,7 +9081,7 @@ abrirModulo = function(nome) {
         if (!usuarioPodeVerModulo('conferencia')) return alert('Sem permissao para acessar esta area.');
         document.getElementById('grid-home').style.display = 'none';
         document.getElementById('conteudo-modulo').style.display = 'block';
-        document.getElementById('titulo-modulo').innerText = 'CONFERÊNCIA';
+        document.getElementById('titulo-modulo').innerText = 'CONFERÃŠNCIA';
         renderizarMenuConferenciaSerra();
         return;
     }
@@ -9235,7 +9235,7 @@ fecharDiaSerra = function() {
 
 function renderizarMenuConferenciaSerra() {
     const render = document.getElementById('render-modulo');
-    const mesesNome = ["", "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+    const mesesNome = ["", "JANEIRO", "FEVEREIRO", "MARÃ‡O", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
     const agrupado = {};
 
     db_conferencia_serra.forEach(pedido => {
@@ -9247,11 +9247,11 @@ function renderizarMenuConferenciaSerra() {
 
     let html = `
         <div style="padding:15px; color:white;">
-            <h2 style="border-bottom:2px solid #10b981; padding-bottom:10px; margin-top:0;">Conferência de Pedidos</h2>
+            <h2 style="border-bottom:2px solid #10b981; padding-bottom:10px; margin-top:0;">ConferÃªncia de Pedidos</h2>
     `;
 
     if (db_conferencia_serra.length === 0) {
-        html += `<div style="text-align:center; padding:50px; color:#94a3b8;">Nenhum pedido da Serra enviado para conferência.</div>`;
+        html += `<div style="text-align:center; padding:50px; color:#94a3b8;">Nenhum pedido da Serra enviado para conferÃªncia.</div>`;
     }
 
     Object.keys(agrupado).sort((a,b) => b-a).forEach(ano => {
@@ -9312,7 +9312,7 @@ function renderizarMenuConferenciaSerra() {
 
 function abrirPedidoConferenciaSerra(idPedido) {
     const pedido = db_conferencia_serra.find(p => String(p.id) === String(idPedido));
-    if (!pedido) return alert('Pedido não encontrado.');
+    if (!pedido) return alert('Pedido nÃ£o encontrado.');
 
     const render = document.getElementById('render-modulo');
 
@@ -9340,7 +9340,7 @@ function abrirPedidoConferenciaSerra(idPedido) {
 
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px;">
                     <div style="background:#0f172a; padding:10px; border-radius:8px; text-align:center; color:#10b981; font-weight:bold;">OK<br>${totalOk}</div>
-                    <div style="background:#0f172a; padding:10px; border-radius:8px; text-align:center; color:#ef4444; font-weight:bold;">NÃO<br>${totalNao}</div>
+                    <div style="background:#0f172a; padding:10px; border-radius:8px; text-align:center; color:#ef4444; font-weight:bold;">NÃƒO<br>${totalNao}</div>
                     <div style="background:#0f172a; padding:10px; border-radius:8px; text-align:center; color:#f59e0b; font-weight:bold;">PENDENTE<br>${totalPendente}</div>
                 </div>
 
@@ -9358,7 +9358,7 @@ function abrirPedidoConferenciaSerra(idPedido) {
 
             ${pedido.unidades.map((unidade, idx) => {
                 const cor = unidade.status === 'ok' ? '#10b981' : unidade.status === 'nao' ? '#ef4444' : '#f59e0b';
-                const textoStatus = unidade.status === 'ok' ? 'OK' : unidade.status === 'nao' ? 'NÃO OK' : 'PENDENTE';
+                const textoStatus = unidade.status === 'ok' ? 'OK' : unidade.status === 'nao' ? 'NÃƒO OK' : 'PENDENTE';
                 const motivos = motivosUnidadeConferenciaSerra(unidade);
 
                 return `
@@ -9397,7 +9397,7 @@ function abrirPedidoConferenciaSerra(idPedido) {
                                     OK
                                 </button>
                                 <button onclick="marcarUnidadeConferenciaSerra(${pedido.id}, ${unidade.id}, 'nao')" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold;">
-                                    NÃO OK
+                                    NÃƒO OK
                                 </button>
                             </div>
                             ${unidade.status === 'nao' ? `
@@ -9421,7 +9421,7 @@ function abrirPedidoConferenciaSerra(idPedido) {
             ` : ''}
 
             <button onclick="excluirPedidoConferenciaSerra(${pedido.id})" style="width:100%; background:#7f1d1d; color:white; border:none; padding:15px; border-radius:10px; font-weight:bold; margin-top:10px;">
-                EXCLUIR PEDIDO DA CONFERÊNCIA
+                EXCLUIR PEDIDO DA CONFERÃŠNCIA
             </button>
         </div>
     `;
@@ -9494,7 +9494,7 @@ function finalizarPedidoConferenciaSerra(idPedido) {
     const naoOk = pedido.unidades.filter(u => u.status === 'nao').length;
 
     if (pendentes > 0) {
-        alert(`Ainda existem ${pendentes} unidade(s) pendente(s). Marque OK ou NÃO OK antes de finalizar.`);
+        alert(`Ainda existem ${pendentes} unidade(s) pendente(s). Marque OK ou NÃƒO OK antes de finalizar.`);
         return;
     }
 
@@ -9506,7 +9506,7 @@ function finalizarPedidoConferenciaSerra(idPedido) {
         return;
     }
 
-    const confirmar = confirm(`Finalizar conferência do pedido ${pedido.pedidoNumero}?`);
+    const confirmar = confirm(`Finalizar conferÃªncia do pedido ${pedido.pedidoNumero}?`);
     if (!confirmar) return;
 
     pedido.status = 'finalizado';
@@ -9520,13 +9520,13 @@ function finalizarPedidoConferenciaSerra(idPedido) {
 function excluirPedidoConferenciaSerra(idPedido) {
     if (!usuarioPodeExcluirModulo('conferencia')) return alert('Sem permissao para excluir Conferencia.');
     const index = db_conferencia_serra.findIndex(p => String(p.id) === String(idPedido));
-    if (index < 0) return alert('Pedido não encontrado.');
+    if (index < 0) return alert('Pedido nÃ£o encontrado.');
 
     const pedido = db_conferencia_serra[index];
-    if (!confirm(`Excluir da conferência o pedido ${pedido.pedidoNumero}?`)) return;
+    if (!confirm(`Excluir da conferÃªncia o pedido ${pedido.pedidoNumero}?`)) return;
 
     if (typeof atlasLixeiraEnviar === 'function') {
-        atlasLixeiraEnviar('Conferência', `Pedido ${pedido.pedidoNumero} - ${pedido.data || 'sem data'}`, 'atlas_conferencia_serra', pedido);
+        atlasLixeiraEnviar('ConferÃªncia', `Pedido ${pedido.pedidoNumero} - ${pedido.data || 'sem data'}`, 'atlas_conferencia_serra', pedido);
     }
 
     db_conferencia_serra.splice(index, 1);
@@ -9535,7 +9535,7 @@ function excluirPedidoConferenciaSerra(idPedido) {
     alert('Pedido movido para a lixeira.');
 }
 /* ==========================================================
-   BOTÃO VOLTAR INTELIGENTE - VOLTA PARA O ÚLTIMO CLIQUE
+   BOTÃƒO VOLTAR INTELIGENTE - VOLTA PARA O ÃšLTIMO CLIQUE
    Cole no FINAL do script.js
    ========================================================== */
 
@@ -9672,7 +9672,7 @@ document.addEventListener('click', function(evento) {
     }
 }, true);
 /* ==========================================================
-   BOTÃO VOLTAR / FECHAR NOS PDFS - VERSÃO MOBILE
+   BOTÃƒO VOLTAR / FECHAR NOS PDFS - VERSÃƒO MOBILE
    Cole no FINAL do script.js ou historicos-admin.js
    ========================================================== */
 
@@ -9779,7 +9779,7 @@ document.addEventListener('click', function(evento) {
         const moduloPeloTexto = atlasModuloPorTextoRetornoPDF(textoTela);
         return {
             modulo: moduloPeloTexto || window.atlasModuloAtual || new URLSearchParams(location.search).get('modulo') || '',
-            historico: textoTela.includes('historico') || textoTela.includes('histórico')
+            historico: textoTela.includes('historico') || textoTela.includes('histÃ³rico')
         };
     }
 
@@ -15343,6 +15343,21 @@ function atlasChaveRelatorioExcluido(chave, item, index = 0) {
     return `${chave}_${item.data || ''}_${item.operador || item.operadorSerra || ''}_${JSON.stringify(item.itens || item.unidades || []).slice(0, 200)}`;
 }
 
+function atlasGarantirIdRelatorio(chave, rel, index = 0) {
+    if (!rel || typeof rel !== 'object') return rel;
+    if (!rel.id) {
+        const base = [
+            chave,
+            rel.data || '',
+            rel.operador || rel.operadorSerra || '',
+            JSON.stringify(rel.itens || rel.unidades || []).slice(0, 260),
+            index
+        ].join('|');
+        rel.id = `rel_${Date.now()}_${Math.abs(Array.from(base).reduce((acc, char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0))}`;
+    }
+    return rel;
+}
+
 function atlasRelatoriosExcluidosLer() {
     try {
         const dados = JSON.parse(localStorage.getItem(ATLAS_RELATORIOS_EXCLUIDOS_KEY) || '{}');
@@ -15353,6 +15368,7 @@ function atlasRelatoriosExcluidosLer() {
 }
 
 window.atlasRegistrarRelatorioExcluido = function(chave, rel, index = 0) {
+    atlasGarantirIdRelatorio(chave, rel, index);
     const excluidos = atlasRelatoriosExcluidosLer();
     const id = atlasChaveRelatorioExcluido(chave, rel, index);
     excluidos[id] = {
@@ -15364,7 +15380,18 @@ window.atlasRegistrarRelatorioExcluido = function(chave, rel, index = 0) {
         excluidoEm: new Date().toISOString()
     };
     localStorage.setItem(ATLAS_RELATORIOS_EXCLUIDOS_KEY, JSON.stringify(excluidos));
+    return id;
 };
+
+function atlasSincronizarExclusaoRelatorioAgora(chave, rel, index = 0) {
+    if (typeof window.atlasFirebaseRegistrarRelatorioExcluidoAgora === 'function') {
+        window.atlasFirebaseRegistrarRelatorioExcluidoAgora(chave, rel, index);
+        return;
+    }
+    if (typeof window.atlasFirebaseSincronizarAgora === 'function') {
+        setTimeout(() => window.atlasFirebaseSincronizarAgora(), 80);
+    }
+}
 
 function atlasRemoverMarcaRelatorioExcluido(chave, rel, index = 0) {
     const excluidos = atlasRelatoriosExcluidosLer();
@@ -15453,11 +15480,11 @@ function atlasLixeiraRestaurarItem(item) {
 function atlasRestaurarDaLixeira(id) {
     if (!usuarioPodeExcluirModulo('lixeira')) return alert('Sem permissao para restaurar itens da lixeira.');
     const item = atlasLixeiraLer().find(x => String(x.id) === String(id));
-    if (!item) return alert('Item não encontrado na lixeira.');
+    if (!item) return alert('Item nÃ£o encontrado na lixeira.');
     if (!confirm(`Restaurar?\n\n${item.titulo}`)) return;
 
     if (!atlasLixeiraRestaurarItem(item)) {
-        alert('Não foi possível restaurar este item automaticamente.');
+        alert('NÃ£o foi possÃ­vel restaurar este item automaticamente.');
         return;
     }
 
@@ -15667,57 +15694,62 @@ function atlasInstalarLixeira() {
     if (typeof atlasApagarRelatorioBobines === 'function' && !window.atlasApagarRelatorioBobinesComLixeira) {
         window.atlasApagarRelatorioBobinesComLixeira = atlasApagarRelatorioBobines;
         atlasApagarRelatorioBobines = function(index) {
-            if (!atlasPodeGerirHistoricos()) return alert('Apenas ADMIN ou SUPERVISOR podem apagar históricos.');
+            if (!atlasPodeGerirHistoricos()) return alert('Apenas ADMIN ou SUPERVISOR podem apagar histÃ³ricos.');
             const rel = historicoBobines[index];
-            if (!rel) return alert('Relatório não encontrado.');
-            if (!confirm('Mover este relatório para a lixeira?')) return;
+            if (!rel) return alert('RelatÃ³rio nÃ£o encontrado.');
+            if (!confirm('Mover este relatÃ³rio para a lixeira?')) return;
             atlasLixeiraEnviar('Bobines', `Bobines - ${rel.data || 'sem data'}`, 'historicoBobines', rel);
             atlasRegistrarRelatorioExcluido('historicoBobines', rel, index);
             historicoBobines.splice(index, 1);
             localStorage.setItem('historicoBobines', JSON.stringify(historicoBobines));
+            atlasSincronizarExclusaoRelatorioAgora('historicoBobines', rel, index);
             atlasFecharModal('modal-gerir-bobines');
             renderizarHistoricoBobines();
-            alert('Relatório movido para a lixeira.');
+            alert('RelatÃ³rio movido para a lixeira.');
         };
     }
 
     if (typeof atlasApagarRelatorioCorte === 'function' && !window.atlasApagarRelatorioCorteComLixeira) {
         window.atlasApagarRelatorioCorteComLixeira = atlasApagarRelatorioCorte;
         atlasApagarRelatorioCorte = function(tipo, index) {
-            if (!atlasPodeGerirHistoricos()) return alert('Apenas ADMIN ou SUPERVISOR podem apagar históricos.');
+            if (!atlasPodeGerirHistoricos()) return alert('Apenas ADMIN ou SUPERVISOR podem apagar histÃ³ricos.');
             const cfg = atlasGetStoreCorte(tipo);
             const rel = cfg.hist[index];
-            if (!rel) return alert('Relatório não encontrado.');
-            if (!confirm('Mover este relatório para a lixeira?')) return;
+            if (!rel) return alert('RelatÃ³rio nÃ£o encontrado.');
+            if (!confirm('Mover este relatÃ³rio para a lixeira?')) return;
             atlasLixeiraEnviar(tipo === 'serra' ? 'Serra' : 'Embalagem', `${tipo} - ${rel.data || 'sem data'}`, cfg.key, rel);
             atlasRegistrarRelatorioExcluido(cfg.key, rel, index);
             cfg.hist.splice(index, 1);
             localStorage.setItem(cfg.key, JSON.stringify(cfg.hist));
             if (tipo === 'serra') db_serra_hist = cfg.hist;
             if (tipo === 'embalagem') db_emb_hist = cfg.hist;
+            atlasSincronizarExclusaoRelatorioAgora(cfg.key, rel, index);
             atlasFecharModal(cfg.modal);
             cfg.listar();
-            alert('Relatório movido para a lixeira.');
+            alert('RelatÃ³rio movido para a lixeira.');
         };
     }
 
     if (typeof atlasApagarRelatorioInjecao === 'function' && !window.atlasApagarRelatorioInjecaoComLixeira) {
         window.atlasApagarRelatorioInjecaoComLixeira = atlasApagarRelatorioInjecao;
         atlasApagarRelatorioInjecao = function(ano, mes, index, modulo) {
-            if (!atlasPodeGerirHistoricos()) return alert('Apenas ADMIN ou SUPERVISOR podem apagar históricos.');
+            if (!atlasPodeGerirHistoricos()) return alert('Apenas ADMIN ou SUPERVISOR podem apagar histÃ³ricos.');
             const db = JSON.parse(localStorage.getItem('atlas_db')) || {};
             const rel = db?.[ano]?.[mes]?.[index];
-            if (!rel) return alert('Relatório não encontrado.');
-            if (!confirm('Mover este relatório para a lixeira?')) return;
+            if (!rel) return alert('RelatÃ³rio nÃ£o encontrado.');
+            if (!confirm('Mover este relatÃ³rio para a lixeira?')) return;
+            rel.ano = rel.ano || ano;
+            rel.mesNome = rel.mesNome || mes;
             atlasLixeiraEnviar('Injecao', `Injecao - ${rel.data || 'sem data'}`, 'atlas_db', rel, { ano, mes });
             atlasRegistrarRelatorioExcluido('atlas_db', rel, index);
             db[ano][mes].splice(index, 1);
             if (db[ano][mes].length === 0) delete db[ano][mes];
             if (Object.keys(db[ano]).length === 0) delete db[ano];
             localStorage.setItem('atlas_db', JSON.stringify(db));
+            atlasSincronizarExclusaoRelatorioAgora('atlas_db', rel, index);
             atlasFecharModal('modal-gerir-injecao');
             exibirHistoricoModulo(modulo);
-            alert('Relatório movido para a lixeira.');
+            alert('RelatÃ³rio movido para a lixeira.');
         };
     }
 
@@ -15726,10 +15758,12 @@ function atlasInstalarLixeira() {
         deletarHistoricoBobine = function(index) {
             const rel = historicoBobines[index];
             if (!rel) return;
-            if (!confirm('Mover este relatório para a lixeira?')) return;
+            if (!confirm('Mover este relatÃ³rio para a lixeira?')) return;
             atlasLixeiraEnviar('Bobines', `Bobines - ${rel.data || 'sem data'}`, 'historicoBobines', rel);
+            atlasRegistrarRelatorioExcluido('historicoBobines', rel, index);
             historicoBobines.splice(index, 1);
             localStorage.setItem('historicoBobines', JSON.stringify(historicoBobines));
+            atlasSincronizarExclusaoRelatorioAgora('historicoBobines', rel, index);
             renderizarHistoricoBobines();
         };
     }
@@ -15766,7 +15800,7 @@ window.addEventListener('load', () => {
 });
 
 /* ==========================================================
-   MÓDULO STOCK - BOBINAS E FILMES
+   MÃ“DULO STOCK - BOBINAS E FILMES
    ========================================================== */
 
 let atlasStockBobinas = atlasArrayLocal('atlas_stock_bobinas');
@@ -16115,7 +16149,7 @@ function renderizarStockBobinasAtlas(termoBusca = '') {
         <div style="background:#111827; border:1px solid #334155; border-radius:12px; padding:15px;">
             <h3 style="margin-top:0;">Bobinas</h3>
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-bottom:12px;">
-                <input id="stock-bob-num" list="stock-bob-num-sugestoes" oninput="avisoBobinaStockDuplicada()" placeholder="Nº bobina" autocomplete="off" style="padding:12px; background:#0f172a; color:white; border:1px solid #334155; border-radius:8px;">
+                <input id="stock-bob-num" list="stock-bob-num-sugestoes" oninput="avisoBobinaStockDuplicada()" placeholder="NÂº bobina" autocomplete="off" style="padding:12px; background:#0f172a; color:white; border:1px solid #334155; border-radius:8px;">
                 ${htmlDatalistStock('stock-bob-num-sugestoes', sugestoesNumerosBobinas)}
                 <select id="stock-bob-ral" style="padding:12px; background:#0f172a; color:white; border:1px solid #334155; border-radius:8px;">${OPCOES_RAL_INF.concat(OPCOES_RAL_SUP).filter((v,i,a)=>a.indexOf(v)===i).map(v=>`<option value="${v}">${v}</option>`).join('')}</select>
                 <select id="stock-bob-medida" title="Tipo/tamanho da chapa" style="padding:12px; background:#0f172a; color:white; border:1px solid #334155; border-radius:8px;">${(OPCOES_MEDIDAS_CHAPA_STOCK || []).map(v=>`<option value="${v}">${v}</option>`).join('')}</select>
@@ -16542,7 +16576,7 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
         if (!rel) return;
 
         const itemBase = rel.itens.find(i => String(i.id) === String(idItem));
-        if (!itemBase) return alert('Item não encontrado.');
+        if (!itemBase) return alert('Item nÃ£o encontrado.');
 
         const pedidoNumero = itemBase.pedidoNumero;
         const destino = itemBase.destino;
@@ -16664,8 +16698,8 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
         const qtd = Number(document.getElementById('edit-plano-qtd')?.value);
         const metros = Number(document.getElementById('edit-plano-metros')?.value);
 
-        if (!qtd || qtd <= 0) return alert('Informe uma quantidade válida.');
-        if (!metros || metros <= 0) return alert('Informe os metros válidos.');
+        if (!qtd || qtd <= 0) return alert('Informe uma quantidade vÃ¡lida.');
+        if (!metros || metros <= 0) return alert('Informe os metros vÃ¡lidos.');
 
         item.quantidadeChapas = qtd;
         item.metrosUnidade = metros;
@@ -16688,7 +16722,7 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
     };
 })();
 /* ==========================================================
-   PLANO - NÃO MOSTRAR ENCOMENDAS CANCELADAS NO PDF
+   PLANO - NÃƒO MOSTRAR ENCOMENDAS CANCELADAS NO PDF
    Cole no FINAL do script.js, depois do bloco de cancelamento
    ========================================================== */
 
@@ -16797,7 +16831,7 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
         render.innerHTML = `
             <div style="padding:15px; color:white;">
                 <div style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:18px; margin-bottom:15px;">
-                    <label style="color:#94a3b8; font-size:12px; font-weight:bold;">NÚMERO DA ENCOMENDA / PEDIDO</label>
+                    <label style="color:#94a3b8; font-size:12px; font-weight:bold;">NÃšMERO DA ENCOMENDA / PEDIDO</label>
                     <div style="display:grid; grid-template-columns:1fr auto; gap:8px; margin-top:8px;">
                         <input id="pesquisa-encomenda-input" type="tel" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Ex: 12345"
                             onkeydown="if(event.key === 'Enter') pesquisarEncomendaAtlas()"
@@ -16902,7 +16936,7 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
             return {
                 texto: 'FALTA CONFERIR',
                 cor: '#f59e0b',
-                detalhe: 'A encomenda já saiu da Serra, mas ainda falta finalizar a conferência.'
+                detalhe: 'A encomenda jÃ¡ saiu da Serra, mas ainda falta finalizar a conferÃªncia.'
             };
         }
 
@@ -16910,10 +16944,10 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
             const temNaoOk = conferencias.some(c => (c.unidades || []).some(u => u.status === 'nao'));
 
             return {
-                texto: temNaoOk ? 'CONFERIDA COM PENDÊNCIA' : 'CONFERIDA OK',
+                texto: temNaoOk ? 'CONFERIDA COM PENDÃŠNCIA' : 'CONFERIDA OK',
                 cor: temNaoOk ? '#f59e0b' : '#10b981',
                 detalhe: temNaoOk
-                    ? 'A conferência foi finalizada, mas existe pelo menos uma unidade marcada como NÃO OK.'
+                    ? 'A conferÃªncia foi finalizada, mas existe pelo menos uma unidade marcada como NÃƒO OK.'
                     : 'A encomenda foi feita e conferida.'
             };
         }
@@ -16922,24 +16956,24 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
             return {
                 texto: 'FEITA NA SERRA',
                 cor: '#3b82f6',
-                detalhe: 'A encomenda aparece no histórico da Serra, mas não tem conferência finalizada.'
+                detalhe: 'A encomenda aparece no histÃ³rico da Serra, mas nÃ£o tem conferÃªncia finalizada.'
             };
         }
 
         if (itensPlano.length > 0) {
             return {
-                texto: algunsCancelados ? 'PARCIALMENTE CANCELADA' : 'AINDA NÃO FEITA',
+                texto: algunsCancelados ? 'PARCIALMENTE CANCELADA' : 'AINDA NÃƒO FEITA',
                 cor: algunsCancelados ? '#f59e0b' : '#94a3b8',
                 detalhe: algunsCancelados
                     ? 'Parte da encomenda foi cancelada, mas ainda existem itens ativos.'
-                    : 'A encomenda está no Plano, mas ainda não aparece como feita na Serra.'
+                    : 'A encomenda estÃ¡ no Plano, mas ainda nÃ£o aparece como feita na Serra.'
             };
         }
 
         return {
-            texto: 'NÃO ENCONTRADA',
+            texto: 'NÃƒO ENCONTRADA',
             cor: '#64748b',
-            detalhe: 'Não foi encontrado registro desta encomenda.'
+            detalhe: 'NÃ£o foi encontrado registro desta encomenda.'
         };
     }
 
@@ -17043,7 +17077,7 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
 
         if (conferencias.length > 0) {
             html += `
-                <h3 style="font-size:14px; margin:18px 0 8px 0; color:white;">Conferência</h3>
+                <h3 style="font-size:14px; margin:18px 0 8px 0; color:white;">ConferÃªncia</h3>
                 ${conferencias.map(conf => {
                     const ok = (conf.unidades || []).filter(u => u.status === 'ok').length;
                     const nao = (conf.unidades || []).filter(u => u.status === 'nao').length;
@@ -17068,7 +17102,7 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
                                 </span>
                             </div>
                             <div style="color:#94a3b8; font-size:12px; margin-top:4px;">
-                                OK: ${ok} | NÃO OK: ${nao} | Pendentes: ${pendente}<br>
+                                OK: ${ok} | NÃƒO OK: ${nao} | Pendentes: ${pendente}<br>
                                 Finalizado por: ${atlasTextoSeguro(conf.finalizadoPor || '-')}<br>
                                 Finalizado em: ${atlasTextoSeguro(conf.finalizadoEm || '-')}
                             </div>
@@ -17103,7 +17137,7 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
         const numero = input.value.trim().toLowerCase();
 
         if (!numero) {
-            alert('Digite o número da encomenda.');
+            alert('Digite o nÃºmero da encomenda.');
             return;
         }
 
@@ -17114,7 +17148,7 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
         if (planos.length === 0 && serra.length === 0 && conferencias.length === 0) {
             resultado.innerHTML = `
                 <div style="background:#111827; border:1px solid #334155; border-radius:12px; padding:20px; text-align:center; color:#94a3b8;">
-                    Nenhuma encomenda encontrada com este número.
+                    Nenhuma encomenda encontrada com este nÃºmero.
                 </div>
             `;
             return;
@@ -18230,3 +18264,4 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
         }
     });
 })();
+
