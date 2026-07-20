@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const ADMIN_FLAG = "atlas_public_admin";
   let originalHomeHTML = "";
   let originalLogout = null;
@@ -57,7 +57,7 @@
     if (user) user.textContent = "VISITANTE";
 
     const subtitle = $(".atlas-system-title span");
-    if (subtitle) subtitle.textContent = "Relatórios públicos";
+    if (subtitle) subtitle.textContent = "RelatÃ³rios pÃºblicos";
 
     const logout = $(".btn-logout");
     if (logout) {
@@ -113,11 +113,11 @@
       const dados = await resposta.json();
       const temperatura = Math.round(Number(dados.current?.temperature_2m));
       const info = atlasIconeTempo(dados.current?.weather_code, temperatura);
-      temp.textContent = Number.isFinite(temperatura) ? `${temperatura}°C` : "--°C";
+      temp.textContent = Number.isFinite(temperatura) ? `${temperatura}Â°C` : "--Â°C";
       clima.textContent = info.texto;
       icone.className = info.classe;
     } catch (error) {
-      temp.textContent = "--°C";
+      temp.textContent = "--Â°C";
       clima.textContent = "Local";
       icone.className = "fas fa-location-dot";
     }
@@ -137,7 +137,7 @@
     navigator.geolocation.getCurrentPosition(
       pos => atualizarTempoPublico(pos.coords.latitude, pos.coords.longitude),
       () => {
-        if (temp) temp.textContent = "--°C";
+        if (temp) temp.textContent = "--Â°C";
         if (clima) clima.textContent = "Sem local";
       },
       { enableHighAccuracy: false, timeout: 9000, maximumAge: 20 * 60 * 1000 }
@@ -175,19 +175,19 @@
         </section>
         <section class="atlas-public-hero">
           <p class="eyebrow">ATLAS PAINEL</p>
-          <h2>Relatórios de produção</h2>
-          <p>Visualize e imprima os históricos da Injeção e da Serra. Para lançar relatórios e acessar o sistema completo, toque em Entrar.</p>
+          <h2>RelatÃ³rios de produÃ§Ã£o</h2>
+          <p>Visualize e imprima os histÃ³ricos da InjeÃ§Ã£o e da Serra. Para lanÃ§ar relatÃ³rios e acessar o sistema completo, toque em Entrar.</p>
         </section>
         <div class="atlas-public-cards">
           <button class="atlas-public-card" type="button" onclick="atlasPublicoAbrirHistoricoInjecao()">
             <i class="fas fa-microchip"></i>
-            <strong>Histórico da Injeção</strong>
-            <span>Ver relatórios por ano, mês e dia, com PDF e impressão.</span>
+            <strong>HistÃ³rico da InjeÃ§Ã£o</strong>
+            <span>Ver relatÃ³rios por ano, mÃªs e dia, com PDF e impressÃ£o.</span>
           </button>
           <button class="atlas-public-card serra" type="button" onclick="atlasPublicoAbrirHistoricoSerra()">
             <i class="fas fa-layer-group"></i>
-            <strong>Histórico da Serra</strong>
-            <span>Ver relatórios de corte por ano, mês e dia, com PDF e impressão.</span>
+            <strong>HistÃ³rico da Serra</strong>
+            <span>Ver relatÃ³rios de corte por ano, mÃªs e dia, com PDF e impressÃ£o.</span>
           </button>
         </div>
       </div>
@@ -300,7 +300,7 @@
     document.body.insertAdjacentHTML("beforeend", `
       <div id="atlas-admin-modal" class="atlas-admin-modal" role="dialog" aria-modal="true" aria-labelledby="atlas-admin-title">
         <div class="atlas-admin-panel">
-          <button class="atlas-admin-close" type="button" aria-label="Fechar login" onclick="atlasPublicoFecharLogin()">×</button>
+          <button class="atlas-admin-close" type="button" aria-label="Fechar login" onclick="atlasPublicoFecharLogin()">Ã—</button>
           <img class="atlas-admin-logo" src="atlas-painel-icon.png" alt="Atlas Painel">
           <p class="atlas-admin-kicker">ACESSO PREMIUM</p>
           <h2 id="atlas-admin-title">Entrar no sistema completo</h2>
@@ -330,13 +330,8 @@
     $("#grid-home").style.display = "none";
     $("#conteudo-modulo").style.display = "block";
     const titulo = $("#titulo-modulo");
-    if (titulo) titulo.textContent = "INJEÇÃO";
-    $("#render-modulo").innerHTML = `<button class="atlas-public-back" onclick="atlasPublicoVoltar()">← VOLTAR</button>`;
+    if (titulo) titulo.textContent = "INJE\u00c7\u00c3O";
     window.exibirHistoricoModulo("injecao");
-    const render = $("#render-modulo");
-    if (render) {
-      render.insertAdjacentHTML("afterbegin", `<button class="atlas-public-back" onclick="atlasPublicoVoltar()">← VOLTAR</button>`);
-    }
   };
 
   window.atlasPublicoAbrirHistoricoSerra = function () {
@@ -347,10 +342,6 @@
     const titulo = $("#titulo-modulo");
     if (titulo) titulo.textContent = "SERRA";
     window.listarHistoricoSerra();
-    const render = $("#render-modulo");
-    if (render) {
-      render.insertAdjacentHTML("afterbegin", `<button class="atlas-public-back" onclick="atlasPublicoVoltar()">← VOLTAR</button>`);
-    }
   };
 
   window.atlasPublicoVoltar = function () {
@@ -704,3 +695,4 @@
     setTimeout(instalarCorrecaoTurnoSerra, 1200);
   });
 })();
+

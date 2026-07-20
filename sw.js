@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'atlas-v197-exclusao-instantanea';
+﻿const CACHE_NAME = 'atlas-v198-voltar-historico-unico';
 const assets = [
   './',
   './index.html',
@@ -84,6 +84,7 @@ self.addEventListener('fetch', e => {
         })))
   );
 });
+
 
 
 
