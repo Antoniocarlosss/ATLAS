@@ -1508,6 +1508,13 @@ function atlasAtualizarTelaAposSyncNuvem(evento) {
     window.atlasTimerAtualizacaoTelaNuvem = setTimeout(() => {
         const modulo = window.atlasModuloAtual;
         if (!modulo || atlasUsuarioDigitandoOuEditando()) return;
+        const rota = new URLSearchParams(location.search);
+        const moduloRota = rota.get('modulo') || rota.get('atlas_modulo') || '';
+        const paginaRota = rota.get('pagina') || '';
+        if (modulo === 'injecao' && moduloRota === 'injecao' && paginaRota === 'historico') {
+            if (typeof exibirHistoricoModulo === 'function') exibirHistoricoModulo('injecao');
+            return;
+        }
         abrirModulo(modulo);
     }, 350);
 }

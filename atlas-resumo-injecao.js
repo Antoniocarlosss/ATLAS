@@ -514,6 +514,9 @@
     const db = JSON.parse(localStorage.getItem("atlas_db") || "{}");
     const render = document.getElementById("render-modulo");
     if (!render) return;
+    const pastasAbertas = Array.from(render.querySelectorAll('[id^="folder-ano-"], [id^="folder-mes-"]'))
+      .filter(elemento => getComputedStyle(elemento).display !== "none")
+      .map(elemento => elemento.id);
     const modoPublico = document.documentElement.classList.contains("atlas-public-mode")
       || String(window.usuarioLogado?.id || "").toLowerCase() === "visitante";
     const podeGerir = !modoPublico
@@ -546,6 +549,10 @@
     iniciarPainel();
     atlasInjecaoAlternarFiltros();
     atlasInjecaoAtualizarResumo();
+    pastasAbertas.forEach(id => {
+      const pasta = document.getElementById(id);
+      if (pasta) pasta.style.display = "block";
+    });
     if (typeof window.atlasLimparTextoTela === "function") window.atlasLimparTextoTela();
   };
 
