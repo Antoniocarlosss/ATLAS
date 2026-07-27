@@ -278,7 +278,7 @@
         <section class="atlas-public-hero">
           <p class="eyebrow">ATLAS PAINEL</p>
           <h2>Relat&oacute;rios de produ&ccedil;&atilde;o</h2>
-          <p>Visualize e imprima os hist&oacute;ricos da Inje&ccedil;&atilde;o e da Serra. Para lan&ccedil;ar relat&oacute;rios e acessar o sistema completo, toque em Entrar.</p>
+          <p>Visualize e imprima os hist&oacute;ricos da Inje&ccedil;&atilde;o, Serra, Bobines e Embalagem. Para lan&ccedil;ar relat&oacute;rios e acessar o sistema completo, toque em Entrar.</p>
         </section>
         <div class="atlas-public-cards">
           <button class="atlas-public-card" type="button" onclick="atlasPublicoAbrirHistoricoInjecao()">
@@ -290,6 +290,16 @@
             <i class="fas fa-layer-group"></i>
             <strong>Hist&oacute;rico da Serra</strong>
             <span>Ver relat&oacute;rios de corte por ano, m&ecirc;s e dia, com PDF e impress&atilde;o.</span>
+          </button>
+          <button class="atlas-public-card bobines" type="button" onclick="atlasPublicoAbrirHistoricoBobines()">
+            <i class="fas fa-compact-disc"></i>
+            <strong>Hist&oacute;rico das Bobines</strong>
+            <span>Ver relat&oacute;rios de bobines e filmes por ano, m&ecirc;s e dia, com PDF.</span>
+          </button>
+          <button class="atlas-public-card embalagem" type="button" onclick="atlasPublicoAbrirHistoricoEmbalagem()">
+            <i class="fas fa-boxes-packing"></i>
+            <strong>Hist&oacute;rico da Embalagem</strong>
+            <span>Ver relat&oacute;rios de embalagem por ano, m&ecirc;s e dia, com PDF.</span>
           </button>
         </div>
       </div>
@@ -443,6 +453,8 @@
       if (modoPublico) {
         if (nome === "injecao") return window.atlasPublicoAbrirHistoricoInjecao();
         if (nome === "serra") return window.atlasPublicoAbrirHistoricoSerra();
+        if (nome === "bobines") return window.atlasPublicoAbrirHistoricoBobines();
+        if (nome === "embalagem") return window.atlasPublicoAbrirHistoricoEmbalagem();
         return window.atlasPublicoVoltar();
       }
       return abrirModuloBasePublico.apply(this, arguments);
@@ -471,6 +483,88 @@
     atlasPublicoCorrigirHistoricoAberto("serra");
   };
 
+  window.atlasPublicoAbrirHistoricoBobines = function () {
+    window.atlasModuloAtual = "bobines";
+    showAppShell();
+    $("#grid-home").style.display = "none";
+    $("#conteudo-modulo").style.display = "block";
+    const titulo = $("#titulo-modulo");
+    if (titulo) titulo.textContent = "BOBINES";
+    renderizarHistoricoPublico("bobines");
+  };
+
+  window.atlasPublicoAbrirHistoricoEmbalagem = function () {
+    window.atlasModuloAtual = "embalagem";
+    showAppShell();
+    $("#grid-home").style.display = "none";
+    $("#conteudo-modulo").style.display = "block";
+    const titulo = $("#titulo-modulo");
+    if (titulo) titulo.textContent = "EMBALAGEM";
+    renderizarHistoricoPublico("embalagem");
+  };
+
+  function textoPublicoSeguro(valor) {
+    return String(valor ?? "").replace(/[<>&"]/g, caractere => ({
+      "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;"
+    }[caractere]));
+  }
+
+  function dadosHistoricoPublico(tipo) {
+    const chave = tipo === "bobines" ? "historicoBobines" : "atlas_emb_hist";
+    const lista = JSON.parse(localStorage.getItem(chave) || "[]");
+    return (Array.isArray(lista) ? lista : []).map((relatorio, indice) => {
+      const partes = String(relatorio.data || "").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      return {
+        relatorio,
+        indice,
+        dia: Number(relatorio.dia || partes?.[1] || 0),
+        mes: Number(relatorio.mes || partes?.[2] || 0),
+        ano: Number(relatorio.ano || partes?.[3] || 0)
+      };
+    }).filter(item => item.ano && item.mes);
+  }
+
+  function renderizarHistoricoPublico(tipo) {
+    const render = $("#render-modulo");
+    if (!render) return;
+    const titulo = tipo === "bobines" ? "Hist\u00f3rico das Bobines" : "Hist\u00f3rico da Embalagem";
+    const funcaoPDF = tipo === "bobines" ? "gerarPDF_Bobines" : "gerarPDF_Embalagem";
+    const agrupado = {};
+    dadosHistoricoPublico(tipo).forEach(item => {
+      agrupado[item.ano] ||= {};
+      agrupado[item.ano][item.mes] ||= [];
+      agrupado[item.ano][item.mes].push(item);
+    });
+
+    const anos = Object.keys(agrupado).sort((a, b) => b - a);
+    render.innerHTML = `
+      <div class="atlas-public-history">
+        <button class="atlas-public-back" type="button" onclick="atlasPublicoVoltar()"><i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar</button>
+        <h2>${titulo}</h2>
+        ${anos.length ? anos.map(ano => `
+          <details>
+            <summary><span>ANO ${ano}</span><i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+            <div class="atlas-public-history-group">
+              ${Object.keys(agrupado[ano]).sort((a, b) => b - a).map(mes => `
+                <details>
+                  <summary><span>${MESES_PUBLICOS[Number(mes) - 1] || mes}</span><i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+                  <div class="atlas-public-history-list">
+                    ${agrupado[ano][mes].sort((a, b) => b.dia - a.dia).map(item => `
+                      <div>
+                        <span><strong>${textoPublicoSeguro(item.relatorio.data || `DIA ${item.dia}/${item.mes}/${item.ano}`)}</strong>${tipo === "embalagem" ? `<small>Total: ${textoPublicoSeguro(item.relatorio.totalGeral || 0)} m</small>` : ""}</span>
+                        <button type="button" onclick="${funcaoPDF}('${encodeURIComponent(JSON.stringify(item.relatorio))}')">PDF</button>
+                      </div>
+                    `).join("")}
+                  </div>
+                </details>
+              `).join("")}
+            </div>
+          </details>
+        `).join("") : `<p class="atlas-public-empty">Nenhum relat&oacute;rio encontrado.</p>`}
+      </div>
+    `;
+  }
+
   window.atlasPublicoVoltar = function () {
     window.atlasModuloAtual = "";
     renderPublicHome();
@@ -480,10 +574,15 @@
     const render = $("#render-modulo");
     if (!render) return;
 
-    render.querySelectorAll("button").forEach(botao => {
+    if (tipo === "bobines" && !render.querySelector(".atlas-public-back")) {
+      render.firstElementChild?.insertAdjacentHTML("afterbegin", `<button class="atlas-public-back" type="button" onclick="atlasPublicoVoltar()"><i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar</button>`);
+    }
+
+    const raiz = tipo === "embalagem" ? $("#container-acao-emb") || render : render;
+    raiz.querySelectorAll("button").forEach(botao => {
       const texto = String(botao.textContent || "").trim().toUpperCase();
       const onclick = String(botao.getAttribute("onclick") || "");
-      if (texto === "" || texto === "\u2190" || onclick.includes("renderizarMenuSerra") || onclick.includes("renderizarMenu")) {
+      if (texto === "" || texto === "\u2190" || onclick.includes("renderizarMenuSerra") || onclick.includes("renderizarMenu") || onclick.includes("alternarAbaEmbalagem")) {
         botao.onclick = window.atlasPublicoVoltar;
         botao.setAttribute("onclick", "atlasPublicoVoltar()");
       }
