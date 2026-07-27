@@ -514,6 +514,12 @@
     const db = JSON.parse(localStorage.getItem("atlas_db") || "{}");
     const render = document.getElementById("render-modulo");
     if (!render) return;
+    const modoPublico = document.documentElement.classList.contains("atlas-public-mode")
+      || String(window.usuarioLogado?.id || "").toLowerCase() === "visitante";
+    const podeGerir = !modoPublico
+      && typeof window.atlasAbrirGerirInjecao === "function"
+      && typeof window.atlasPodeGerirHistoricoModulo === "function"
+      && window.atlasPodeGerirHistoricoModulo(modulo);
 
     let html = `<div style="padding:15px; color:white;">
       <h2 style="border-bottom:2px solid #3b82f6; padding-bottom:10px;">Historico da Injecao</h2>
@@ -522,12 +528,14 @@
     Object.keys(db || {}).forEach(ano => {
       html += `<div onclick="toggleElement('folder-ano-${ano}')" style="background:#334155; padding:12px; margin-top:8px; border-radius:8px; cursor:pointer; display:flex; justify-content:space-between; font-weight:bold;"><span>ANO ${ano}</span><i class="fas fa-chevron-down"></i></div><div id="folder-ano-${ano}" style="display:none; padding:5px 10px;">`;
       Object.keys(db[ano] || {}).forEach(mes => {
-        const filtrados = (Array.isArray(db[ano][mes]) ? db[ano][mes] : []).filter(r => r.modulo === modulo);
+        const filtrados = (Array.isArray(db[ano][mes]) ? db[ano][mes] : [])
+          .map((rel, indexOriginal) => ({ rel, indexOriginal }))
+          .filter(item => item.rel.modulo === modulo);
         if (!filtrados.length) return;
         const mesId = `folder-mes-${ano}-${mes}`;
-        html += `<div onclick="toggleElement('${mesId}')" style="color:#3b82f6; padding:10px; cursor:pointer; border-bottom:1px solid #1e293b; display:flex; justify-content:space-between; font-weight:700;"><span>${mes}</span><i class="fas fa-caret-down"></i></div><div id="${mesId}" style="display:none; padding-left:10px; border-left:2px solid #3b82f6; margin-bottom:10px;">${resumoMesHtml(filtrados, `Resumo de ${mes} / ${ano}`)}`;
-        filtrados.forEach((rel, idx) => {
-          html += `<div style="background:#1e293b; padding:12px; margin-bottom:8px; border-radius:8px; border:1px solid #334155; display:flex; justify-content:space-between; gap:8px; align-items:center;"><div><b>${textoSeguro(rel.data)}</b><br><small style="color:#94a3b8;">${textoSeguro(rel.operador || "")}</small></div><div style="display:flex; gap:8px;"><button onclick="gerarPDF_Injecao_Final('${encodeURIComponent(JSON.stringify(rel))}')" style="background:#10b981; color:white; border:none; padding:8px 12px; border-radius:6px; font-weight:900;">PDF</button></div></div>`;
+        html += `<div onclick="toggleElement('${mesId}')" style="color:#3b82f6; padding:10px; cursor:pointer; border-bottom:1px solid #1e293b; display:flex; justify-content:space-between; font-weight:700;"><span>${mes}</span><i class="fas fa-caret-down"></i></div><div id="${mesId}" style="display:none; padding-left:10px; border-left:2px solid #3b82f6; margin-bottom:10px;">${resumoMesHtml(filtrados.map(item => item.rel), `Resumo de ${mes} / ${ano}`)}`;
+        filtrados.forEach(({ rel, indexOriginal }) => {
+          html += `<div style="background:#1e293b; padding:12px; margin-bottom:8px; border-radius:8px; border:1px solid #334155; display:flex; justify-content:space-between; gap:8px; align-items:center;"><div><b>${textoSeguro(rel.data)}</b><br><small style="color:#94a3b8;">${textoSeguro(rel.operador || "")}</small></div><div style="display:flex; gap:8px; flex-wrap:wrap;">${podeGerir ? `<button onclick="atlasAbrirGerirInjecao('${textoSeguro(ano)}','${textoSeguro(mes)}',${indexOriginal},'${textoSeguro(modulo)}')" style="background:#f59e0b; color:#111827; border:none; padding:8px 12px; border-radius:6px; font-weight:900;">GERIR</button>` : ""}<button onclick="gerarPDF_Injecao_Final('${encodeURIComponent(JSON.stringify(rel))}')" style="background:#10b981; color:white; border:none; padding:8px 12px; border-radius:6px; font-weight:900;">PDF</button></div></div>`;
         });
         html += `</div>`;
       });
