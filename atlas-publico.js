@@ -1,5 +1,9 @@
 ﻿(function () {
   const ADMIN_FLAG = "atlas_public_admin";
+  const MESES_PUBLICOS = [
+    "Janeiro", "Fevereiro", "Mar\u00e7o", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
   let originalHomeHTML = "";
   let originalLogout = null;
 
@@ -144,6 +148,80 @@
     );
   }
 
+  function numeroProducao(valor) {
+    const n = Number(String(valor ?? "").replace(",", "."));
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function dataRelatorio(data) {
+    const partes = String(data || "").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (!partes) return null;
+    return { mes: Number(partes[2]) - 1, ano: Number(partes[3]) };
+  }
+
+  function totaisProducaoAtual() {
+    const agora = new Date();
+    const mesAnterior = new Date(agora.getFullYear(), agora.getMonth() - 1, 1);
+    const vistos = new Set();
+    const totais = { mesAnterior: 0, mes: 0, ano: 0 };
+    const db = JSON.parse(localStorage.getItem("atlas_db") || "{}");
+
+    Object.entries(db || {}).forEach(([ano, meses]) => {
+      Object.entries(meses || {}).forEach(([mes, relatorios]) => {
+        (Array.isArray(relatorios) ? relatorios : []).forEach((relatorio, indice) => {
+          if (!relatorio || relatorio.modulo !== "injecao") return;
+          const data = dataRelatorio(relatorio.data);
+          const idsItens = (Array.isArray(relatorio.itens) ? relatorio.itens : [])
+            .map(item => item?.id)
+            .filter(id => id != null)
+            .join(",");
+          const chave = relatorio.id != null
+            ? `id:${relatorio.id}`
+            : relatorio._atlasId != null
+              ? `atlas:${relatorio._atlasId}`
+              : idsItens ? `${relatorio.data}|${idsItens}` : `${ano}/${mes}/${indice}`;
+          if (!data || vistos.has(chave)) return;
+          vistos.add(chave);
+          const metros = (Array.isArray(relatorio.itens) ? relatorio.itens : []).reduce((soma, item) => {
+            const manha = numeroProducao(item?.metrosManha);
+            const tarde = numeroProducao(item?.metrosTarde);
+            return soma + numeroProducao(item?.metros || manha + tarde);
+          }, 0);
+          if (data.ano === agora.getFullYear()) {
+            totais.ano += metros;
+            if (data.mes === agora.getMonth()) totais.mes += metros;
+          }
+          if (data.ano === mesAnterior.getFullYear() && data.mes === mesAnterior.getMonth()) {
+            totais.mesAnterior += metros;
+          }
+        });
+      });
+    });
+    return totais;
+  }
+
+  function formatarMetros(valor) {
+    return `${numeroProducao(valor).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m`;
+  }
+
+  function atualizarProducaoPublica() {
+    const mesAnterior = document.getElementById("atlas-public-producao-mes-anterior");
+    const mes = document.getElementById("atlas-public-producao-mes");
+    const ano = document.getElementById("atlas-public-producao-ano");
+    if (!mesAnterior || !mes || !ano) return;
+    try {
+      const totais = totaisProducaoAtual();
+      mesAnterior.textContent = formatarMetros(totais.mesAnterior);
+      mes.textContent = formatarMetros(totais.mes);
+      ano.textContent = formatarMetros(totais.ano);
+    } catch (error) {
+      console.error("Nao foi possivel calcular a producao publica:", error);
+      mesAnterior.textContent = "N\u00e3o dispon\u00edvel";
+      mes.textContent = "N\u00e3o dispon\u00edvel";
+      ano.textContent = "N\u00e3o dispon\u00edvel";
+    }
+  }
+
   function renderPublicHome() {
     const grid = $("#grid-home");
     const content = $("#conteudo-modulo");
@@ -154,7 +232,7 @@
     grid.style.display = "grid";
     grid.innerHTML = `
       <div class="atlas-public-home">
-        <section class="atlas-public-weather" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px;">
+        <section class="atlas-public-weather">
           <div style="background:#1e293b; border:1px solid #334155; border-radius:14px; padding:16px; color:white;">
             <div style="color:#94a3b8; font-size:13px;">Sauda&ccedil;&atilde;o</div>
             <strong id="atlas-public-saudacao" style="display:block; font-size:24px; margin-top:5px;">${atlasSaudacaoAtual()}</strong>
@@ -170,6 +248,30 @@
               <div style="color:#94a3b8; font-size:13px;">Temperatura local</div>
               <strong id="atlas-public-temp" style="display:block; font-size:24px; margin-top:5px;">--&deg;C</strong>
               <span id="atlas-public-clima" style="color:#cbd5e1; font-size:13px;">Local</span>
+            </div>
+          </div>
+          <div class="atlas-public-production-card">
+            <i class="fas fa-calendar-minus" aria-hidden="true"></i>
+            <div>
+              <div class="atlas-public-card-label">Produ&ccedil;&atilde;o do m&ecirc;s anterior</div>
+              <strong id="atlas-public-producao-mes-anterior">A carregar...</strong>
+              <span>${MESES_PUBLICOS[new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getMonth()]} de ${new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).getFullYear()}</span>
+            </div>
+          </div>
+          <div class="atlas-public-production-card">
+            <i class="fas fa-ruler-horizontal" aria-hidden="true"></i>
+            <div>
+              <div class="atlas-public-card-label">Produ&ccedil;&atilde;o do m&ecirc;s atual</div>
+              <strong id="atlas-public-producao-mes">A carregar...</strong>
+              <span>${MESES_PUBLICOS[new Date().getMonth()]} de ${new Date().getFullYear()}</span>
+            </div>
+          </div>
+          <div class="atlas-public-production-card">
+            <i class="fas fa-industry" aria-hidden="true"></i>
+            <div>
+              <div class="atlas-public-card-label">Produ&ccedil;&atilde;o do ano</div>
+              <strong id="atlas-public-producao-ano">A carregar...</strong>
+              <span>Ano de ${new Date().getFullYear()}</span>
             </div>
           </div>
         </section>
@@ -193,9 +295,16 @@
       </div>
     `;
     iniciarTempoPublico();
+    atualizarProducaoPublica();
   }
 
   window.atlasPublicoRenderHome = renderPublicHome;
+  window.addEventListener("atlasDadosNuvemAtualizados", evento => {
+    if (!evento.detail?.chaves || evento.detail.chaves.includes("atlas_db")) atualizarProducaoPublica();
+  });
+  window.addEventListener("storage", evento => {
+    if (evento.key === "atlas_db") atualizarProducaoPublica();
+  });
 
   function enterPublicMode() {
     localStorage.removeItem("atlas_sessao_usuario_id");

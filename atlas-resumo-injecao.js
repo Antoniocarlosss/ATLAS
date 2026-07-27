@@ -14,6 +14,7 @@
     "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho",
     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
   ];
+  const PAINEL_STORAGE_KEY = "atlas_injecao_filtros_resumo_aberto";
 
   function numero(valor) {
     const n = parseFloat(String(valor ?? "").replace(",", "."));
@@ -22,6 +23,10 @@
 
   function fmt(valor, unidade, casas = 2) {
     return `${numero(valor).toFixed(casas)} ${unidade}`;
+  }
+
+  function fmtCompacto(valor) {
+    return `${numero(valor).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m`;
   }
 
   function dataMs(dataPt) {
@@ -261,7 +266,13 @@
 
   function controlesHtml() {
     return `
-      <div style="background:#111827; border:1px solid #334155; border-radius:10px; padding:12px; margin:10px 0 12px 0; color:white;">
+      <div class="atlas-inj-painel" style="background:#111827; border:1px solid #334155; border-radius:10px; margin:10px 0 12px 0; color:white;">
+        <button id="atlas-inj-painel-toggle" class="atlas-inj-painel-toggle" type="button" aria-expanded="true" aria-controls="atlas-inj-painel-conteudo" onclick="atlasInjecaoAlternarPainel()">
+          <span><strong>Filtros e resumo do relat&oacute;rio</strong><small id="atlas-inj-resumo-compacto">A carregar resumo...</small></span>
+          <i class="fas fa-chevron-down" aria-hidden="true"></i>
+        </button>
+        <div id="atlas-inj-painel-conteudo" class="atlas-inj-painel-conteudo">
+        <div class="atlas-inj-painel-interior">
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(145px, 1fr)); gap:8px; align-items:end;">
           <div>
             <label style="display:block; color:#94a3b8; font-size:11px; margin-bottom:4px;">Periodo</label>
@@ -310,6 +321,8 @@
           <button onclick="atlasInjecaoLimparFiltros()" style="padding:11px; background:#475569; color:white; border:none; border-radius:8px; font-weight:900;">Limpar filtros</button>
         </div>
         <div id="atlas-inj-resumo-render"></div>
+        </div>
+        </div>
       </div>
     `;
   }
@@ -356,8 +369,32 @@
     const destino = document.getElementById("atlas-inj-resumo-render");
     if (!destino) return;
     destino.innerHTML = resumoTelaHtml();
+    const filtros = filtrosAtuais();
+    const total = totalizar(aplicarFiltros(todosRelatorios("injecao"), filtros));
+    const compacto = document.getElementById("atlas-inj-resumo-compacto");
+    if (compacto) compacto.textContent = `${filtros.label} \u2022 ${fmtCompacto(total.metros)}`;
     if (typeof window.atlasLimparTextoTela === "function") window.atlasLimparTextoTela();
   };
+
+  function definirPainelAberto(aberto, salvar) {
+    const painel = document.querySelector(".atlas-inj-painel");
+    const botao = document.getElementById("atlas-inj-painel-toggle");
+    if (!painel || !botao) return;
+    painel.classList.toggle("is-open", aberto);
+    botao.setAttribute("aria-expanded", String(aberto));
+    if (salvar) localStorage.setItem(PAINEL_STORAGE_KEY, String(aberto));
+  }
+
+  window.atlasInjecaoAlternarPainel = function () {
+    const botao = document.getElementById("atlas-inj-painel-toggle");
+    definirPainelAberto(botao?.getAttribute("aria-expanded") !== "true", true);
+  };
+
+  function iniciarPainel() {
+    const salvo = localStorage.getItem(PAINEL_STORAGE_KEY);
+    const aberto = salvo === null ? !window.matchMedia("(max-width: 767px)").matches : salvo === "true";
+    definirPainelAberto(aberto, false);
+  }
 
   window.atlasInjecaoLimparFiltros = function () {
     const p = document.getElementById("atlas-inj-periodo");
@@ -498,6 +535,7 @@
     });
     html += `</div>`;
     render.innerHTML = html;
+    iniciarPainel();
     atlasInjecaoAlternarFiltros();
     atlasInjecaoAtualizarResumo();
     if (typeof window.atlasLimparTextoTela === "function") window.atlasLimparTextoTela();

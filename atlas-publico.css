@@ -29,6 +29,110 @@ html.atlas-public-mode #card-lixeira-atlas {
   margin: 0 auto;
 }
 
+.atlas-public-weather {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.atlas-public-production-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 16px;
+  background: #1e293b;
+  color: #fff;
+}
+
+.atlas-public-production-card i {
+  flex: 0 0 auto;
+  color: #22c55e;
+  font-size: 30px;
+}
+
+.atlas-public-production-card div {
+  min-width: 0;
+}
+
+.atlas-public-card-label,
+.atlas-public-production-card span {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.atlas-public-production-card strong {
+  display: block;
+  margin-top: 5px;
+  color: #fff;
+  font-size: 24px;
+  overflow-wrap: anywhere;
+}
+
+.atlas-inj-painel-toggle {
+  display: flex;
+  width: 100%;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #111827;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.atlas-inj-painel-toggle strong,
+.atlas-inj-painel-toggle small {
+  display: block;
+}
+
+.atlas-inj-painel-toggle small {
+  margin-top: 3px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.atlas-inj-painel-toggle i {
+  color: #93c5fd;
+  transition: transform 240ms ease;
+}
+
+.atlas-inj-painel-toggle:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -3px;
+}
+
+.atlas-inj-painel-conteudo {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 280ms ease;
+}
+
+.atlas-inj-painel-interior {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 12px;
+  transition: padding 280ms ease;
+}
+
+.atlas-inj-painel.is-open .atlas-inj-painel-conteudo {
+  grid-template-rows: 1fr;
+}
+
+.atlas-inj-painel.is-open .atlas-inj-painel-interior {
+  padding: 0 12px 12px;
+}
+
+.atlas-inj-painel.is-open .atlas-inj-painel-toggle i {
+  transform: rotate(180deg);
+}
+
 .atlas-public-hero {
   border: 1px solid #334155;
   border-radius: 16px;
@@ -208,11 +312,29 @@ html.atlas-public-mode #card-lixeira-atlas {
 }
 
 @media (max-width: 640px) {
+  .atlas-public-weather {
+    grid-template-columns: 1fr;
+  }
+
   .atlas-public-cards {
     grid-template-columns: 1fr;
   }
 
   .atlas-admin-panel {
     padding: 22px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1100px) {
+  .atlas-public-weather {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-inj-painel-conteudo,
+  .atlas-inj-painel-interior,
+  .atlas-inj-painel-toggle i {
+    transition: none;
   }
 }
