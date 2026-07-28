@@ -252,7 +252,7 @@
               </label>
             </div>
             <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin-top:10px;">
-              <button type="button" onclick="atlasSerraImprimirResumo()" style="padding:11px; background:#ef233c; color:white; border:none; border-radius:8px; font-weight:900;">Imprimir / Gerar PDF</button>
+              <button type="button" onclick="atlasSerraImprimirResumo()" style="padding:13px 16px; background:linear-gradient(135deg,#ef233c,#c8102e); color:white; border:1px solid #ff5368; border-radius:9px; font-weight:900; box-shadow:0 5px 16px rgba(239,35,60,.24); cursor:pointer;"><i class="fas fa-file-pdf" aria-hidden="true" style="margin-right:7px;"></i> GERAR RELATÓRIO PDF</button>
               <button type="button" onclick="atlasSerraExportarCSV()" style="padding:11px; background:#10b981; color:white; border:none; border-radius:8px; font-weight:900;">Exportar CSV</button>
               <button type="button" onclick="atlasSerraLimparFiltros()" style="padding:11px; background:#475569; color:white; border:none; border-radius:8px; font-weight:900;">Limpar filtros</button>
             </div>
@@ -361,13 +361,128 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
+  function tabelaImpressao(titulo, grupos, primeiraColuna) {
+    const total = grupos.reduce((soma, [, info]) => soma + info.metros, 0);
+    return `
+      <section class="report-section">
+        <h2>${seguro(titulo)}</h2>
+        <table>
+          <thead><tr><th>${seguro(primeiraColuna)}</th><th>Quantidade</th><th>Metros</th><th>Participação</th></tr></thead>
+          <tbody>${grupos.length ? grupos.map(([nome, info]) => `
+            <tr><td>${seguro(nome)}</td><td>${info.quantidade}</td><td class="meters">${formatarMetros(info.metros)}</td><td>${total ? (info.metros * 100 / total).toFixed(1) : "0.0"}%</td></tr>
+          `).join("") : `<tr><td colspan="4" class="empty">Sem dados neste filtro.</td></tr>`}</tbody>
+        </table>
+      </section>
+    `;
+  }
+
+  function relatorioImpressaoHtml(lista, filtros) {
+    const metros = lista.reduce((soma, item) => soma + item.metros, 0);
+    const relatoriosEncontrados = new Set(lista.map(item => item.idRelatorio)).size;
+    const manha = lista.filter(item => item.turno === "manha").reduce((soma, item) => soma + item.metros, 0);
+    const tarde = metros - manha;
+    const filtrosAplicados = [
+      filtros.tipo && `Painel: ${filtros.tipo}`,
+      filtros.espessura && `Espessura: ${filtros.espessura} mm`,
+      filtros.ralInferior && `RAL inferior: ${filtros.ralInferior}`,
+      filtros.ralSuperior && `RAL superior: ${filtros.ralSuperior}`,
+      filtros.turno && `Turno: ${filtros.turno === "manha" ? "Manhã" : "Tarde"}`,
+      filtros.origem && `Origem: ${filtros.origem === "pedido" ? "Pedidos" : "Stock"}`
+    ].filter(Boolean);
+
+    return `
+      <div class="report-header">
+        <img src="${seguro(new URL("logo.png", window.location.href).href)}" alt="ATLAS PAINEL">
+        <div class="report-header-text">
+          <div class="report-kicker">RELATÓRIO DE PRODUÇÃO</div>
+          <h1>RESUMO DA SERRA</h1>
+          <p>Atlas Painel • Gestão Industrial</p>
+        </div>
+      </div>
+      <div class="report-period">
+        <strong>PERÍODO ANALISADO</strong>
+        <span>${seguro(filtros.label)}</span>
+        <small>Documento gerado em ${new Date().toLocaleString("pt-BR")}</small>
+      </div>
+      ${filtrosAplicados.length ? `<div class="filter-row"><b>FILTROS:</b>${filtrosAplicados.map(filtro => `<span>${seguro(filtro)}</span>`).join("")}</div>` : ""}
+      <div class="summary-cards">
+        <div><span>Relatórios</span><strong>${relatoriosEncontrados}</strong></div>
+        <div><span>Turno da manhã</span><strong>${formatarMetros(manha)}</strong></div>
+        <div><span>Turno da tarde</span><strong>${formatarMetros(tarde)}</strong></div>
+        <div class="total-card"><span>Produção total</span><strong>${formatarMetros(metros)}</strong></div>
+      </div>
+      <div class="report-grid">
+        ${tabelaImpressao("Produção por tipo de painel", agrupar(lista, "tipo"), "Painel")}
+        ${tabelaImpressao("Produção por espessura", agrupar(lista, item => `${item.espessura} mm`), "Espessura")}
+        ${tabelaImpressao("Produção por combinação de RAL", agrupar(lista, item => `${item.ralInferior} / ${item.ralSuperior}`), "RAL inferior / superior")}
+        ${tabelaImpressao("Painel, espessura e RAL", agrupar(lista, item => `${item.tipo} • ${item.espessura} mm • RAL ${item.ralInferior}/${item.ralSuperior}`), "Combinação")}
+      </div>
+      <footer><span>ATLAS PAINEL</span><span>Resumo da produção da Serra</span><span>${seguro(filtros.label)}</span></footer>
+    `;
+  }
+
   window.atlasSerraImprimirResumo = function () {
     const filtros = filtrosAtuais();
     const filtrados = aplicarFiltros(linhas(), filtros);
     if (!filtrados.length) return alert("Não existem dados para imprimir com estes filtros.");
     const janela = window.open("", "_blank");
     if (!janela) return alert("Permita pop-ups para imprimir ou gerar o PDF.");
-    janela.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Resumo da Serra</title><style>body{font-family:Arial,sans-serif;color:#111;padding:20px}h1{border-bottom:4px solid #e31c24;padding-bottom:10px}section{border:1px solid #aaa;margin:12px 0}h3{padding:8px;margin:0;background:#eee}table{width:100%;border-collapse:collapse}th,td{border:1px solid #aaa;padding:7px;text-align:left}th:not(:first-child),td:not(:first-child){text-align:right}.no-print{padding:12px 0}@media print{.no-print{display:none}}</style></head><body><h1>Resumo da Produção da Serra</h1><p><b>Período:</b> ${seguro(filtros.label)} | <b>Gerado em:</b> ${new Date().toLocaleString("pt-BR")}</p>${resumoHtml(filtrados, filtros)}<div class="no-print"><button onclick="window.print()">IMPRIMIR / SALVAR PDF</button></div></body></html>`);
+    janela.document.write(`<!doctype html>
+      <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>Relatório da Serra - ATLAS</title>
+      <style>
+        *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+        :root{--navy:#071329;--blue:#123d73;--red:#ed1b2f;--green:#087f45;--line:#b8c4d3;--soft:#eef3f8}
+        body{margin:0;background:#dfe5ec;color:#101827;font-family:Arial,Helvetica,sans-serif}
+        .toolbar{position:sticky;top:0;z-index:5;display:flex;justify-content:center;gap:12px;padding:15px;background:rgba(7,19,41,.96);box-shadow:0 5px 18px rgba(0,0,0,.25)}
+        .toolbar button{border:0;border-radius:9px;padding:13px 24px;color:#fff;font-weight:900;font-size:14px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+        .print-button{background:linear-gradient(135deg,#ed1b2f,#bd1023)}
+        .close-button{background:#34465d}
+        .sheet{width:min(210mm,calc(100% - 24px));min-height:297mm;margin:18px auto;padding:10mm;background:#fff;box-shadow:0 8px 30px rgba(15,23,42,.22)}
+        .report-header{display:flex;align-items:center;justify-content:center;gap:22px;min-height:95px;padding:12px 20px;border:2px solid var(--navy);border-bottom:7px solid var(--red);background:var(--navy);text-align:center}
+        .report-header img{width:165px;height:72px;object-fit:contain;flex:0 0 auto}
+        .report-header-text{color:#fff;border-left:1px solid #708198;padding-left:22px}
+        .report-kicker{color:#ff6a78;font-size:10px;font-weight:900;letter-spacing:2.4px}
+        .report-header h1{margin:5px 0 3px;font-size:25px;letter-spacing:.8px}
+        .report-header p{margin:0;color:#d8e2ef;font-size:11px}
+        .report-period{text-align:center;margin:12px 0 9px;padding:9px;border:1px solid var(--line);border-left:6px solid var(--red);background:var(--soft)}
+        .report-period strong,.report-period span,.report-period small{display:block}
+        .report-period strong{color:var(--red);font-size:9px;letter-spacing:1.5px}
+        .report-period span{margin:3px 0;color:var(--navy);font-size:17px;font-weight:900}
+        .report-period small{color:#475569;font-size:9px}
+        .filter-row{display:flex;justify-content:center;align-items:center;gap:5px;flex-wrap:wrap;margin:8px 0;font-size:9px}
+        .filter-row b{color:var(--navy)}
+        .filter-row span{border:1px solid #9dafc2;border-radius:20px;padding:4px 8px;background:#fff}
+        .summary-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0 12px}
+        .summary-cards div{min-height:57px;padding:8px;border:1.5px solid var(--blue);border-top:5px solid var(--blue);border-radius:5px;text-align:center;background:#fff}
+        .summary-cards span,.summary-cards strong{display:block}
+        .summary-cards span{color:#3b5675;font-size:9px;font-weight:700;text-transform:uppercase}
+        .summary-cards strong{margin-top:5px;color:var(--navy);font-size:15px}
+        .summary-cards .total-card{border-color:var(--red);border-top-color:var(--red);background:#fff7f8}
+        .summary-cards .total-card strong{color:#b30d20}
+        .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .report-section{overflow:hidden;border:1.5px solid var(--blue);border-radius:5px;break-inside:avoid;background:#fff}
+        .report-section h2{margin:0;padding:8px;background:var(--blue);color:#fff;text-align:center;font-size:11px;letter-spacing:.25px;text-transform:uppercase}
+        table{width:100%;border-collapse:collapse;table-layout:auto;font-size:9px}
+        th{padding:7px 5px;background:#dfe9f4;color:var(--navy);text-align:center;font-weight:900;border-bottom:1px solid #91a4ba}
+        td{padding:7px 5px;border-top:1px solid #c8d2dd;color:#111827;font-weight:700;overflow-wrap:anywhere}
+        th:first-child,td:first-child{text-align:left}
+        th:not(:first-child),td:not(:first-child){text-align:right;white-space:nowrap}
+        tbody tr:nth-child(even){background:#f2f6fa}
+        td.meters{color:var(--green);font-weight:900}
+        td.empty{text-align:center!important;color:#64748b}
+        footer{display:flex;justify-content:space-between;gap:10px;margin-top:13px;padding-top:7px;border-top:2px solid var(--red);color:#475569;font-size:8px;font-weight:700}
+        @page{size:A4 portrait;margin:7mm}
+        @media(max-width:760px){.report-grid{grid-template-columns:1fr}.summary-cards{grid-template-columns:1fr 1fr}.report-header{flex-direction:column}.report-header-text{border-left:0;padding-left:0}.sheet{padding:14px}}
+        @media print{body{background:#fff}.toolbar{display:none}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}.report-header{min-height:80px}.report-header img{width:140px;height:60px}.report-grid{gap:7px}.report-section h2{padding:6px}th,td{padding:5px 4px}}
+      </style></head>
+      <body>
+        <div class="toolbar">
+          <button class="print-button" onclick="window.print()">🖨️ IMPRIMIR OU SALVAR EM PDF</button>
+          <button class="close-button" onclick="window.close()">✕ FECHAR RELATÓRIO</button>
+        </div>
+        <main class="sheet">${relatorioImpressaoHtml(filtrados, filtros)}</main>
+      </body></html>`);
     janela.document.close();
   };
 
