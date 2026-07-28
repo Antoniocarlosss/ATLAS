@@ -9800,34 +9800,64 @@ document.addEventListener('click', function(evento) {
             try {
                 if (!janela.document || !janela.document.body) return;
                 if (janela.document.getElementById('atlas-botao-voltar-pdf')) return;
+                if (janela.document.querySelector('.toolbar .print-button') && janela.document.querySelector('.toolbar .close-button')) {
+                    janela.document.body.style.paddingBottom = '0';
+                    return;
+                }
 
                 const style = janela.document.createElement('style');
                 style.innerHTML = `
                     #atlas-botao-voltar-pdf {
-                        position: fixed !important;
-                        left: 10px !important;
-                        right: 10px !important;
-                        bottom: 10px !important;
-                        bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+                        position: sticky !important;
+                        left: 0 !important;
+                        right: 0 !important;
+                        top: 0 !important;
                         z-index: 2147483647 !important;
-                        display: block !important;
+                        display: flex !important;
+                        justify-content: center !important;
+                        align-items: center !important;
+                        gap: 12px !important;
+                        padding: 15px !important;
+                        background: #071329 !important;
+                        box-shadow: 0 5px 18px rgba(0,0,0,0.28) !important;
                         pointer-events: auto !important;
                     }
 
                     #atlas-botao-voltar-pdf button {
-                        width: 100% !important;
-                        padding: 16px !important;
-                        background: #E31C24 !important;
+                        width: auto !important;
+                        min-width: 250px !important;
+                        padding: 13px 24px !important;
                         color: #fff !important;
-                        border: 3px solid #000 !important;
-                        border-radius: 10px !important;
-                        font-size: 16px !important;
-                        font-weight: bold !important;
-                        box-shadow: 0 8px 24px rgba(0,0,0,0.35) !important;
+                        border: 0 !important;
+                        border-radius: 9px !important;
+                        font-size: 14px !important;
+                        font-weight: 900 !important;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+                        cursor: pointer !important;
+                    }
+
+                    #atlas-botao-imprimir-pdf {
+                        background: linear-gradient(135deg,#ed1b2f,#bd1023) !important;
+                    }
+
+                    #atlas-botao-fechar-pdf {
+                        background: #34465d !important;
                     }
 
                     body {
-                        padding-bottom: 90px !important;
+                        padding-bottom: 0 !important;
+                    }
+
+                    @media (max-width: 600px) {
+                        #atlas-botao-voltar-pdf {
+                            flex-direction: column !important;
+                            padding: 10px !important;
+                        }
+
+                        #atlas-botao-voltar-pdf button {
+                            width: 100% !important;
+                            min-width: 0 !important;
+                        }
                     }
 
                     @media print {
@@ -9882,15 +9912,24 @@ document.addEventListener('click', function(evento) {
                         janela.document.body.appendChild(aviso);
                     } catch(e) {}
                 };
+                const botaoImprimir = janela.document.createElement('button');
+                botaoImprimir.id = 'atlas-botao-imprimir-pdf';
+                botaoImprimir.type = 'button';
+                botaoImprimir.textContent = '🖨️ IMPRIMIR OU SALVAR EM PDF';
+                botaoImprimir.onclick = function() {
+                    janela.print();
+                };
+
                 const botao = janela.document.createElement('button');
+                botao.id = 'atlas-botao-fechar-pdf';
                 botao.type = 'button';
-                botao.textContent = 'VOLTAR / FECHAR';
+                botao.textContent = '✕ FECHAR RELATÓRIO';
                 botao.onclick = janela.atlasVoltarFecharPDF;
                 botao.addEventListener('click', janela.atlasVoltarFecharPDF);
                 botao.addEventListener('touchstart', janela.atlasVoltarFecharPDF, { passive: true });
+                div.appendChild(botaoImprimir);
                 div.appendChild(botao);
-
-                janela.document.body.appendChild(div);
+                janela.document.body.prepend(div);
             } catch (erro) {}
         };
 

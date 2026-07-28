@@ -412,15 +412,13 @@
     atlasInjecaoAtualizarResumo();
   };
 
-  function tabelaResumo(titulo, grupos) {
+  function tabelaProducaoRelatorio(titulo, grupos, coluna) {
     return `
-      <h3>${titulo}</h3>
-      <table>
-        <thead><tr><th>Grupo</th><th>Manha</th><th>Tarde</th><th>Total</th>${QUIMICOS.map(([, l]) => `<th>${l}</th>`).join("")}</tr></thead>
-        <tbody>
-          ${grupos.map(g => `<tr><td>${textoSeguro(g.chave)}</td><td>${fmt(g.total.manha, "m")}</td><td>${fmt(g.total.tarde, "m")}</td><td><b>${fmt(g.total.metros, "m")}</b></td>${QUIMICOS.map(([k]) => `<td>${fmt(g.total.quimicos[k], "kg")}</td>`).join("")}</tr>`).join("")}
-        </tbody>
-      </table>
+      <section class="report-section">
+        <h2>${textoSeguro(titulo)}</h2>
+        <table><thead><tr><th>${textoSeguro(coluna)}</th><th>Manhã</th><th>Tarde</th><th>Total</th></tr></thead>
+        <tbody>${grupos.length ? grupos.map(g => `<tr><td>${textoSeguro(g.chave)}</td><td>${fmt(g.total.manha, "m")}</td><td>${fmt(g.total.tarde, "m")}</td><td class="meters">${fmt(g.total.metros, "m")}</td></tr>`).join("") : `<tr><td colspan="4" class="empty">Sem dados para este período.</td></tr>`}</tbody></table>
+      </section>
     `;
   }
 
@@ -430,59 +428,88 @@
     const total = totalizar(registros);
     const porTipo = agrupar(registros, reg => reg.tipo);
     const porEsp = agrupar(registros, reg => `${reg.esp} mm`);
-    const porTipoEsp = agrupar(registros, reg => `${reg.tipo} ${reg.esp} mm`);
     const operador = document.getElementById("user-display")?.innerText || "VISITANTE";
     const especifico = filtros.conteudo === "painel";
     const logoUrl = new URL("logo.png", location.href).href;
+    const filtrosAplicados = especifico ? [
+      filtros.tipoPainel !== "todos" && `Painel: ${filtros.tipoPainel}`,
+      filtros.espessura !== "todas" && `Espessura: ${filtros.espessura} mm`
+    ].filter(Boolean) : [];
 
     return `
-      <!doctype html><html><head><meta charset="UTF-8"><title>Relatorio de Injecao</title>
+      <!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatório de Injeção - ATLAS</title>
       <style>
-        @page { size: A4 landscape; margin: 10mm; }
-        body { font-family: Arial, sans-serif; color:#000; margin:0; }
-        .cab { background:#050505; color:white; padding:12px 16px; border-bottom:5px solid #e31c24; display:flex; justify-content:space-between; align-items:center; }
-        .cab img { height:42px; object-fit:contain; }
-        h1 { font-size:20px; margin:10px 0 4px; }
-        h2 { font-size:15px; margin:10px 0; }
-        h3 { background:#111; color:white; padding:7px; font-size:13px; margin:12px 0 0; }
-        table { width:100%; border-collapse:collapse; page-break-inside:auto; margin-bottom:8px; }
-        tr { page-break-inside:avoid; }
-        th,td { border:1px solid #000; padding:5px; font-size:10px; text-align:center; }
-        th { background:#e5e7eb; }
-        .cards { display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin:10px 0; }
-        .card { border:2px solid #111; padding:8px; text-align:center; font-weight:bold; }
-        .obs { height:55px; border:1px solid #000; margin-top:8px; padding:6px; }
-        .assinatura { margin-top:30px; display:flex; justify-content:space-around; gap:20px; }
-        .linha { border-top:1px solid #000; width:260px; text-align:center; padding-top:6px; }
+        *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+        :root{--navy:#071329;--blue:#123d73;--red:#ed1b2f;--green:#087f45;--line:#b8c4d3;--soft:#eef3f8}
+        body{margin:0;background:#dfe5ec;color:#101827;font-family:Arial,Helvetica,sans-serif}
+        .sheet{width:min(210mm,calc(100% - 24px));min-height:297mm;margin:20px auto;padding:10mm;background:#fff;box-shadow:0 8px 30px rgba(15,23,42,.22)}
+        .report-header{display:flex;align-items:center;justify-content:center;gap:22px;min-height:96px;padding:12px 20px;border:2px solid var(--navy);border-bottom:7px solid var(--red);background:var(--navy);text-align:center}
+        .report-header img{width:165px;height:72px;object-fit:contain}
+        .report-header-text{color:#fff;border-left:1px solid #708198;padding-left:22px}
+        .report-kicker{color:#ff6a78;font-size:10px;font-weight:900;letter-spacing:2.4px}
+        .report-header h1{margin:5px 0 3px;font-size:25px;letter-spacing:.8px}
+        .report-header p{margin:0;color:#d8e2ef;font-size:11px}
+        .report-period{text-align:center;margin:12px 0 9px;padding:9px;border:1px solid var(--line);border-left:6px solid var(--red);background:var(--soft)}
+        .report-period strong,.report-period span,.report-period small{display:block}
+        .report-period strong{color:var(--red);font-size:9px;letter-spacing:1.5px}
+        .report-period span{margin:3px 0;color:var(--navy);font-size:17px;font-weight:900}
+        .report-period small{color:#475569;font-size:9px}
+        .filter-row{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin:8px 0;font-size:9px}
+        .filter-row span{border:1px solid #9dafc2;border-radius:20px;padding:4px 8px}
+        .summary-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0 12px}
+        .summary-cards div{min-height:57px;padding:8px;border:1.5px solid var(--blue);border-top:5px solid var(--blue);border-radius:5px;text-align:center}
+        .summary-cards span,.summary-cards strong{display:block}
+        .summary-cards span{color:#3b5675;font-size:9px;font-weight:700;text-transform:uppercase}
+        .summary-cards strong{margin-top:5px;color:var(--navy);font-size:15px}
+        .summary-cards .total-card{border-color:var(--red);border-top-color:var(--red);background:#fff7f8}
+        .summary-cards .total-card strong{color:#b30d20}
+        .chemical-section{margin-bottom:10px;border:1.5px solid var(--blue);border-radius:5px;overflow:hidden}
+        .chemical-section h2,.report-section h2{margin:0;padding:8px;background:var(--blue);color:#fff;text-align:center;font-size:11px;text-transform:uppercase}
+        .chemical-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+        .chemical-grid div{padding:7px;text-align:center;border-right:1px solid var(--line);border-top:1px solid var(--line)}
+        .chemical-grid span,.chemical-grid strong{display:block}
+        .chemical-grid span{font-size:8px;color:#425b78;font-weight:700}
+        .chemical-grid strong{margin-top:3px;color:var(--navy);font-size:12px}
+        .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+        .report-section{overflow:hidden;border:1.5px solid var(--blue);border-radius:5px;break-inside:avoid}
+        table{width:100%;border-collapse:collapse;font-size:9px}
+        th{padding:7px 5px;background:#dfe9f4;color:var(--navy);text-align:center;font-weight:900}
+        td{padding:7px 5px;border-top:1px solid #c8d2dd;color:#111827;font-weight:700}
+        th:first-child,td:first-child{text-align:left}
+        th:not(:first-child),td:not(:first-child){text-align:right;white-space:nowrap}
+        tbody tr:nth-child(even){background:#f2f6fa}
+        td.meters{color:var(--green);font-weight:900}
+        td.empty{text-align:center!important;color:#64748b}
+        .details{grid-column:1/-1}
+        .signatures{display:flex;justify-content:space-around;gap:30px;margin-top:28px;font-size:9px;text-align:center}
+        .signatures div{width:190px;border-top:1px solid #334155;padding-top:5px}
+        footer{display:flex;justify-content:space-between;gap:10px;margin-top:13px;padding-top:7px;border-top:2px solid var(--red);color:#475569;font-size:8px;font-weight:700}
+        @page{size:A4 portrait;margin:7mm}
+        @media(max-width:760px){.report-grid{grid-template-columns:1fr}.summary-cards,.chemical-grid{grid-template-columns:1fr 1fr}.report-header{flex-direction:column}.report-header-text{border-left:0;padding-left:0}.sheet{padding:14px}}
+        @media print{body{background:#fff}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}.report-header{min-height:80px}.report-header img{width:140px;height:60px}.report-grid{gap:7px}.report-section h2,.chemical-section h2{padding:6px}th,td{padding:5px 4px}}
       </style></head><body>
-        <div class="cab">
-          <div><img src="${logoUrl}" alt="Atlas Painel"><h1>Relatorio de Producao e Consumo da Injecao</h1></div>
-          <div style="text-align:right; font-weight:bold;">Periodo: ${textoSeguro(filtros.label)}<br>Emissao: ${new Date().toLocaleString("pt-BR")}<br>Utilizador: ${textoSeguro(operador)}</div>
+      <main class="sheet">
+        <div class="report-header">
+          <img src="${logoUrl}" alt="ATLAS PAINEL">
+          <div class="report-header-text"><div class="report-kicker">RELATÓRIO DE PRODUÇÃO</div><h1>RESUMO DA INJEÇÃO</h1><p>Atlas Painel • Gestão Industrial</p></div>
         </div>
-        ${especifico ? `<h2>Filtro: ${textoSeguro(filtros.tipoPainel === "todos" ? "Todos os tipos" : filtros.tipoPainel)} | ${textoSeguro(filtros.espessura === "todas" ? "Todas as espessuras" : filtros.espessura + " mm")}</h2>` : ""}
-        <div class="cards">
-          <div class="card">Relatorios<br>${total.relatorios}</div>
-          <div class="card">Manha<br>${fmt(total.manha, "m")}</div>
-          <div class="card">Tarde<br>${fmt(total.tarde, "m")}</div>
-          <div class="card">Total<br>${fmt(total.metros, "m")}</div>
-          <div class="card">Dias<br>${total.diasProducao}</div>
+        <div class="report-period"><strong>PERÍODO ANALISADO</strong><span>${textoSeguro(filtros.label)}</span><small>Gerado em ${new Date().toLocaleString("pt-BR")} por ${textoSeguro(operador)}</small></div>
+        ${filtrosAplicados.length ? `<div class="filter-row">${filtrosAplicados.map(filtro => `<span>${textoSeguro(filtro)}</span>`).join("")}</div>` : ""}
+        <div class="summary-cards">
+          <div><span>Relatórios</span><strong>${total.relatorios}</strong></div>
+          <div><span>Turno da manhã</span><strong>${fmt(total.manha, "m")}</strong></div>
+          <div><span>Turno da tarde</span><strong>${fmt(total.tarde, "m")}</strong></div>
+          <div class="total-card"><span>Produção total</span><strong>${fmt(total.metros, "m")}</strong></div>
         </div>
-        ${tabelaResumo("Totais gerais de quimicos", [{ chave: "TOTAL GERAL", total }])}
-        ${especifico ? tabelaResumo("Consumo medio por metro", [{
-          chave: "kg/m",
-          total: { manha: total.manha, tarde: total.tarde, metros: total.metros, quimicos: Object.fromEntries(QUIMICOS.map(([k]) => [k, total.metros ? total.quimicos[k] / total.metros : 0])) }
-        }]) : ""}
-        ${tabelaResumo("Resumo por tipo de painel", porTipo)}
-        ${tabelaResumo("Resumo por espessura", porEsp)}
-        ${tabelaResumo("Resumo por tipo de painel e espessura", porTipoEsp)}
-        <h3>Registos detalhados do periodo</h3>
-        <table>
-          <thead><tr><th>Data</th><th>Tipo</th><th>Esp.</th><th>Manha</th><th>Tarde</th><th>Total</th>${QUIMICOS.map(([, l]) => `<th>${l}</th>`).join("")}</tr></thead>
-          <tbody>${registros.map(reg => `<tr><td>${textoSeguro(reg.data)}</td><td>${textoSeguro(reg.tipo)}</td><td>${textoSeguro(reg.esp)} mm</td><td>${fmt(reg.manha, "m")}</td><td>${fmt(reg.tarde, "m")}</td><td><b>${fmt(reg.total, "m")}</b></td>${QUIMICOS.map(([k]) => `<td>${fmt(reg.item[k], "kg")}</td>`).join("")}</tr>`).join("")}</tbody>
-        </table>
-        <div class="obs"><b>Observacoes:</b></div>
-        <div class="assinatura"><div class="linha">Responsavel</div><div class="linha">Conferencia</div></div>
-      </body></html>
+        <section class="chemical-section"><h2>Consumo total de químicos</h2><div class="chemical-grid">${QUIMICOS.map(([chave, nome]) => `<div><span>${textoSeguro(nome)}</span><strong>${fmt(total.quimicos[chave], "kg")}</strong></div>`).join("")}</div></section>
+        <div class="report-grid">
+          ${tabelaProducaoRelatorio("Produção por tipo de painel", porTipo, "Painel")}
+          ${tabelaProducaoRelatorio("Produção por espessura", porEsp, "Espessura")}
+          <section class="report-section details"><h2>Registros do período</h2><table><thead><tr><th>Data</th><th>Painel</th><th>Esp.</th><th>Manhã</th><th>Tarde</th><th>Total</th></tr></thead><tbody>${registros.length ? registros.map(reg => `<tr><td>${textoSeguro(reg.data)}</td><td>${textoSeguro(reg.tipo)}</td><td>${textoSeguro(reg.esp)} mm</td><td>${fmt(reg.manha, "m")}</td><td>${fmt(reg.tarde, "m")}</td><td class="meters">${fmt(reg.total, "m")}</td></tr>`).join("") : `<tr><td colspan="6" class="empty">Sem registros no período.</td></tr>`}</tbody></table></section>
+        </div>
+        <div class="signatures"><div>Responsável</div><div>Conferência</div></div>
+        <footer><span>ATLAS PAINEL</span><span>Resumo da produção da Injeção</span><span>${textoSeguro(filtros.label)}</span></footer>
+      </main></body></html>
     `;
   }
 
