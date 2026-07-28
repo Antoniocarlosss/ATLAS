@@ -267,7 +267,7 @@
   function controlesHtml() {
     return `
       <div class="atlas-inj-painel" style="background:#111827; border:1px solid #334155; border-radius:10px; margin:10px 0 12px 0; color:white;">
-        <button id="atlas-inj-painel-toggle" class="atlas-inj-painel-toggle" type="button" aria-expanded="true" aria-controls="atlas-inj-painel-conteudo" onclick="atlasInjecaoAlternarPainel()">
+        <button id="atlas-inj-painel-toggle" class="atlas-inj-painel-toggle" type="button" aria-expanded="false" aria-controls="atlas-inj-painel-conteudo" onclick="atlasInjecaoAlternarPainel()">
           <span><strong>Filtros e resumo do relat&oacute;rio</strong><small id="atlas-inj-resumo-compacto">A carregar resumo...</small></span>
           <i class="fas fa-chevron-down" aria-hidden="true"></i>
         </button>
@@ -391,9 +391,8 @@
   };
 
   function iniciarPainel() {
-    const salvo = localStorage.getItem(PAINEL_STORAGE_KEY);
-    const aberto = salvo === null ? !window.matchMedia("(max-width: 767px)").matches : salvo === "true";
-    definirPainelAberto(aberto, false);
+    localStorage.removeItem(PAINEL_STORAGE_KEY);
+    definirPainelAberto(false, false);
   }
 
   window.atlasInjecaoLimparFiltros = function () {

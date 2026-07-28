@@ -539,7 +539,6 @@
     const anos = Object.keys(agrupado).sort((a, b) => b - a);
     render.innerHTML = `
       <div class="atlas-public-history">
-        <button class="atlas-public-back" type="button" onclick="atlasPublicoVoltar()"><i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar</button>
         <h2>${titulo}</h2>
         ${anos.length ? anos.map(ano => `
           <details>
