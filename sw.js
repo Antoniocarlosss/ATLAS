@@ -8,6 +8,7 @@ const assets = [
   './atlas-publico.js',
   './atlas-texto-limpo.js',
   './atlas-resumo-injecao.js',
+  './atlas-resumo-serra.js',
   './historicos-admin.js',
   './atlas-ajustes-fachadas.js',
   './firebase-atlas.js',
