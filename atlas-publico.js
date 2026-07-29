@@ -324,6 +324,7 @@
     showAppShell();
     setHeaderPublic();
     renderPublicHome();
+    window.atlasFinalizarCarregamentoSistema?.();
   }
 
   window.atlasPublicoEntrarVisitante = enterPublicMode;
@@ -382,6 +383,7 @@
     } catch (error) {
       console.warn("Falha ao abrir modo admin:", error);
     }
+    window.atlasFinalizarCarregamentoSistema?.();
   }
 
   function closeAdminModal() {

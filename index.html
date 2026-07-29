@@ -10,6 +10,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script>
+        window.atlasBootStartedAt = Date.now();
+window.atlasFinalizarCarregamentoSistema = function () {
+  clearTimeout(window.atlasBootFallbackTimer);
+  const decorrido = Date.now() - window.atlasBootStartedAt;
+            const atraso = Math.max(0, 650 - decorrido);
+            clearTimeout(window.atlasBootFinishTimer);
+            window.atlasBootFinishTimer = setTimeout(function () {
+                document.documentElement.classList.add('atlas-boot-ready');
+                const tela = document.getElementById('atlas-boot-screen');
+                if (tela) setTimeout(function () { tela.remove(); }, 500);
+            }, atraso);
+        };
+        window.atlasBootFallbackTimer = setTimeout(window.atlasFinalizarCarregamentoSistema, 8000);
+
         if (new URLSearchParams(location.search).has('modulo') || new URLSearchParams(location.search).has('atlas_modulo')) {
             document.documentElement.classList.add('atlas-route-loading');
         }
@@ -19,6 +33,93 @@
         #app-principal { display: block !important; }
         html.atlas-route-loading #tela-login { display: none !important; }
         html.atlas-route-loading #app-principal { display: block !important; }
+        html:not(.atlas-boot-ready) body { overflow: hidden !important; }
+        html:not(.atlas-boot-ready) #tela-login,
+        html:not(.atlas-boot-ready) #app-principal { visibility: hidden !important; }
+        #atlas-boot-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 2147483647;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background:
+                radial-gradient(circle at 50% 18%, rgba(37, 99, 235, 0.18), transparent 34%),
+                linear-gradient(145deg, #020617 0%, #071329 54%, #0f172a 100%);
+            color: #fff;
+            font-family: Inter, Arial, sans-serif;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity .4s ease, visibility .4s ease;
+        }
+        html.atlas-boot-ready #atlas-boot-screen { opacity: 0; visibility: hidden; pointer-events: none; }
+        .atlas-boot-card {
+            width: min(92vw, 470px);
+            padding: 34px 30px 30px;
+            border: 1px solid rgba(148, 163, 184, .3);
+            border-radius: 22px;
+            background: rgba(7, 19, 41, .9);
+            box-shadow: 0 28px 90px rgba(0, 0, 0, .55);
+            text-align: center;
+            backdrop-filter: blur(12px);
+        }
+        .atlas-boot-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 13px;
+            margin-bottom: 25px;
+            animation: atlasBootLogo .7s ease both;
+        }
+        .atlas-boot-mark { position: relative; width: 58px; height: 44px; }
+        .atlas-boot-mark::before,
+        .atlas-boot-mark::after {
+            content: "";
+            position: absolute;
+            left: 4px;
+            width: 49px;
+            height: 14px;
+            border-radius: 2px;
+            background: #ed1b2f;
+            transform: skewX(-18deg);
+            box-shadow: 0 0 24px rgba(237, 27, 47, .2);
+        }
+        .atlas-boot-mark::before { top: 5px; }
+        .atlas-boot-mark::after { bottom: 5px; }
+        .atlas-boot-word { text-align: left; }
+        .atlas-boot-name { font-size: clamp(34px, 9vw, 48px); line-height: .9; font-weight: 900; letter-spacing: -2px; }
+        .atlas-boot-sub { margin-top: 7px; padding-left: 4px; color: #dbe7f5; font-size: 11px; font-weight: 800; letter-spacing: 9px; }
+        .atlas-boot-status { margin: 0; font-size: 19px; font-weight: 800; }
+        .atlas-boot-detail { margin: 7px 0 20px; color: #9db3ce; font-size: 13px; }
+        .atlas-boot-track { height: 5px; overflow: hidden; border-radius: 999px; background: #16243a; }
+        .atlas-boot-progress {
+            width: 42%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #ed1b2f, #ff5264, #3b82f6);
+            animation: atlasBootProgress 1.25s ease-in-out infinite;
+        }
+        .atlas-boot-dots span { animation: atlasBootDot 1.2s infinite; }
+        .atlas-boot-dots span:nth-child(2) { animation-delay: .18s; }
+        .atlas-boot-dots span:nth-child(3) { animation-delay: .36s; }
+        @keyframes atlasBootLogo {
+            from { opacity: 0; transform: translateY(10px) scale(.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes atlasBootProgress {
+            0% { transform: translateX(-120%); }
+            55% { transform: translateX(95%); }
+            100% { transform: translateX(260%); }
+        }
+        @keyframes atlasBootDot {
+            0%, 55%, 100% { opacity: .25; }
+            25% { opacity: 1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .atlas-boot-logo, .atlas-boot-progress, .atlas-boot-dots span { animation: none; }
+            .atlas-boot-progress { width: 70%; margin: auto; }
+        }
     </style>
     <link rel="stylesheet" href="style.css?v=20260720-publico-limpo-204">
     <link rel="stylesheet" href="atlas-publico.css?v=20260727-historicos-publicos-207">
@@ -29,6 +130,20 @@
     <meta name="theme-color" content="#0f172a">
 </head>
 <body>
+    <div id="atlas-boot-screen" role="status" aria-live="polite" aria-label="Carregando sistema ATLAS">
+        <div class="atlas-boot-card">
+            <div class="atlas-boot-logo" aria-hidden="true">
+                <div class="atlas-boot-mark"></div>
+                <div class="atlas-boot-word">
+                    <div class="atlas-boot-name">ATLAS</div>
+                    <div class="atlas-boot-sub">PAINEL</div>
+                </div>
+            </div>
+            <p class="atlas-boot-status">Carregando sistema<span class="atlas-boot-dots"><span>.</span><span>.</span><span>.</span></span></p>
+            <p class="atlas-boot-detail">Preparando dados e configurações</p>
+            <div class="atlas-boot-track" aria-hidden="true"><div class="atlas-boot-progress"></div></div>
+        </div>
+    </div>
 
     <section id="tela-login" style="display:none;" aria-hidden="true">
         <div class="login-box">
@@ -425,7 +540,7 @@
     <script src="historicos-admin.js?v=20260720-publico-limpo-204"></script>
     <script src="atlas-ajustes-fachadas.js?v=20260720-publico-limpo-204"></script>
     <script type="module" src="main.js?v=20260720-publico-limpo-204"></script>
-    <script src="atlas-publico.js?v=20260729-bloqueio-serra-automatica-215"></script>
+    <script src="atlas-publico.js?v=20260729-tela-carregamento-216"></script>
     <script src="atlas-texto-limpo.js?v=20260720-publico-limpo-204"></script>
     <script src="atlas-resumo-injecao.js?v=20260728-relatorio-injecao-212"></script>
     <script src="atlas-resumo-serra.js?v=20260729-gerir-serra-213"></script>
@@ -439,7 +554,7 @@
             });
 
             window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js?v=20260729-fix-serra-215')
+            navigator.serviceWorker.register('sw.js?v=20260729-tela-carregamento-216')
                     .then(reg => {
                         console.log('Atlas PWA: Ativo!');
                         reg.update();
