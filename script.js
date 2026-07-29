@@ -1,7 +1,5 @@
 ﻿// --- BANCO DE USUARIOS ---
-let usuariosSistema = atlasArrayLocal('atlas_usuarios', [
-    { id: "admin", senha: "123", cargo: "admin" }
-]);
+let usuariosSistema = atlasArrayLocal('atlas_usuarios', []);
 
 let usuarioLogado = null;
 const MODULOS_SISTEMA = [
@@ -410,7 +408,7 @@ function atlasAtualizarDetalhesAparelhoAssincrono(idDispositivo) {
 
 function atlasDadosDispositivoOfflineAtual() {
     const dispositivos = atlasJSONLocal('atlas_dispositivos_online', {});
-    const id = atlasDispositivoIdAtual(usuarioLogado?.id || atual.usuario || '');
+    const id = atlasDispositivoIdAtual(usuarioLogado?.id || '');
     const atual = dispositivos[id] || {};
     const agora = Date.now();
     const dados = {
@@ -762,27 +760,15 @@ function inicializarUsuarios() {
     if (!Array.isArray(usuariosSistema)) {
         usuariosSistema = [];
     }
-    garantirAdminSistemaAtlas();
 }
 
 function garantirAdminSistemaAtlas() {
     if (!Array.isArray(usuariosSistema)) usuariosSistema = [];
-    usuariosSistema = usuariosSistema.filter(usuario => atlasIdUsuarioNormalizado(usuario?.id) !== 'admin');
-    usuariosSistema.unshift({
-        id: 'admin',
-        nome: 'ADMIN',
-        senha: '123',
-        cargo: 'admin',
-        bloqueado: false,
-        _atlasUsuarioAtualizadoEm: Date.now()
-    });
-    try {
-        const excluidos = JSON.parse(localStorage.getItem('atlas_usuarios_excluidos') || '{}');
-        delete excluidos.admin;
-        localStorage.setItem('atlas_usuarios_excluidos', JSON.stringify(excluidos));
-        localStorage.setItem('atlas_usuarios', JSON.stringify(usuariosSistema));
-    } catch (erro) {}
-    return usuariosSistema[0];
+    return usuariosSistema.find(usuario =>
+        atlasIdUsuarioNormalizado(usuario?.id) === 'admin'
+        && normalizarCargoUsuario(usuario?.cargo) === 'admin'
+        && usuario?.bloqueado !== true
+    ) || null;
 }
 
 inicializarUsuarios();
@@ -890,28 +876,6 @@ async function fazerLogin() {
     const usuarioInput = document.getElementById('login-email').value.trim();
     const senhaInput = document.getElementById('login-senha').value.trim();
     const idLogin = String(usuarioInput || '').toLowerCase();
-
-    if (idLogin === 'admin' && senhaInput === '123') {
-        usuarioLogado = garantirAdminSistemaAtlas();
-        window.usuarioLogado = usuarioLogado;
-        localStorage.setItem('atlas_sessao_usuario_id', usuarioLogado.id || 'admin');
-        document.getElementById('tela-login').style.display = 'none';
-        document.getElementById('app-principal').style.display = 'block';
-        document.getElementById('user-display').innerText = 'ADMIN';
-        aplicarPermissoesUsuario();
-        aplicarPreferenciasVisuaisUsuario();
-        atlasInicializarDashboardHome();
-        atlasRegistrarDispositivoAtual();
-        setTimeout(atlasRegistrarDispositivoAtual, 1500);
-        setTimeout(atlasRegistrarDispositivoAtual, 5000);
-        if (!window.atlasTimerDispositivoAtual) {
-            window.atlasTimerDispositivoAtual = setInterval(atlasRegistrarDispositivoAtual, 10000);
-        }
-        if (typeof window.atlasFirebaseSincronizarAgora === 'function') {
-            window.atlasFirebaseSincronizarAgora();
-        }
-        return;
-    }
 
     if (typeof atlasNormalizarUsuariosSistema === 'function') {
         atlasNormalizarUsuariosSistema();
@@ -5134,8 +5098,6 @@ function atlasNormalizarUsuariosSistema() {
         }
     });
 
-    mapa.set('admin', { id: 'admin', nome: 'ADMIN', senha: '123', cargo: 'admin', bloqueado: false, _atlasUsuarioAtualizadoEm: Date.now() });
-
     usuariosSistema = Array.from(mapa.values()).sort((a, b) => {
         const adminA = atlasIdUsuarioNormalizado(a.id) === 'admin' ? -1 : 0;
         const adminB = atlasIdUsuarioNormalizado(b.id) === 'admin' ? -1 : 0;
@@ -7954,7 +7916,7 @@ function renderizarPermissoesAdmin(alvoSelecionado = 'grupo:operario') {
         .filter(mod => mod.chave !== 'permissoes');
     const opcoesUsuarios = usuariosSistema
         .filter(u => normalizarCargoUsuario(u.cargo) !== 'admin')
-        .map(u => `<option value="usuario:${textoSeguroPermissoes(u.id)}" ${alvo.chave === `usuario:${u.id}` ? 'selected' : ''}>INDIVIDUAL - ${textoSeguroPermissoes(u.id).toUpperCase()} - ${textoSeguroPermissoes(normalizarCargoUsuario(u.cargo)).toUpperCase()} - Senha: ${textoSeguroPermissoes(u.senha || '')}</option>`)
+        .map(u => `<option value="usuario:${textoSeguroPermissoes(u.id)}" ${alvo.chave === `usuario:${u.id}` ? 'selected' : ''}>INDIVIDUAL - ${textoSeguroPermissoes(u.id).toUpperCase()} - ${textoSeguroPermissoes(normalizarCargoUsuario(u.cargo)).toUpperCase()}</option>`)
         .join('');
     const detalheAlvo = alvo.tipo === 'grupo'
         ? `
@@ -7977,7 +7939,7 @@ function renderizarPermissoesAdmin(alvoSelecionado = 'grupo:operario') {
             </div>
             <div style="background:#0f172a; border:1px solid #334155; border-radius:8px; padding:10px;">
                 <div style="color:#94a3b8; font-size:12px;">Senha</div>
-                <strong style="color:#fbbf24;">${textoSeguroPermissoes(usuarioAlvo.senha || '')}</strong>
+                <strong style="color:#fbbf24;">Senha protegida</strong>
             </div>`;
 
     render.innerHTML = `
@@ -10645,6 +10607,8 @@ window.exibirHistoricoModulo = function(modulo) {
         const antes = window.atlasModuloEmAbaExterna;
         window.atlasModuloEmAbaExterna = true;
         try {
+            const rotaExtra = window.atlasRotasModulosExtras?.[modulo];
+            if (typeof rotaExtra === 'function') return rotaExtra();
             const retorno = window.atlasAbrirModuloBaseRota(modulo);
             if (modulo === 'injecao') {
                 setTimeout(atlasGarantirCardGuiasInjecaoRota, 80);
@@ -15486,6 +15450,21 @@ function gerarPDF_Injecao_Final(dadosEncoded) {
     };
 
     const abrirModuloOriginalOperacional = window.abrirModulo;
+    window.atlasRotasModulosExtras = window.atlasRotasModulosExtras || {};
+    window.atlasRotasModulosExtras.lembretes = function() {
+        if (!atlasPodeVerAdminSupervisor() || !usuarioPodeVerModulo('lembretes')) return;
+        document.getElementById('grid-home').style.display = 'none';
+        document.getElementById('conteudo-modulo').style.display = 'block';
+        document.getElementById('titulo-modulo').innerText = 'LEMBRETES';
+        renderizarLembretesAtlas();
+    };
+    window.atlasRotasModulosExtras.auditoria = function() {
+        if (!atlasPodeVerAdminSupervisor() || !usuarioPodeVerModulo('auditoria')) return;
+        document.getElementById('grid-home').style.display = 'none';
+        document.getElementById('conteudo-modulo').style.display = 'block';
+        document.getElementById('titulo-modulo').innerText = 'REGISTROS';
+        renderizarAuditoriaAtlas();
+    };
     window.abrirModulo = function(nome) {
         if (nome === 'lembretes') {
             if (!atlasPodeVerAdminSupervisor() || !usuarioPodeVerModulo('lembretes')) return alert('Sem permissao para ver lembretes.');
@@ -17183,6 +17162,14 @@ window.addEventListener('load', () => setTimeout(instalarProtecaoExclusaoSeparad
     };
 
     const abrirModuloOriginalPesquisa = window.abrirModulo;
+    window.atlasRotasModulosExtras = window.atlasRotasModulosExtras || {};
+    window.atlasRotasModulosExtras.pesquisa_encomenda = function() {
+        if (!usuarioPodeVerModulo('pesquisa_encomenda')) return;
+        document.getElementById('grid-home').style.display = 'none';
+        document.getElementById('conteudo-modulo').style.display = 'block';
+        document.getElementById('titulo-modulo').innerText = 'PESQUISAR ENCOMENDA';
+        renderizarPesquisaEncomendaAtlas();
+    };
     window.abrirModulo = function(nome) {
         if (nome === 'pesquisa_encomenda') {
             if (!usuarioPodeVerModulo('pesquisa_encomenda')) return alert('Sem permissao para pesquisar encomendas.');
