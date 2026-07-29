@@ -834,6 +834,8 @@
       const totalGeral = totalManha + totalTarde;
       const equipeManha = Array.isArray(rel.equipesTurno?.manha) ? rel.equipesTurno.manha.join(", ") : (rel.equipeManha || "");
       const equipeTarde = Array.isArray(rel.equipesTurno?.tarde) ? rel.equipesTurno.tarde.join(", ") : (rel.equipeTarde || "");
+      const ocorrencias = (Array.isArray(rel.ocorrencias) ? rel.ocorrencias : [])
+        .filter(ocorrencia => String(ocorrencia?.mensagem || "").trim());
 
       janela.document.write(`
         <!DOCTYPE html>
@@ -854,6 +856,8 @@
             .subsecao b{grid-column:3;text-align:right;font-size:14px}
             table{width:100%;border-collapse:collapse;font-size:10px} th,td{border:1.5px solid #000;padding:4px 5px;text-align:center} th{background:#eee}.vazio{padding:10px;color:#555;font-style:italic}.total td{background:#111;color:#fff;font-weight:900}
             .duas{display:grid;grid-template-columns:1fr 1fr;gap:7mm;margin-top:4mm}
+            .ocorrencias{margin-top:5mm;border:2px solid #000;page-break-inside:avoid}.ocorrencias-titulo{background:#8a5a00;color:#fff;text-align:center;font-weight:900;text-transform:uppercase;padding:7px}
+            .ocorrencia{display:grid;grid-template-columns:42mm 1fr;border-top:1.5px solid #000}.ocorrencia b,.ocorrencia span{padding:7px;font-size:11px;text-align:left}.ocorrencia b{background:#fff3cd;border-right:1.5px solid #000;text-transform:uppercase}
             .no-print{position:sticky;bottom:0;padding:12px;background:#0f172a}.no-print button{width:100%;padding:16px;border:3px solid #e31c24;border-radius:10px;background:#000;color:#fff;font-size:18px;font-weight:900}
             @media print{body{background:#fff}.page{width:297mm;min-height:210mm;margin:0;padding:9mm}.no-print{display:none!important}@page{margin:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
           </style>
@@ -865,6 +869,17 @@
             <section class="cards"><div class="card"><span>Turno da manha</span><b>${totalManha.toFixed(2)} m</b></div><div class="card"><span>Turno da tarde</span><b>${totalTarde.toFixed(2)} m</b></div><div class="card"><span>Total do dia</span><b>${totalGeral.toFixed(2)} m</b></div></section>
             ${blocoTurno("Turno da manha", porTurno.manha)}
             ${blocoTurno("Turno da tarde", porTurno.tarde)}
+            ${ocorrencias.length ? `
+              <section class="ocorrencias">
+                <div class="ocorrencias-titulo">Ocorrencias e informacoes dos turnos</div>
+                ${ocorrencias.map(ocorrencia => `
+                  <div class="ocorrencia">
+                    <b>${ocorrencia.turno === "tarde" ? "Turno da tarde" : "Turno da manha"}</b>
+                    <span>${seguro(ocorrencia.mensagem)}</span>
+                  </div>
+                `).join("")}
+              </section>
+            ` : ""}
             <div class="secao">Relatorio final de tudo separado por turno</div>
             <div class="duas">
               <table><thead><tr><th>Classe</th><th>Manha</th><th>Tarde</th><th>Total</th></tr></thead><tbody>${linhasResumoQualidadePorTurno(resumo)}<tr class="total"><td>Total</td><td>${totalManha.toFixed(2)} m</td><td>${totalTarde.toFixed(2)} m</td><td>${totalGeral.toFixed(2)} m</td></tr></tbody></table>
