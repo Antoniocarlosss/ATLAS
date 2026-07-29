@@ -1,4 +1,5 @@
 ﻿const CACHE_NAME = 'atlas-v204-publico-limpo';
+const CACHE_NAME_ATLAS_ATUAL = 'atlas-v217-ocorrencias-serra';
 const assets = [
   './',
   './index.html',
@@ -41,7 +42,7 @@ function cachearArquivo(cache, asset) {
 // InstalaÃ§Ã£o
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
+    caches.open(CACHE_NAME_ATLAS_ATUAL).then(cache => {
       return Promise.all(assets.map(asset => cachearArquivo(cache, asset)));
     }).then(() => self.skipWaiting())
   );
@@ -50,7 +51,7 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+      keys.filter(key => key !== CACHE_NAME_ATLAS_ATUAL).map(key => caches.delete(key))
     )).then(() => self.clients.claim())
   );
 });
@@ -76,7 +77,7 @@ self.addEventListener('fetch', e => {
       .then(response => {
         if (response && response.ok) {
           const copia = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(e.request, copia)).catch(() => null);
+          caches.open(CACHE_NAME_ATLAS_ATUAL).then(cache => cache.put(e.request, copia)).catch(() => null);
         }
         return response;
       })

@@ -3689,6 +3689,7 @@ function renderizarCalculadoraAgro() {
 // --- BANCO DE DADOS ---
 let db_serra_live = atlasArrayLocal('atlas_serra_live');
 let db_serra_hist = atlasArrayLocal('atlas_serra_hist');
+let db_serra_ocorrencias_live = atlasArrayLocal('atlas_serra_ocorrencias_live');
 
 // --- 1. MENU PRINCIPAL ---
 function renderizarMenuSerra() {
@@ -3962,6 +3963,12 @@ function iniciarInterfaceCorteSerra() {
         </div>
 
         <div id="campos-serra" style="background:#111827; padding:15px; border-radius:10px; border:1px solid #334155;"></div>
+        <div style="background:#111827; border:1px solid #475569; border-left:4px solid #f59e0b; border-radius:10px; padding:14px; margin-top:15px;">
+            <label for="s-ocorrencia-serra" style="display:block; color:#fbbf24; font-size:12px; font-weight:900; margin-bottom:7px;">OCORRÊNCIA / INFORMAÇÃO DO TURNO</label>
+            <textarea id="s-ocorrencia-serra" rows="3" maxlength="1000" placeholder="Ex.: Serra parada por manutenção, troca de disco, material com defeito..." style="width:100%; resize:vertical; padding:11px; background:#1e293b; color:white; border:1px solid #64748b; border-radius:7px; font-family:inherit;"></textarea>
+            <button type="button" onclick="adicionarOcorrenciaSerra()" style="width:100%; margin-top:8px; padding:11px; border:0; border-radius:7px; background:#f59e0b; color:#111827; font-weight:900; cursor:pointer;">REGISTRAR INFORMAÇÃO DO TURNO</button>
+            <div id="lista-ocorrencias-serra" style="margin-top:10px;"></div>
+        </div>
         <div id="lista-corte-serra" style="margin-top:15px; max-height:250px; overflow-y:auto;"></div>
 
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-top:15px;">
@@ -3973,6 +3980,7 @@ function iniciarInterfaceCorteSerra() {
 
     setModoCorteSerra('pedido');
     atualizarTabelaSerra();
+    atualizarOcorrenciasSerra();
 }
 
 function atualizarLabelTurnoSerra() {
@@ -3990,6 +3998,40 @@ function mudarTurnoSerra() {
     if (!select) return;
     select.value = select.value === 'tarde' ? 'manha' : 'tarde';
     atualizarLabelTurnoSerra();
+}
+
+function adicionarOcorrenciaSerra() {
+    const campo = document.getElementById('s-ocorrencia-serra');
+    const mensagem = campo?.value.trim() || '';
+    if (!mensagem) return alert('Escreva a informação ou ocorrência antes de registrar.');
+    const turno = document.getElementById('s-turno-serra')?.value === 'tarde' ? 'tarde' : 'manha';
+    db_serra_ocorrencias_live.push({
+        id: Date.now(),
+        turno,
+        mensagem,
+        registradoEm: new Date().toISOString()
+    });
+    localStorage.setItem('atlas_serra_ocorrencias_live', JSON.stringify(db_serra_ocorrencias_live));
+    campo.value = '';
+    atualizarOcorrenciasSerra();
+}
+
+function removerOcorrenciaSerra(indice) {
+    db_serra_ocorrencias_live.splice(indice, 1);
+    localStorage.setItem('atlas_serra_ocorrencias_live', JSON.stringify(db_serra_ocorrencias_live));
+    atualizarOcorrenciasSerra();
+}
+
+function atualizarOcorrenciasSerra() {
+    const lista = document.getElementById('lista-ocorrencias-serra');
+    if (!lista) return;
+    lista.innerHTML = db_serra_ocorrencias_live.length
+        ? db_serra_ocorrencias_live.map((ocorrencia, indice) => `
+            <div style="display:flex; justify-content:space-between; gap:10px; padding:9px; margin-top:6px; background:#1e293b; border-radius:6px; color:white;">
+                <span><b style="color:#fbbf24;">${ocorrencia.turno === 'tarde' ? 'TURNO DA TARDE' : 'TURNO DA MANHÃ'}</b><br><small>${atlasTextoSeguroSaude(ocorrencia.mensagem)}</small></span>
+                <button type="button" onclick="removerOcorrenciaSerra(${indice})" title="Remover informação" style="border:0; background:transparent; color:#ef4444; cursor:pointer;"><i class="fas fa-trash"></i></button>
+            </div>`).join('')
+        : '<small style="color:#94a3b8;">Nenhuma ocorrência registrada neste relatório.</small>';
 }
 
 function setModoCorteSerra(modo) {
@@ -4100,6 +4142,7 @@ function atlasSerraRelatorioAtual() {
         ano,
         operador: document.getElementById('user-display')?.innerText || 'OP. SERRA',
         itens: [...db_serra_live],
+        ocorrencias: db_serra_ocorrencias_live.map(ocorrencia => ({ ...ocorrencia })),
         totalGeral: db_serra_live.reduce((acc, cur) => acc + ((parseFloat(cur.metros) || 0) * (parseInt(cur.qtd, 10) || 1)), 0).toFixed(2)
     };
 }
@@ -4129,6 +4172,7 @@ function atlasSerraPreviewFecharDia() {
                 const metros = parseFloat(item.metros) || 0;
                 return `<tr><td>${atlasTextoSeguroSaude(item.tipo || '')}</td><td>${atlasTextoSeguroSaude(item.esp || '')} mm</td><td>${atlasTextoSeguroSaude(item.ralS || '')}</td><td>${atlasTextoSeguroSaude(item.ralI || '')}</td><td>${qtd}</td><td>${metros.toFixed(2)} m</td><td>${(qtd * metros).toFixed(2)} m</td><td>${atlasTextoSeguroSaude(item.desc || '')}</td></tr>`;
             }).join('')}</tbody></table>
+            ${rel.ocorrencias?.length ? `<div style="margin-top:16px;"><h3>Ocorrências e informações dos turnos</h3>${rel.ocorrencias.map(ocorrencia => `<div style="border:1px solid #111;padding:9px;margin-top:5px;"><b>${ocorrencia.turno === 'tarde' ? 'TURNO DA TARDE' : 'TURNO DA MANHÃ'}:</b> ${atlasTextoSeguroSaude(ocorrencia.mensagem)}</div>`).join('')}</div>` : ''}
             <div class="no-print">
                 <button onclick="window.print()">IMPRIMIR / PDF</button>
                 <button onclick="window.opener.fecharDiaSerra(); try { window.opener.focus(); } catch(e) {}">CONFIRMAR E SALVAR</button>
@@ -4200,8 +4244,9 @@ function fecharDiaSerra() {
         dia: dia,
         mes: parseInt(mes),
         ano: ano,
-       operador: document.getElementById('user-display')?.innerText || "OP. SERRA",
+        operador: document.getElementById('user-display')?.innerText || "OP. SERRA",
         itens: [...db_serra_live],
+        ocorrencias: db_serra_ocorrencias_live.map(ocorrencia => ({ ...ocorrencia })),
         totalGeral: db_serra_live.reduce((acc, cur) => acc + (cur.metros * cur.qtd), 0).toFixed(2)
     };
 
@@ -4210,6 +4255,8 @@ function fecharDiaSerra() {
 
     db_serra_live = [];
     localStorage.removeItem('atlas_serra_live');
+    db_serra_ocorrencias_live = [];
+    localStorage.removeItem('atlas_serra_ocorrencias_live');
 
     alert(`RelatÃ³rio salvo com sucesso para o dia ${dataFinal}!`);
     renderizarMenuSerra();
@@ -10322,6 +10369,7 @@ window.exibirHistoricoModulo = function(modulo) {
         const totalManha = Object.values(resumoTurno.manha).reduce((s, v) => s + v, 0);
         const totalTarde = Object.values(resumoTurno.tarde).reduce((s, v) => s + v, 0);
         const totalGeral = totalManha + totalTarde;
+        const ocorrencias = Array.isArray(rel.ocorrencias) ? rel.ocorrencias : [];
 
         const blocoTurno = turno => `
             <section class="turno">
@@ -10376,6 +10424,11 @@ window.exibirHistoricoModulo = function(modulo) {
                     .duas-colunas { display:grid; grid-template-columns:0.75fr 1.25fr; gap:6mm; margin-top:4mm; align-items:start; }
                     .total td { background:#111; color:#fff; font-weight:900; }
                     .vazio { color:#555; font-style:italic; padding:10px; }
+                    .ocorrencias { margin-top:6mm; border:2px solid #000; page-break-inside:avoid; }
+                    .ocorrencia { display:grid; grid-template-columns:42mm 1fr; border-top:1px solid #999; }
+                    .ocorrencia:first-of-type { border-top:0; }
+                    .ocorrencia b, .ocorrencia span { padding:7px; font-size:11px; }
+                    .ocorrencia b { background:#fff3cd; text-transform:uppercase; border-right:1px solid #999; }
                     .assinatura { margin-top:12mm; text-align:center; }
                     .assinatura div { display:inline-block; width:90mm; border-top:2px solid #000; padding-top:4px; font-weight:700; }
                     .no-print { position:sticky; bottom:0; padding:12px; background:#0f172a; }
@@ -10404,6 +10457,17 @@ window.exibirHistoricoModulo = function(modulo) {
 
                     ${blocoTurno('manha')}
                     ${blocoTurno('tarde')}
+
+                    ${ocorrencias.length ? `
+                    <section class="ocorrencias">
+                        <div class="secao-titulo" style="margin-top:0;">Ocorrências e informações dos turnos</div>
+                        ${ocorrencias.map(ocorrencia => `
+                            <div class="ocorrencia">
+                                <b>${ocorrencia.turno === 'tarde' ? 'Turno da tarde' : 'Turno da manhã'}</b>
+                                <span>${textoSerraSeguro(ocorrencia.mensagem || '')}</span>
+                            </div>
+                        `).join('')}
+                    </section>` : ''}
 
                     <section class="turno">
                         <div class="secao-titulo">Relatorio final do dia</div>

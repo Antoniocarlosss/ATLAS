@@ -297,7 +297,9 @@
                 <div id="mes-s-${ano}-${mes}" style="display:none; padding-left:10px; background:#1a202c;">
                   ${agrupado[ano][mes].sort((a, b) => numero(b.relatorio?.dia) - numero(a.relatorio?.dia)).map(({ relatorio, indiceRelatorio }) => `
                     <div style="padding:12px; border-bottom:1px solid #334155; display:flex; justify-content:space-between; align-items:center; gap:10px;">
-                      <span style="font-size:13px;"><b>DIA ${seguro(relatorio.dia)}/${seguro(relatorio.mes)}</b><br><small style="color:#94a3b8;">Total: ${formatarMetros(relatorio.totalGeral)}</small></span>
+                      <span style="font-size:13px;"><b>DIA ${seguro(relatorio.dia)}/${seguro(relatorio.mes)}</b><br><small style="color:#94a3b8;">Total: ${formatarMetros(relatorio.totalGeral)}</small>
+                        ${(Array.isArray(relatorio.ocorrencias) ? relatorio.ocorrencias : []).map(ocorrencia => `<br><small style="display:inline-block; margin-top:4px; color:#fbbf24;"><b>${ocorrencia.turno === "tarde" ? "Turno da tarde" : "Turno da manhã"}:</b> ${seguro(ocorrencia.mensagem)}</small>`).join("")}
+                      </span>
                       <div style="display:flex; gap:8px; flex-wrap:wrap;">
                         ${podeGerir ? `<button type="button" onclick="atlasAbrirGerirCorte('serra',${indiceRelatorio})" style="background:#f59e0b; color:#111827; border:none; padding:8px 13px; border-radius:5px; cursor:pointer; font-weight:900; font-size:11px;"><i class="fas fa-pen-to-square" aria-hidden="true"></i> GERIR</button>` : ""}
                         <button type="button" onclick='gerarPDF_Serra("${encodeURIComponent(JSON.stringify(relatorio))}")' style="background:#10b981; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:11px;"><i class="fas fa-file-pdf"></i> VER PDF</button>
