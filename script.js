@@ -1482,17 +1482,18 @@ function atlasAtualizarTelaAposSyncNuvem(evento) {
 
     const modoPublico = document.documentElement.classList.contains('atlas-public-mode') || String(usuarioLogado?.id || '').toLowerCase() === 'visitante';
     if (modoPublico) {
-        const textoTela = String(document.getElementById('render-modulo')?.innerText || '')
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .toLowerCase();
+        const moduloPublicoAtual = String(window.atlasModuloAtual || '').toLowerCase();
+        const conteudoModulo = document.getElementById('conteudo-modulo');
+        const historicoPublicoVisivel = conteudoModulo
+            && getComputedStyle(conteudoModulo).display !== 'none';
         clearTimeout(window.atlasTimerAtualizacaoPublicaNuvem);
         window.atlasTimerAtualizacaoPublicaNuvem = setTimeout(() => {
-            if (chavesAtualizadas.includes('atlas_db') && textoTela.includes('injec')) {
+            if (!historicoPublicoVisivel || !moduloPublicoAtual) return;
+            if (chavesAtualizadas.includes('atlas_db') && moduloPublicoAtual === 'injecao') {
                 if (typeof window.atlasPublicoAbrirHistoricoInjecao === 'function') window.atlasPublicoAbrirHistoricoInjecao();
                 return;
             }
-            if (chavesAtualizadas.includes('atlas_serra_hist') && textoTela.includes('serra')) {
+            if (chavesAtualizadas.includes('atlas_serra_hist') && moduloPublicoAtual === 'serra') {
                 if (typeof window.atlasPublicoAbrirHistoricoSerra === 'function') window.atlasPublicoAbrirHistoricoSerra();
             }
         }, 80);

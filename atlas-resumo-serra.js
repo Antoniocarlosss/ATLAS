@@ -265,18 +265,22 @@
 
   function historicoHtml() {
     const agrupado = {};
-    relatorios().forEach(relatorio => {
+    relatorios().forEach((relatorio, indiceRelatorio) => {
       const data = dataRelatorio(relatorio);
       if (!data) return;
       const ano = data.getFullYear();
       const mes = data.getMonth() + 1;
       agrupado[ano] ||= {};
       agrupado[ano][mes] ||= [];
-      agrupado[ano][mes].push(relatorio);
+      agrupado[ano][mes].push({ relatorio, indiceRelatorio });
     });
 
     const modoPublico = document.documentElement.classList.contains("atlas-public-mode")
       || normalizar(window.usuarioLogado?.id).toLowerCase() === "visitante";
+    const podeGerir = !modoPublico
+      && typeof window.atlasAbrirGerirCorte === "function"
+      && typeof window.atlasPodeGerirHistoricoModulo === "function"
+      && window.atlasPodeGerirHistoricoModulo("serra");
     const voltar = modoPublico ? "" : `<button type="button" onclick="renderizarMenuSerra()" style="background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer; margin-right:15px;" aria-label="Voltar ao menu da Serra"><i class="fas fa-arrow-left"></i></button>`;
     const anos = Object.keys(agrupado).sort((a, b) => b - a);
 
@@ -291,10 +295,13 @@
               ${Object.keys(agrupado[ano]).sort((a, b) => b - a).map(mes => `
                 <div onclick="toggleElemento('mes-s-${ano}-${mes}')" style="cursor:pointer; padding:10px; color:#3b82f6; background:#0f172a; margin-top:5px; border-radius:4px; font-weight:bold;">${MESES[mes]}</div>
                 <div id="mes-s-${ano}-${mes}" style="display:none; padding-left:10px; background:#1a202c;">
-                  ${agrupado[ano][mes].sort((a, b) => numero(b.dia) - numero(a.dia)).map(relatorio => `
+                  ${agrupado[ano][mes].sort((a, b) => numero(b.relatorio?.dia) - numero(a.relatorio?.dia)).map(({ relatorio, indiceRelatorio }) => `
                     <div style="padding:12px; border-bottom:1px solid #334155; display:flex; justify-content:space-between; align-items:center; gap:10px;">
                       <span style="font-size:13px;"><b>DIA ${seguro(relatorio.dia)}/${seguro(relatorio.mes)}</b><br><small style="color:#94a3b8;">Total: ${formatarMetros(relatorio.totalGeral)}</small></span>
-                      <button type="button" onclick='gerarPDF_Serra("${encodeURIComponent(JSON.stringify(relatorio))}")' style="background:#10b981; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:11px;"><i class="fas fa-file-pdf"></i> VER PDF</button>
+                      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        ${podeGerir ? `<button type="button" onclick="atlasAbrirGerirCorte('serra',${indiceRelatorio})" style="background:#f59e0b; color:#111827; border:none; padding:8px 13px; border-radius:5px; cursor:pointer; font-weight:900; font-size:11px;"><i class="fas fa-pen-to-square" aria-hidden="true"></i> GERIR</button>` : ""}
+                        <button type="button" onclick='gerarPDF_Serra("${encodeURIComponent(JSON.stringify(relatorio))}")' style="background:#10b981; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:11px;"><i class="fas fa-file-pdf"></i> VER PDF</button>
+                      </div>
                     </div>`).join("")}
                 </div>`).join("")}
             </div>

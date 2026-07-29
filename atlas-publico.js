@@ -286,7 +286,7 @@
             <strong>Hist&oacute;rico da Inje&ccedil;&atilde;o</strong>
             <span>Ver relat&oacute;rios por ano, m&ecirc;s e dia, com PDF e impress&atilde;o.</span>
           </button>
-          <button class="atlas-public-card serra" type="button" onclick="atlasPublicoAbrirHistoricoSerra()">
+          <button class="atlas-public-card serra" type="button" onclick="atlasPublicoAbrirHistoricoSerra(true)">
             <i class="fas fa-layer-group"></i>
             <strong>Hist&oacute;rico da Serra</strong>
             <span>Ver relat&oacute;rios de corte por ano, m&ecirc;s e dia, com PDF e impress&atilde;o.</span>
@@ -472,7 +472,12 @@
     atlasPublicoCorrigirHistoricoAberto("injecao");
   };
 
-  window.atlasPublicoAbrirHistoricoSerra = function () {
+  window.atlasPublicoAbrirHistoricoSerra = function (solicitadoPeloVisitante = false) {
+    if (solicitadoPeloVisitante !== true && window.atlasModuloAtual !== "serra") {
+      window.atlasModuloAtual = "";
+      renderPublicHome();
+      return;
+    }
     window.atlasModuloAtual = "serra";
     showAppShell();
     $("#grid-home").style.display = "none";
