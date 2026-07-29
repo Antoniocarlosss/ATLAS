@@ -7,8 +7,14 @@
   let originalHomeHTML = "";
   let originalLogout = null;
 
-  localStorage.removeItem(ADMIN_FLAG);
-  localStorage.removeItem("atlas_sessao_usuario_id");
+  const parametrosEntrada = new URLSearchParams(location.search);
+  const rotaInternaSolicitada = parametrosEntrada.has("modulo")
+    || parametrosEntrada.has("pagina")
+    || parametrosEntrada.has("atlas_modulo");
+  if (!rotaInternaSolicitada) {
+    localStorage.removeItem(ADMIN_FLAG);
+    localStorage.removeItem("atlas_sessao_usuario_id");
+  }
 
   function $(selector) {
     return document.querySelector(selector);
@@ -706,6 +712,12 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     waitReady(() => {
+      const temSessaoInterna = rotaInternaSolicitada
+        && Boolean(localStorage.getItem("atlas_sessao_usuario_id"));
+      if (temSessaoInterna) {
+        setTimeout(() => window.atlasFinalizarCarregamentoSistema?.(), 700);
+        return;
+      }
       enterPublicMode();
     });
     setInterval(instalarEquipesTurnoFormulario, 700);
