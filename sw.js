@@ -1,5 +1,4 @@
-﻿const CACHE_NAME = 'atlas-v204-publico-limpo';
-const CACHE_NAME_ATLAS_ATUAL = 'atlas-v222-sessao-admin-nova-aba';
+const CACHE_NAME_ATLAS_ATUAL = 'atlas-v223-auditoria-seguranca';
 const assets = [
   './',
   './index.html',
@@ -39,64 +38,59 @@ function cachearArquivo(cache, asset) {
   return cache.add(asset).catch(() => null);
 }
 
-// InstalaÃ§Ã£o
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE_NAME_ATLAS_ATUAL).then(cache => {
-      return Promise.all(assets.map(asset => cachearArquivo(cache, asset)));
-    }).then(() => self.skipWaiting())
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME_ATLAS_ATUAL)
+      .then(cache => Promise.all(assets.map(asset => cachearArquivo(cache, asset))))
+      .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME_ATLAS_ATUAL).map(key => caches.delete(key))
-    )).then(() => self.clients.claim())
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(
+        keys.filter(key => key !== CACHE_NAME_ATLAS_ATUAL).map(key => caches.delete(key))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('message', e => {
-  if (e.data && e.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
-// Busca de arquivos: tenta pegar a versao nova primeiro e usa cache se estiver offline.
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
 
-  const url = new URL(e.request.url);
+  const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  const sempreAtualizar = e.request.mode === 'navigate' || /\.(html|js|css)$/i.test(url.pathname);
-  const requestAtualizado = sempreAtualizar ? new Request(e.request, { cache: 'reload' }) : e.request;
+  const sempreAtualizar = event.request.mode === 'navigate' || /\.(html|js|css)$/i.test(url.pathname);
+  const requestAtualizado = sempreAtualizar
+    ? new Request(event.request, { cache: 'reload' })
+    : event.request;
 
-  e.respondWith(
+  event.respondWith(
     fetch(requestAtualizado)
       .then(response => {
-        if (response && response.ok) {
+        if (response?.ok) {
           const copia = response.clone();
-          caches.open(CACHE_NAME_ATLAS_ATUAL).then(cache => cache.put(e.request, copia)).catch(() => null);
+          caches.open(CACHE_NAME_ATLAS_ATUAL)
+            .then(cache => cache.put(event.request, copia))
+            .catch(() => null);
         }
         return response;
       })
-      .catch(() => caches.match(e.request).then(cached => cached || caches.match('./index.html'))
+      .catch(() => caches.match(event.request)
+        .then(cached => {
+          if (cached) return cached;
+          if (event.request.mode === 'navigate') return caches.match('./index.html');
+          return null;
+        })
         .then(cached => cached || new Response('Atlas offline: arquivo nao disponivel.', {
           status: 503,
           headers: { 'Content-Type': 'text/plain; charset=utf-8' }
         })))
   );
 });
-
-
-
-
-
-
-
-
-
-
-
-
