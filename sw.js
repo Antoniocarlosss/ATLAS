@@ -1,5 +1,5 @@
 ﻿const CACHE_NAME = 'atlas-v204-publico-limpo';
-const CACHE_NAME_ATLAS_ATUAL = 'atlas-v218-ocorrencias-pdf-serra';
+const CACHE_NAME_ATLAS_ATUAL = 'atlas-v219-salvar-ocorrencias-serra';
 const assets = [
   './',
   './index.html',

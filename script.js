@@ -11670,6 +11670,8 @@ window.exibirHistoricoModulo = function(modulo) {
             operador: document.getElementById('user-display')?.innerText || 'OP. SERRA',
             equipesTurno: typeof window.atlasColetarEquipesTurno === 'function' ? window.atlasColetarEquipesTurno() : {},
             itens: [...db_serra_live],
+            ocorrencias: (Array.isArray(db_serra_ocorrencias_live) ? db_serra_ocorrencias_live : [])
+                .map(ocorrencia => ({ ...ocorrencia })),
             totalGeral: db_serra_live.reduce((acc, cur) => acc + ((parseFloat(cur.metros) || 0) * (parseInt(cur.qtd, 10) || 1)), 0).toFixed(2)
         };
 
@@ -11683,6 +11685,8 @@ window.exibirHistoricoModulo = function(modulo) {
         atlasAcaoAuditoriaFinalDia('serra', 'Fechou dia da serra');
         db_serra_live = [];
         localStorage.removeItem('atlas_serra_live');
+        db_serra_ocorrencias_live = [];
+        localStorage.removeItem('atlas_serra_ocorrencias_live');
         atlasRenderRelatorioSerraFinalizado(rel);
     };
 })();

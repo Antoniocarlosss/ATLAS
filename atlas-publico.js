@@ -834,7 +834,15 @@
       const totalGeral = totalManha + totalTarde;
       const equipeManha = Array.isArray(rel.equipesTurno?.manha) ? rel.equipesTurno.manha.join(", ") : (rel.equipeManha || "");
       const equipeTarde = Array.isArray(rel.equipesTurno?.tarde) ? rel.equipesTurno.tarde.join(", ") : (rel.equipeTarde || "");
-      const ocorrencias = (Array.isArray(rel.ocorrencias) ? rel.ocorrencias : [])
+      let ocorrenciasTemporarias = [];
+      try {
+        const salvas = JSON.parse(localStorage.getItem("atlas_serra_ocorrencias_live") || "[]");
+        ocorrenciasTemporarias = Array.isArray(salvas) ? salvas : [];
+      } catch (erro) {}
+      const ocorrenciasRelatorio = Array.isArray(rel.ocorrencias)
+        ? rel.ocorrencias
+        : (Array.isArray(rel.observacoesTurno) ? rel.observacoesTurno : []);
+      const ocorrencias = (ocorrenciasRelatorio.length ? ocorrenciasRelatorio : ocorrenciasTemporarias)
         .filter(ocorrencia => String(ocorrencia?.mensagem || "").trim());
 
       janela.document.write(`
