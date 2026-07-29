@@ -1,5 +1,5 @@
 ﻿const CACHE_NAME = 'atlas-v204-publico-limpo';
-const CACHE_NAME_ATLAS_ATUAL = 'atlas-v220-ocorrencias-final-pdf';
+const CACHE_NAME_ATLAS_ATUAL = 'atlas-v221-plano-comprador-nova-aba';
 const assets = [
   './',
   './index.html',
