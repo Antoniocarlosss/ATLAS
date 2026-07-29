@@ -540,7 +540,7 @@ window.atlasFinalizarCarregamentoSistema = function () {
     <script src="historicos-admin.js?v=20260720-publico-limpo-204"></script>
     <script src="atlas-ajustes-fachadas.js?v=20260720-publico-limpo-204"></script>
     <script type="module" src="main.js?v=20260720-publico-limpo-204"></script>
-    <script src="atlas-publico.js?v=20260729-salvar-ocorrencias-serra-219"></script>
+    <script src="atlas-publico.js?v=20260729-ocorrencias-final-pdf-220"></script>
     <script src="atlas-texto-limpo.js?v=20260720-publico-limpo-204"></script>
     <script src="atlas-resumo-injecao.js?v=20260728-relatorio-injecao-212"></script>
     <script src="atlas-resumo-serra.js?v=20260729-ocorrencias-serra-217"></script>
@@ -554,7 +554,7 @@ window.atlasFinalizarCarregamentoSistema = function () {
             });
 
             window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js?v=20260729-salvar-ocorrencias-serra-219')
+            navigator.serviceWorker.register('sw.js?v=20260729-ocorrencias-final-pdf-220')
                     .then(reg => {
                         console.log('Atlas PWA: Ativo!');
                         reg.update();
