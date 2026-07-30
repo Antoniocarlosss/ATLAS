@@ -524,13 +524,15 @@ window.atlasFinalizarCarregamentoSistema = function () {
     </script>
     <script>
         try {
+            localStorage.removeItem('atlas_public_admin');
+            localStorage.removeItem('atlas_sessao_usuario_id');
             const atlasUrlPublica = new URL(location.href);
-            const atlasTemRotaInterna = atlasUrlPublica.searchParams.has('modulo')
-                || atlasUrlPublica.searchParams.has('pagina')
-                || atlasUrlPublica.searchParams.has('atlas_modulo');
-            if (!atlasTemRotaInterna) {
-                localStorage.removeItem('atlas_public_admin');
-                localStorage.removeItem('atlas_sessao_usuario_id');
+            if (atlasUrlPublica.searchParams.has('modulo') || atlasUrlPublica.searchParams.has('pagina') || atlasUrlPublica.searchParams.has('atlas_modulo')) {
+                atlasUrlPublica.searchParams.delete('modulo');
+                atlasUrlPublica.searchParams.delete('pagina');
+                atlasUrlPublica.searchParams.delete('atlas_modulo');
+                atlasUrlPublica.searchParams.delete('atlas_nocache');
+                history.replaceState({}, '', atlasUrlPublica);
             }
         } catch (erro) {}
     </script>
